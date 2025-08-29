@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <algorithm>
+#include <limits>
 
 Rational::Rational() : _numerator(0), _denominator(1) {
 }
@@ -110,7 +111,28 @@ bool Rational::operator!=(const Rational &other) const {
 }
 
 bool Rational::operator<(const Rational &other) const {
-    return _numerator * other._denominator < other._numerator * _denominator;
+    if ((_numerator < 0) != (other._numerator < 0)) {
+        return _numerator < other._numerator;
+    }
+    // && (other._numerator < 0) is implicitly satisfieds
+    if ((_numerator < 0) /* && (other._numerator < 0) */) {
+        return -other < -(*this);
+    }
+    if (_numerator < std::numeric_limits<int>::max() / other._denominator &&
+        other._numerator < std::numeric_limits<int>::max() / _denominator) {
+        return _numerator * other._denominator < other._numerator * _denominator;
+    }
+    int left_int = _numerator / _denominator;
+    int right_int = other._numerator / other._denominator;
+    if (left_int != right_int) {
+        return left_int < right_int;
+    }
+    int left_rem = _numerator - left_int * _denominator;
+    int right_rem = other._numerator - right_int * other._denominator;
+    if (left_rem == 0 || right_rem == 0) {
+        return left_rem < right_rem;
+    }
+    return Rational(other._denominator, right_rem) < Rational(_denominator, left_rem);
 }
 
 bool Rational::operator<=(const Rational &other) const {
@@ -123,6 +145,14 @@ bool Rational::operator>(const Rational &other) const {
 
 bool Rational::operator>=(const Rational &other) const {
     return !(*this < other);
+}
+
+Rational Rational::operator-() const {
+    return Rational(-_numerator, _denominator);
+}
+
+Rational Rational::abs() const {
+    return Rational(std::abs(_numerator), _denominator);
 }
 
 std::ostream &operator<<(std::ostream &os, const Rational &r) {
