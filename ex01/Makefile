@@ -4,6 +4,7 @@ NAME = rpn
 TOOLBOXSRCS = ../toolbox/StepMark.cpp \
 			../toolbox/color.cpp
 SRCS = main.cpp \
+    Rational.cpp \
 	${TOOLBOXSRCS}
 
 
@@ -12,6 +13,28 @@ OBJS = $(SRCS:.cpp=.o)
 # compiler
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -pedantic -I..
+
+# rules
+.PHONY: all
+all: $(NAME)
+
+$(NAME): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
+
+.PHONY: clean
+clean:
+	$(RM) $(OBJS)
+
+.PHONY: fclean
+fclean: clean
+	$(RM) $(NAME)
+
+.PHONY: clean-log
+clean-log:
+	$(RM) *.log
+
+.PHONY: re
+re: fclean all
 
 # STACK
 STACK := 
@@ -46,25 +69,3 @@ solve:
 	$(eval $(foreach token,$(RPN_EXPR),$(call process_token,$(token))))
 	@echo "計算する式: $(RPN_EXPR)"
 	@echo "計算結果: $(firstword $(STACK))"
-
-# rules
-.PHONY: all
-all: $(NAME)
-
-$(NAME): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
-
-.PHONY: clean
-clean:
-	$(RM) $(OBJS)
-
-.PHONY: fclean
-fclean: clean
-	$(RM) $(NAME)
-
-.PHONY: clean-log
-clean-log:
-	$(RM) *.log
-
-.PHONY: re
-re: fclean all
