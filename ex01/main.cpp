@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <sstream>
 
 #include "Rational.hpp"
 
@@ -10,6 +11,8 @@ namespace {
 
 void operator_apply(std::stack<Rational, std::list<Rational> > &st, const std::string &op);
 void operand_push(std::stack<Rational, std::list<Rational> > &st, const std::string &token);
+
+int stoi(const std::string &s);
 
 }  // namespace
 
@@ -92,16 +95,31 @@ void operator_apply(std::stack<Rational, std::list<Rational> > &st, const std::s
 void operand_push(std::stack<Rational, std::list<Rational> > &st, const std::string &token) {
     size_t slash_pos = token.find('/');
     if (slash_pos == std::string::npos) {
-        int num = std::atoi(token.c_str());
+        int num = stoi(token.c_str());
         st.push(Rational(num));
     } else {
         if (slash_pos == 0 || slash_pos == token.size() - 1) {
             throw std::invalid_argument("Invalid rational number format: '" + token + "'");
         }
-        int num = std::atoi(token.substr(0, slash_pos).c_str());
-        int denom = std::atoi(token.substr(slash_pos + 1).c_str());
+        std::string num_str = token.substr(0, slash_pos);
+        std::string denom_str = token.substr(slash_pos + 1);
+        if (denom_str.find('/') != std::string::npos) {
+            throw std::invalid_argument("Invalid rational number format: '" + token + "'");
+        }
+        int num = stoi(token.substr(0, slash_pos).c_str());
+        int denom = stoi(token.substr(slash_pos + 1).c_str());
         st.push(Rational(num, denom));  // this may throw an exception if denom == 0
     }
+}
+
+int stoi(const std::string &s) {
+    std::stringstream ss(s);
+    int num;
+    ss >> num;
+    if (ss.fail() || !ss.eof()) {
+        throw std::invalid_argument("Invalid integer: '" + s + "'");
+    }
+    return num;
 }
 
 }  // namespace
