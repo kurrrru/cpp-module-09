@@ -1,4 +1,4 @@
-NAME = rpn
+NAME = RPN
 
 # sources
 TOOLBOXSRCS = ../toolbox/StepMark.cpp \

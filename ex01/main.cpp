@@ -91,6 +91,9 @@ void operand_push(std::stack<Rational, std::list<Rational> > &st, const std::str
         int num = std::atoi(token.c_str());
         st.push(Rational(num));
     } else {
+        if (slash_pos == 0 || slash_pos == token.size() - 1) {
+            throw std::invalid_argument("Invalid rational number format: '" + token + "'");
+        }
         int num = std::atoi(token.substr(0, slash_pos).c_str());
         int denom = std::atoi(token.substr(slash_pos + 1).c_str());
         st.push(Rational(num, denom));  // this may throw an exception if denom == 0
