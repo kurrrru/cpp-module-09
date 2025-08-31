@@ -19,6 +19,10 @@ int main(int argc, char **argv) {
         return 1;
     }
     std::string delimiter = (argc == 3) ? argv[2] : " ";
+    if (delimiter.empty()) {
+        std::cerr << "Error: Delimiter cannot be empty" << std::endl;
+        return 1;
+    }
     if (delimiter.find_first_of("0123456789-+*/") != std::string::npos) {
         std::cerr << "Error: Delimiter cannot contain digits or operators" << std::endl;
         return 1;
