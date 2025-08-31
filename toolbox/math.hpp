@@ -15,15 +15,13 @@ namespace math
 * @note [complexity]: O(log(min(a, b)))
 */
 template <typename T>
-T gcd(T a, T b)
-{
-	while (b)
-	{
-		T t = a % b;
-		a = b;
-		b = t;
-	}
-	return a;
+T gcd(T a, T b) {
+    while (b) {
+        T t = a % b;
+        a = b;
+        b = t;
+    }
+    return a;
 }
 
 } // namespace math
