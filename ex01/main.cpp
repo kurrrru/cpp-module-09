@@ -2,7 +2,6 @@
 #include <stack>
 #include <iostream>
 #include <string>
-#include <cstdlib>
 #include <sstream>
 
 #include "Rational.hpp"
