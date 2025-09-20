@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <limits>
 #include <stdexcept>
+#include <map>
+#include <utility>
 
 #include <Date.hpp>
 #include <string.hpp>
@@ -39,25 +41,26 @@ void BitcoinExchange::load_data(const std::string &data_filename) {
     if (!std::getline(file, line)) {
         throw std::runtime_error("Data file is empty: " + data_filename);
     }
-    std::size_t pos_date = line.find("date");
-    std::size_t pos_value = line.rfind("exchange_rate");
-    if (pos_date != 0 || pos_value != line.size() - std::strlen("exchange_rate")) {
-        throw std::runtime_error("Invalid header in data file: " + data_filename);
+    if (line != "date,exchange_rate") {
+        throw std::runtime_error("Invalid header in data file: "
+            + data_filename);
     }
-    std::size_t pos_delimiter = pos_date + std::strlen("date");
-    std::string delimiter = line.substr(pos_delimiter, pos_value - pos_delimiter); 
     std::map<toolbox::Date, double> new_map;
     while (std::getline(file, line)) {
-        std::size_t pos_delimiter = line.find(delimiter);
+        std::size_t pos_delimiter = line.find(",");
         if (pos_delimiter == std::string::npos) {
-            throw std::runtime_error("Invalid line format (missing delimiter) in data file: " + line);
+            throw std::runtime_error(
+                "Invalid line format (missing delimiter) in data file: "
+                + line);
         }
         std::string date_str = line.substr(0, pos_delimiter);
-        std::string value_str = line.substr(pos_delimiter + delimiter.size());
+        std::string value_str = line.substr(pos_delimiter + 1);
         if (date_str.empty() || value_str.empty()) {
-            throw std::runtime_error("Invalid line format (empty date or value) in data file: " + line);
+            throw std::runtime_error(
+                "Invalid line format (empty date or value) in data file: "
+                + line);
         }
-        toolbox::Date date = toolbox::Date(toolbox::GREGORIAN, date_str, "%Y-%m-%d", true);
+        toolbox::Date date(toolbox::GREGORIAN, date_str, "%Y-%m-%d", true);
         double value = toolbox::stod(value_str);
         new_map[date] = value;
     }
@@ -68,7 +71,8 @@ double BitcoinExchange::get_exchange_rate(const toolbox::Date &date) const {
     std::map<toolbox::Date, double>::const_iterator it;
     it = _exchange_rates.upper_bound(date);
     if (it == _exchange_rates.begin()) {
-        throw std::out_of_range("No exchange rate data available for the given date or earlier");
+        throw std::out_of_range(
+            "No exchange rate data available for the given date or earlier");
     }
     --it;
     return it->second;

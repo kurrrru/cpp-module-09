@@ -6,7 +6,8 @@
 #include <BitcoinExchange.hpp>
 #include <string.hpp>
 
-void convert_and_print(const BitcoinExchange &btc, const std::string &file_name) {
+void convert_and_print(const BitcoinExchange &btc,
+    const std::string &file_name) {
     std::ifstream file(file_name.c_str());
     if (!file.is_open()) {
         throw std::runtime_error("Failed to open input file: " + file_name);
@@ -32,7 +33,7 @@ void convert_and_print(const BitcoinExchange &btc, const std::string &file_name)
         toolbox::Date date;
         double value;
         try {
-            date = toolbox::Date(toolbox::GREGORIAN, date_str, "%Y-%m-%d", true);
+            date = toolbox::Date(toolbox::GREGORIAN, date_str, "%Y-%m-%d");
             value = toolbox::stod(value_str);
         } catch (const std::exception &e) {
             std::cerr << "Error: bad input => " << line << std::endl;
@@ -49,21 +50,18 @@ void convert_and_print(const BitcoinExchange &btc, const std::string &file_name)
         try {
             double rate = btc.get_exchange_rate(date);
             double result = value * rate;
-            std::cout << date.to_string(toolbox::GREGORIAN, "%Y-%m-%d") << " => " << value
-                << " = " << result << std::endl;
+            std::cout << date.to_string(toolbox::GREGORIAN, "%Y-%m-%d")
+                << " => " << value << " = " << result << std::endl;
         } catch (const std::exception &e) {
             std::cerr << "Error: no exchange rate available for date: "
                 << date.to_string(toolbox::GREGORIAN, "%Y-%m-%d") << std::endl;
         }
-        
     }
 }
 
 int main(int argc, char **argv) {
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " <data file>" << std::endl;
-
-        // Example: ./btc_exchange input.txt <- これを計算に使う
         return 1;
     }
     try {
