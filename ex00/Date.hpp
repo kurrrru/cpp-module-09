@@ -30,10 +30,10 @@ class Date {
     int get_year(CalendarSystem cal_sys) const;
     int get_weekday(CalendarSystem cal_sys) const;  // 0=Sun, 1=Mon, ..., 6=Sat
 
-    Date& operator++();  // 前置インクリメント
-    Date operator++(int);  // 後置インクリメント
-    Date& operator--();  // 前置デクリメント
-    Date operator--(int);  // 後置デクリメント
+    Date& operator++();  // pre-increment
+    Date operator++(int);  // post-increment
+    Date& operator--();  // pre-decrement
+    Date operator--(int);  // post-decrement
 
     Date operator+(const int delta) const;
     Date operator-(const int delta) const;

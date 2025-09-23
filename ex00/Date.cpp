@@ -8,7 +8,6 @@
 #include <calendar_system/NonProlepticGregorianCalendar.hpp>
 #include <calendar_system/JulianCalendar.hpp>
 #include <calendar_system/EthiopianCalendar.hpp>
-#include <calendar_system/JapaneseWarekiCalendar.hpp>
 #include <calendar_system/FrenchRepublicanCalendar.hpp>
 
 namespace {
@@ -17,7 +16,6 @@ toolbox::NonProlepticGregorianCalendar non_proleptic_gregorian_calendar;
 toolbox::JulianCalendar julian_calendar;
 toolbox::EthiopianCalendar ethiopian_calendar;
 toolbox::FrenchRepublicanCalendar french_republican_calendar;
-// toolbox::JapaneseWarekiCalendar japanese_wareki_calendar;
 }
 
 toolbox::Date::Date() : _serial_date(0) {}
@@ -238,8 +236,6 @@ toolbox::ICalendarSystem& toolbox::Date::get_calendar_system(
             return ethiopian_calendar;
         case toolbox::FRENCH_REPUBLICAN:
             return french_republican_calendar;
-        // case toolbox::JAPANESE_WAREKI:
-        //     return japanese_wareki_calendar;
         default:
             throw std::invalid_argument("Invalid calendar system");
     }

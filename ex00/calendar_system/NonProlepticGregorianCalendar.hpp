@@ -1,4 +1,3 @@
-// 1582-10-4の次の日が1582-10-15
 #pragma once
 
 #include <string>

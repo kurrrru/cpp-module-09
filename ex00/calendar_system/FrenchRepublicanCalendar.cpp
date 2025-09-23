@@ -429,7 +429,6 @@ void FrenchRepublicanCalendar::parse_Yy(const std::string& date_str,
     return;
 }
 
-// get_month_nameを使う
 void FrenchRepublicanCalendar::parse_Mm(const std::string& date_str,
     std::size_t pos,
     const char* format,
