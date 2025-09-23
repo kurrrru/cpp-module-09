@@ -1,4 +1,4 @@
-#include <calendar_system/EthiopianCalendar.hpp>
+#include <ex00/calendar_system/EthiopianCalendar.hpp>
 
 #include <iostream>
 #include <iomanip>
@@ -7,8 +7,8 @@
 #include <stdexcept>
 #include <cstring>
 
-#include <calendar_system/JulianCalendar.hpp>
-#include <string.hpp>
+#include <ex00/calendar_system/JulianCalendar.hpp>
+#include <ex00/string.hpp>
 
 namespace {
 

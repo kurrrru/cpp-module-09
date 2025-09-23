@@ -1,4 +1,4 @@
-#include <BitcoinExchange.hpp>
+#include <ex00/BitcoinExchange.hpp>
 
 #include <iostream>
 #include <string>
@@ -10,8 +10,8 @@
 #include <map>
 #include <utility>
 
-#include <Date.hpp>
-#include <string.hpp>
+#include <ex00/Date.hpp>
+#include <ex00/string.hpp>
 
 BitcoinExchange::BitcoinExchange() : _exchange_rates() {}
 

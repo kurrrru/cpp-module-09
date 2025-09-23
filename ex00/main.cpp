@@ -3,8 +3,8 @@
 #include <fstream>
 #include <sstream>
 
-#include <BitcoinExchange.hpp>
-#include <string.hpp>
+#include <ex00/BitcoinExchange.hpp>
+#include <ex00/string.hpp>
 
 void convert_and_print(const BitcoinExchange &btc,
     const std::string &file_name) {
@@ -60,6 +60,7 @@ void convert_and_print(const BitcoinExchange &btc,
 }
 
 int main(int argc, char **argv) {
+
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " <data file>" << std::endl;
         return 1;

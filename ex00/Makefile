@@ -4,6 +4,14 @@ NAME = btc
 TOOLBOXSRCS = ../toolbox/StepMark.cpp \
 			../toolbox/color.cpp
 SRCS = main.cpp \
+	calendar_system/EthiopianCalendar.cpp \
+	calendar_system/FrenchRepublicanCalendar.cpp \
+	calendar_system/GregorianCalendar.cpp \
+	calendar_system/JulianCalendar.cpp \
+	calendar_system/NonProlepticGregorianCalendar.cpp \
+	Date.cpp \
+	BitcoinExchange.cpp \
+	string.cpp \
 	${TOOLBOXSRCS}
 
 
