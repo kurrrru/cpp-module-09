@@ -1,0 +1,107 @@
+#include <iostream>
+#include <vector>
+#include <deque>
+#include <algorithm>
+
+#include <ex02/PmergeMe.hpp>
+#include <ex02/NestedPair.hpp>
+#include <ex02/type_trait.hpp>
+#include <ex02/compare/CLess.hpp>
+#include <ex02/compare/CGreater.hpp>
+
+
+
+int main() {
+    std::vector<int> vec;
+    vec.push_back(34);
+    vec.push_back(7);
+    vec.push_back(23);
+    vec.push_back(32);
+    vec.push_back(5);
+    vec.push_back(62);
+    std::deque<int> deq;
+    deq.push_back(34);
+    deq.push_back(7);
+    deq.push_back(23);
+    deq.push_back(32);
+    deq.push_back(5);
+    deq.push_back(62);
+
+    std::cout << "Original vector: ";
+    for (size_t i = 0; i < vec.size(); ++i) {
+        std::cout << vec[i] << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Original deque: ";
+    for (size_t i = 0; i < deq.size(); ++i) {
+        std::cout << deq[i] << " ";
+    }
+    std::cout << std::endl;
+
+    // mergeSort(vec, comparer::CLess<int>());
+    // mergeSort(deq, comparer::CGreater<int>());
+
+    PmergeMeSort(vec, comparer::CLess<int>());
+    PmergeMeSort(deq, comparer::CGreater<int>());
+
+    // std::sort(vec.begin(), vec.end(), comparer::CLess<int>{});
+    // std::sort(deq.begin(), deq.end(), comparer::CGreater<int>{});
+
+    std::cout << "Sorted vector (ascending): ";
+    for (size_t i = 0; i < vec.size(); ++i) {
+        std::cout << vec[i] << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Sorted deque (descending): ";
+    for (size_t i = 0; i < deq.size(); ++i) {
+        std::cout << deq[i] << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Number of comparisons in vector sort: " << comparer::CLess<int>::getcnt() << std::endl;
+    std::cout << "Number of comparisons in deque sort: " << comparer::CGreater<int>::getcnt() << std::endl;
+
+    std::vector<int> empty_vec;
+    for (int i = 1; i <= 7; ++i) {
+        empty_vec.push_back(i);
+    }
+    std::size_t cnt_cmp = 0;
+    do {
+        std::vector<int> cpy = empty_vec;
+        comparer::CLess<int>::reset();
+        PmergeMeSort(cpy, comparer::CLess<int>());
+        bool is_sorted = true;
+        for (size_t i = 1; i < cpy.size(); ++i) {
+            if (cpy[i - 1] > cpy[i]) {
+                is_sorted = false;
+                break;
+            }
+        }
+        if (!is_sorted) {
+            std::cout << "Sorting failed for permutation: ";
+            for (size_t i = 0; i < empty_vec.size(); ++i) {
+                std::cout << empty_vec[i] << " ";
+            }
+            std::cout << std::endl;
+            std::cout << "Result: ";
+            for (size_t i = 0; i < cpy.size(); ++i) {
+                std::cout << cpy[i] << " ";
+            }
+            std::cout << std::endl;
+        }
+        else {
+            cnt_cmp = std::max(cnt_cmp, static_cast<std::size_t>(comparer::CLess<int>::getcnt()));
+            // std::cout << "Sorted successfully with " << comparer::CLess<int>::getcnt() << " comparisons for permutation: ";
+            // for (size_t i = 0; i < empty_vec.size(); ++i) {
+            //     std::cout << empty_vec[i] << " ";
+            // }
+            // std::cout << std::endl;
+        }
+    } while (std::next_permutation(empty_vec.begin(), empty_vec.end()));
+
+    std::cout << "Maximum number of comparisons: " << cnt_cmp << std::endl;
+
+    return 0;
+}
