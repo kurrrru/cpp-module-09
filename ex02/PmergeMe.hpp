@@ -12,15 +12,15 @@
 #include <ex02/detail/5_write_back.hpp>
 
 template<typename T, template<typename, typename> class Container, typename Compare>
-void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
+void PmergeMeSort(Container<std::pair<T, std::size_t>, std::allocator<std::pair<T, std::size_t> > > &container, Compare cmp) {
     if (container.size() <= 1) {
         return;
     }
     std::size_t num_elements = container.size();
     std::size_t bigger_size = num_elements / 2;
 
-    Container<std::pair<T, T>, std::allocator<std::pair<T, T> > > pairs;
-    Container<T, std::allocator<T> > bigger;
+    Container<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> >, std::allocator<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > > pairs;
+    Container<std::pair<T, std::size_t>, std::allocator<std::pair<T, std::size_t> > > bigger;
 
     // -> 1_cmp_neighbor.hpp
     if (is_deque<Container<T, std::allocator<T> > >::value ||
@@ -30,14 +30,14 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
             // bigger.reserve(num_elements);
         }
         for (std::size_t i = 0; i < bigger_size; ++i) {
-            T first = container[2 * i];
-            T second = container[2 * i + 1];
-            if (cmp(first, second)) {
+            std::pair<T, std::size_t> first = container[2 * i];
+            std::pair<T, std::size_t> second = container[2 * i + 1];
+            if (cmp(first.first, second.first)) {
                 pairs.push_back(std::make_pair(second, first));
-                bigger.push_back(second);
+                bigger.push_back(std::make_pair(second.first, i));
             } else {
                 pairs.push_back(std::make_pair(first, second));
-                bigger.push_back(first);
+                bigger.push_back(std::make_pair(first.first, i));
             }
         }
     } else {
@@ -45,7 +45,7 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
     }
 
     bool hasStraggler = (num_elements % 2) == 1;
-    T straggler = T();
+    std::pair<T, std::size_t> straggler = std::make_pair(T(), 0);
     if (hasStraggler) {
         straggler = container.back();
     }
@@ -53,29 +53,13 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
     PmergeMeSort(bigger, cmp);
 
     // -> 2_reorder_pairs.hpp
-    Container<std::pair<T, T>, std::allocator<std::pair<T, T> > > orderedPairs;
-    Container<bool, std::allocator<bool> > used;
-    if (is_deque<Container<T, std::allocator<T> > >::value ||
-            is_vector<Container<T, std::allocator<T> > >::value) {
-        if (is_vector<Container<T, std::allocator<T> > >::value) {
-            // orderedPairs.reserve(pairs.size());
-        }
-        used.resize(pairs.size(), false);
-        for (std::size_t i = 0; i < bigger.size(); ++i) {
-            for (std::size_t j = 0; j < pairs.size(); ++j) {
-                if (!used[j] && pairs[j].first == bigger[i]) {
-                    orderedPairs.push_back(pairs[j]);
-                    used[j] = true;
-                    break;
-                }
-            }
-        }
-    } else {
-        // neither vector nor deque
+    Container<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> >, std::allocator<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > > orderedPairs(pairs.size());
+    for (std::size_t i = 0; i < pairs.size(); ++i) {
+        orderedPairs[i] = pairs[bigger[i].second];
     }
     pairs.swap(orderedPairs);
 
-    Container<std::pair<T, bool>, std::allocator<std::pair<T, bool> > > mainChain;
+    Container<std::pair<std::pair<T, std::size_t>, bool>, std::allocator<std::pair<std::pair<T, std::size_t>, bool> > > mainChain;
 
     // -> 3_create_main_chain.hpp
     if (is_deque<Container<T, std::allocator<T> > >::value ||
@@ -83,8 +67,7 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
         if (is_vector<Container<T, std::allocator<T> > >::value) {
             // mainChain.reserve(num_elements);
         }
-        T b_1 = pairs[0].second;
-        pairs[0].second = T();
+        std::pair<T, std::size_t> b_1 = pairs[0].second;
         mainChain.push_back(std::make_pair(b_1, false));
         for (std::size_t i = 0; i < pairs.size(); ++i) {
             mainChain.push_back(std::make_pair(pairs[i].first, true));
@@ -96,7 +79,7 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
     if (is_deque<Container<T, std::allocator<T> > >::value ||
             is_vector<Container<T, std::allocator<T> > >::value) {
         if (hasStraggler) {
-            pairs.push_back(std::make_pair(T(), straggler));
+            pairs.push_back(std::make_pair(std::make_pair(T(), 0), straggler));
         }
         std::pair<std::size_t, std::size_t> jacobsthal = std::make_pair(1, 1);
         while (true) {
@@ -108,23 +91,23 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
                 if (i <= 1) {
                     break;
                 }
-                const T &insert_value = pairs[i - 1].second;
-                typename Container<std::pair<T, bool>, std::allocator<std::pair<T, bool> > >::iterator end_iterator = mainChain.end();
-                if (pairs[i - 1].first != T()) {
+                const std::pair<T, std::size_t> &insert_value = pairs[i - 1].second;
+                typename Container<std::pair<std::pair<T, std::size_t>, bool>, std::allocator<std::pair<std::pair<T, std::size_t>, bool> > >::iterator end_iterator = mainChain.end();
+                if (pairs[i - 1].first.first != T()) {
                     std::size_t bigger_cnt = 0;
                     for (std::size_t j = 0; j < mainChain.size(); ++j) {
                         if (mainChain[j].second) {
                             ++bigger_cnt;
                         }
                         if (bigger_cnt == i) {
-                            end_iterator = mainChain.begin() + j;
+                            end_iterator = mainChain.begin() + j; // これができるのはvectorかdequeの場合のみ
                             break;
                         }
                     }
                 }
-                typename Container<std::pair<T, bool>, std::allocator<std::pair<T, bool> > >::iterator insert_position = std::lower_bound(
+                typename Container<std::pair<std::pair<T, std::size_t>, bool>, std::allocator<std::pair<std::pair<T, std::size_t>, bool> > >::iterator insert_position = std::lower_bound(
                     mainChain.begin(), end_iterator, std::make_pair(insert_value, false),
-                    ComparePairFirst<T, Compare>()
+                    ComparePairFirstFirst<T, Compare>()
                 );
                 mainChain.insert(insert_position, std::make_pair(insert_value, false));
             }
@@ -146,4 +129,17 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
         // neither vector nor deque
     // }
     writeBack(container, mainChain);
+}
+
+
+template<typename T, template<typename, typename> class Container, typename Compare>
+void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
+    Container<std::pair<T, std::size_t>, std::allocator<std::pair<T, std::size_t> > > indexedContainer;
+    for (std::size_t i = 0; i < container.size(); ++i) {
+        indexedContainer.push_back(std::make_pair(container[i], i));
+    }
+    PmergeMeSort(indexedContainer, cmp);
+    for (std::size_t i = 0; i < container.size(); ++i) {
+        container[i] = indexedContainer[i].first;
+    }
 }
