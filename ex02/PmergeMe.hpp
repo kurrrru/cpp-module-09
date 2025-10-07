@@ -4,20 +4,12 @@
 #include <iterator>
 #include <ex02/type_trait.hpp>
 #include <ex02/compare/CLess.hpp>
-
-// -> utils.{hpp,cpp}
-void nextJacobsthal(std::pair<std::size_t, std::size_t> &j) {
-    std::swap(j.first, j.second);
-    j.first = j.first * 2 + j.second;
-}
-
-// -> utils.hpp
-template <typename T, typename Compare>
-struct ComparePairFirst {
-    bool operator()(const std::pair<T, bool> &a, const std::pair<T, bool> &b) {
-        return Compare()(a.first, b.first);
-    }
-};
+#include <ex02/detail/utils.hpp>
+#include <ex02/detail/1_cmp_neighbor.hpp>
+#include <ex02/detail/2_reorder_pairs.hpp>
+#include <ex02/detail/3_create_main_chain.hpp>
+#include <ex02/detail/4_insert_into_main_chain.hpp>
+#include <ex02/detail/5_write_back.hpp>
 
 template<typename T, template<typename, typename> class Container, typename Compare>
 void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
