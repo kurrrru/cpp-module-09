@@ -5,53 +5,19 @@
 #include <ex02/type_trait.hpp>
 #include <ex02/compare/CLess.hpp>
 
+// -> utils.{hpp,cpp}
 void nextJacobsthal(std::pair<std::size_t, std::size_t> &j) {
     std::swap(j.first, j.second);
     j.first = j.first * 2 + j.second;
 }
 
-
+// -> utils.hpp
 template <typename T, typename Compare>
 struct ComparePairFirst {
     bool operator()(const std::pair<T, bool> &a, const std::pair<T, bool> &b) {
         return Compare()(a.first, b.first);
     }
 };
-
-
-template<typename T, template<typename, typename> class Container, typename Compare>
-void mergeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
-    if (container.size() <= 1) {
-        return;
-    }
-
-    typename Container<T, std::allocator<T> >::iterator mid = container.begin() + container.size() / 2;
-    Container<T, std::allocator<T> > left(container.begin(), mid);
-    Container<T, std::allocator<T> > right(mid, container.end());
-
-    mergeSort(left, cmp);
-    mergeSort(right, cmp);
-
-    typename Container<T, std::allocator<T> >::iterator it = container.begin();
-    typename Container<T, std::allocator<T> >::iterator it_left = left.begin();
-    typename Container<T, std::allocator<T> >::iterator it_right = right.begin();
-
-    while (it_left != left.end() && it_right != right.end()) {
-        if (cmp(*it_left, *it_right)) {
-            *it++ = *it_left++;
-        } else {
-            *it++ = *it_right++;
-        }
-    }
-
-    while (it_left != left.end()) {
-        *it++ = *it_left++;
-    }
-
-    while (it_right != right.end()) {
-        *it++ = *it_right++;
-    }
-}
 
 template<typename T, template<typename, typename> class Container, typename Compare>
 void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
@@ -64,6 +30,7 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
     Container<std::pair<T, T>, std::allocator<std::pair<T, T> > > pairs;
     Container<T, std::allocator<T> > bigger;
 
+    // -> 1_cmp_neighbor.hpp
     if (is_deque<Container<T, std::allocator<T> > >::value ||
             is_vector<Container<T, std::allocator<T> > >::value) {
         if (is_vector<Container<T, std::allocator<T> > >::value) {
@@ -93,6 +60,7 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
 
     PmergeMeSort(bigger, cmp);
 
+    // -> 2_reorder_pairs.hpp
     Container<std::pair<T, T>, std::allocator<std::pair<T, T> > > orderedPairs;
     Container<bool, std::allocator<bool> > used;
     if (is_deque<Container<T, std::allocator<T> > >::value ||
@@ -117,6 +85,7 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
 
     Container<std::pair<T, bool>, std::allocator<std::pair<T, bool> > > mainChain;
 
+    // -> 3_create_main_chain.hpp
     if (is_deque<Container<T, std::allocator<T> > >::value ||
             is_vector<Container<T, std::allocator<T> > >::value) {
         if (is_vector<Container<T, std::allocator<T> > >::value) {
@@ -131,6 +100,7 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
     } else {
         // neither vector nor deque
     }
+    // -> 4_insert_into_main_chain.hpp
     if (is_deque<Container<T, std::allocator<T> > >::value ||
             is_vector<Container<T, std::allocator<T> > >::value) {
         if (hasStraggler) {
@@ -173,6 +143,8 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
     } else {
         // neither vector nor deque
     }
+
+    // -> 5_write_back.hpp
     if (is_deque<Container<T, std::allocator<T> > >::value ||
             is_vector<Container<T, std::allocator<T> > >::value) {
         for (std::size_t i = 0; i < mainChain.size(); ++i) {
