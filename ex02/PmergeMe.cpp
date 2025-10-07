@@ -115,5 +115,31 @@ int main() {
     }
     std::cout << std::endl;
 
+        std::vector<double> d(5000);
+    for (size_t i = 0; i < d.size(); ++i) {
+        d[i] = std::abs(static_cast<double>((d.size() + i) * 647323 % 50001) / 3.0) + 0.5;
+    }
+    PmergeMeSort(d, comparer::CLess<double>());
+    bool sorted = true;
+    for (size_t i = 1; i < d.size(); ++i) {
+        if (d[i - 1] > d[i]) {
+            sorted = false;
+            break;
+        }
+    }
+    if (sorted) {
+        std::cout << "Large vector sorted successfully." << std::endl;
+    } else {
+        std::cout << "Large vector sorting failed." << std::endl;
+    }
+    for (size_t i = 0; i < 10; ++i) {
+        std::cout << d[i] << " ";
+    }
+    std::cout << "... ";
+    for (size_t i = d.size() - 10; i < d.size(); ++i) {
+        std::cout << d[i] << " ";
+    }
+    std::cout << std::endl;
+
     return 0;
 }
