@@ -4,7 +4,6 @@
 #include <algorithm>
 
 #include <ex02/PmergeMe.hpp>
-#include <ex02/NestedPair.hpp>
 #include <ex02/type_trait.hpp>
 #include <ex02/compare/CLess.hpp>
 #include <ex02/compare/CGreater.hpp>
@@ -102,6 +101,19 @@ int main() {
     } while (std::next_permutation(empty_vec.begin(), empty_vec.end()));
 
     std::cout << "Maximum number of comparisons: " << cnt_cmp << std::endl;
+
+    std::vector<std::string> s;
+    s.push_back("Eagle");
+    s.push_back("Apple");
+    s.push_back("Cat");
+    s.push_back("Banana");
+    s.push_back("Dog");
+    PmergeMeSort(s, comparer::CLess<std::string>());
+    std::cout << "Sorted strings (ascending): ";
+    for (size_t i = 0; i < s.size(); ++i) {
+        std::cout << s[i] << " ";
+    }
+    std::cout << std::endl;
 
     return 0;
 }
