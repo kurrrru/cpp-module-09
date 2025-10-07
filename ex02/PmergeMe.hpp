@@ -137,12 +137,13 @@ void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
     }
 
     // -> 5_write_back.hpp
-    if (is_deque<Container<T, std::allocator<T> > >::value ||
-            is_vector<Container<T, std::allocator<T> > >::value) {
-        for (std::size_t i = 0; i < mainChain.size(); ++i) {
-            container[i] = mainChain[i].first;
-        }
-    } else {
+    // if (is_deque<Container<T, std::allocator<T> > >::value ||
+    //         is_vector<Container<T, std::allocator<T> > >::value) {
+    //     for (std::size_t i = 0; i < mainChain.size(); ++i) {
+    //         container[i] = mainChain[i].first;
+    //     }
+    // } else {
         // neither vector nor deque
-    }
+    // }
+    writeBack(container, mainChain);
 }
