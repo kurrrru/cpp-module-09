@@ -6,7 +6,6 @@
 #include <utility>
 
 #include <ex02/detail/details.hpp>
-#include <ex02/type_trait.hpp>
 
 template<typename T, template<typename, typename> class Container, typename Compare>
 void PmergeMeSortIndexed(Container<std::pair<T, std::size_t>, std::allocator<std::pair<T, std::size_t> > > &container, Compare cmp) {
