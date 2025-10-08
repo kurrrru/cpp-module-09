@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <memory>
 
 template<typename T, template<typename, typename> class Container, typename Compare>
 void mergeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
