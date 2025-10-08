@@ -56,6 +56,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     std::deque<int> deq(vec.begin(), vec.end());
+    // std::list<int> lst(vec.begin(), vec.end());
     std::size_t width = longest_integer_width(vec);
     std::cout << "Before: ";
     print_vec(vec, width);
@@ -67,6 +68,10 @@ int main(int argc, char **argv) {
     start_deq = get_microseconds();
     PmergeMeSort(deq, comparer::CLess<int>());
     end_deq = get_microseconds();
+    // int64 start_lst, end_lst;
+    // start_lst = get_microseconds();
+    // PmergeMeSort(lst, comparer::CLess<int>());
+    // end_lst = get_microseconds();
     bool vec_sorted = true;
     for (size_t i = 1; i < vec.size(); ++i) {
         if (vec[i - 1] > vec[i]) {
@@ -97,6 +102,9 @@ int main(int argc, char **argv) {
     std::cout << "Time to process a range of " << std::setw(4) << vec.size()
             << " elements with std::deque  : " << std::setw(10)
             << (end_deq - start_deq) << " us" << std::endl;
+    // std::cout << "Time to process a range of " << std::setw(4) << vec.size()
+    //         << " elements with std::list   : " << std::setw(10)
+    //         << (end_lst - start_lst) << " us" << std::endl;
 
     // test();
 

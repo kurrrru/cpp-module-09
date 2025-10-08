@@ -54,7 +54,7 @@ void insertIntoMainChain(Container<std::pair<std::pair<T, std::size_t>, std::pai
     }
 }
 
-// // vectorにテンプレート特殊化する
+// vectorにテンプレート特殊化する
 template<typename T, typename Compare>
 void insertIntoMainChain(std::vector<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
         std::vector<std::pair<std::pair<T, std::size_t>, bool> > &mainChain,
