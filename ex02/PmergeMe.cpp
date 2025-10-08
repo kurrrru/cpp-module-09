@@ -4,7 +4,6 @@
 #include <algorithm>
 
 #include <ex02/PmergeMe.hpp>
-#include <ex02/type_trait.hpp>
 #include <ex02/compare/CLess.hpp>
 #include <ex02/compare/CGreater.hpp>
 
