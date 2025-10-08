@@ -11,7 +11,7 @@
 #include <utility>
 
 #include <ex00/Date.hpp>
-#include <ex00/string.hpp>
+#include <toolbox/string.hpp>
 
 BitcoinExchange::BitcoinExchange() : _exchange_rates() {}
 

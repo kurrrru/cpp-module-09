@@ -4,7 +4,7 @@
 #include <sstream>
 
 #include <ex00/BitcoinExchange.hpp>
-#include <ex00/string.hpp>
+#include <toolbox/string.hpp>
 
 void convert_and_print(const BitcoinExchange &btc,
     const std::string &file_name) {

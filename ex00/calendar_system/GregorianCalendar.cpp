@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <cstring>
 
-#include <ex00/string.hpp>
+#include <toolbox/string.hpp>
 
 namespace {
 

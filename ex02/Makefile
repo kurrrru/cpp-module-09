@@ -2,9 +2,11 @@ NAME = PmergeMe
 
 # sources
 TOOLBOXSRCS = ../toolbox/StepMark.cpp \
-			../toolbox/color.cpp
-SRCS = PmergeMe.cpp \
+			../toolbox/color.cpp \
+			../toolbox/string.cpp
+SRCS = main.cpp \
     detail/utils.cpp \
+	clock/clock.cpp \
 	${TOOLBOXSRCS}
 
 
@@ -12,7 +14,7 @@ OBJS = $(SRCS:.cpp=.o)
 
 # compiler
 CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -pedantic -I..
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -I.. -pg # -pedantic ... for int64
 
 # rules
 .PHONY: all

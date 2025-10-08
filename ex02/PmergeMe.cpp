@@ -11,7 +11,7 @@
 
 
 
-int main() {
+int test() {
     std::vector<int> vec;
     vec.push_back(34);
     vec.push_back(7);
@@ -164,11 +164,11 @@ int main() {
         }
     }
 
-
     if (sorted) {
         std::cout << "Large list sorted successfully." << std::endl;
     } else {
         std::cout << "Large list sorting failed." << std::endl;
         return 1;
     }
+    return 0;
 }
