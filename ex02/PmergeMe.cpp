@@ -62,45 +62,48 @@ int main() {
     std::cout << "Number of comparisons in vector sort: " << comparer::CLess<int>::getcnt() << std::endl;
     std::cout << "Number of comparisons in deque sort: " << comparer::CGreater<int>::getcnt() << std::endl;
 
-    std::vector<int> empty_vec;
-    for (int i = 1; i <= 7; ++i) {
-        empty_vec.push_back(i);
-    }
-    std::size_t cnt_cmp = 0;
-    do {
-        std::vector<int> cpy = empty_vec;
-        comparer::CLess<int>::reset();
-        PmergeMeSort(cpy, comparer::CLess<int>());
-        bool is_sorted = true;
-        for (size_t i = 1; i < cpy.size(); ++i) {
-            if (cpy[i - 1] > cpy[i]) {
-                is_sorted = false;
-                break;
-            }
+    std::size_t max_size = 8;
+    for (std::size_t size = 1; size <= max_size; ++size) {
+        std::vector<int> empty_vec;
+        for (std::size_t i = 1; i <= size; ++i) {
+            empty_vec.push_back(i);
         }
-        if (!is_sorted) {
-            std::cout << "Sorting failed for permutation: ";
-            for (size_t i = 0; i < empty_vec.size(); ++i) {
-                std::cout << empty_vec[i] << " ";
+        std::size_t cnt_cmp = 0;
+        do {
+            std::vector<int> cpy = empty_vec;
+            comparer::CLess<int>::reset();
+            PmergeMeSort(cpy, comparer::CLess<int>());
+            bool is_sorted = true;
+            for (size_t i = 1; i < cpy.size(); ++i) {
+                if (cpy[i - 1] > cpy[i]) {
+                    is_sorted = false;
+                    break;
+                }
             }
-            std::cout << std::endl;
-            std::cout << "Result: ";
-            for (size_t i = 0; i < cpy.size(); ++i) {
-                std::cout << cpy[i] << " ";
+            if (!is_sorted) {
+                std::cout << "Sorting failed for permutation: ";
+                for (size_t i = 0; i < empty_vec.size(); ++i) {
+                    std::cout << empty_vec[i] << " ";
+                }
+                std::cout << std::endl;
+                std::cout << "Result: ";
+                for (size_t i = 0; i < cpy.size(); ++i) {
+                    std::cout << cpy[i] << " ";
+                }
+                std::cout << std::endl;
             }
-            std::cout << std::endl;
-        }
-        else {
-            cnt_cmp = std::max(cnt_cmp, static_cast<std::size_t>(comparer::CLess<int>::getcnt()));
-            // std::cout << "Sorted successfully with " << comparer::CLess<int>::getcnt() << " comparisons for permutation: ";
-            // for (size_t i = 0; i < empty_vec.size(); ++i) {
-            //     std::cout << empty_vec[i] << " ";
-            // }
-            // std::cout << std::endl;
-        }
-    } while (std::next_permutation(empty_vec.begin(), empty_vec.end()));
+            else {
+                cnt_cmp = std::max(cnt_cmp, static_cast<std::size_t>(comparer::CLess<int>::getcnt()));
+                // std::cout << "Sorted successfully with " << comparer::CLess<int>::getcnt() << " comparisons for permutation: ";
+                // for (size_t i = 0; i < empty_vec.size(); ++i) {
+                //     std::cout << empty_vec[i] << " ";
+                // }
+                // std::cout << std::endl;
+            }
+        } while (std::next_permutation(empty_vec.begin(), empty_vec.end()));
 
-    std::cout << "Maximum number of comparisons: " << cnt_cmp << std::endl;
+        std::cout << "Maximum number of comparisons: " << cnt_cmp << std::endl;
+    }
 
     std::vector<std::string> s;
     s.push_back("Eagle");
