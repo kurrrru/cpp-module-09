@@ -34,6 +34,8 @@ namespace {
     }
 }
 
+int test();
+
 int main(int argc, char **argv) {
     if (argc < 2) {
         std::cerr << "Error: At least one positive integer argument is required." << std::endl;
@@ -96,6 +98,7 @@ int main(int argc, char **argv) {
             << " elements with std::deque  : " << std::setw(10)
             << (end_deq - start_deq) << " us" << std::endl;
 
+    // test();
 
     return 0;
 }
