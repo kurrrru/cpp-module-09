@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iterator>
 #include <memory>
 #include <utility>
 
@@ -22,7 +23,7 @@ void reorderPairs(std::vector<std::pair<std::pair<T, std::size_t>, std::pair<T, 
         const std::vector<std::pair<T, std::size_t> > &bigger) {
     std::vector<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > orderedPairs;
     orderedPairs.reserve(pairs.size());
-    for (std::size_t i = 0; i < pairs.size(); ++i) {
+    for (std::size_t i = 0; i < bigger.size(); ++i) {
         orderedPairs.push_back(pairs[bigger[i].second]);
     }
     pairs.swap(orderedPairs);
@@ -33,7 +34,7 @@ template<typename T>
 void reorderPairs(std::deque<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
         const std::deque<std::pair<T, std::size_t> > &bigger) {
     std::deque<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > orderedPairs(pairs.size());
-    for (std::size_t i = 0; i < pairs.size(); ++i) {
+    for (std::size_t i = 0; i < bigger.size(); ++i) {
         orderedPairs[i] = pairs[bigger[i].second];
     }
     pairs.swap(orderedPairs);

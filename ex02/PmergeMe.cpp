@@ -148,24 +148,27 @@ int main() {
     std::cout << std::endl;
 
     std::list<int> lst;
-    return 0;
 
-    // std::list<double> d;
-    // for (size_t i = 0; i < 3000; ++i) {
-    //     d.push_back(std::abs(static_cast<double>((d.size() + i) * 647323 % 50001) / 3.0) + 0.5);
-    // }
-    // PmergeMeSort(d, comparer::CLess<double>());
-    // sorted = true;
-    // for (std::list<double>::iterator it = d.begin(), next_it = ++(d.begin()); next_it != d.end(); ++it, ++next_it) {
-    //     if (*it > *next_it) {
-    //         sorted = false;
-    //         break;
-    //     }
-    // }
-    // if (sorted) {
-    //     std::cout << "Large list sorted successfully." << std::endl;
-    // } else {
-    //     std::cout << "Large list sorting failed." << std::endl;
-    //     return 1;
-    // }
+    std::list<double> ld;
+    for (size_t i = 0; i < 3000; ++i) {
+        ld.push_back(std::abs(static_cast<double>((ld.size() + i) * 647323 % 50001) / 3.0) + 0.5);
+    }
+    PmergeMeSort(ld, comparer::CLess<double>());
+    sorted = true;
+    for (std::list<double>::iterator it = ld.begin(); it != ld.end(); it++) {
+        std::list<double>::iterator next_it = it;
+        ++next_it;
+        if (next_it != ld.end() && *it > *next_it) {
+            sorted = false;
+            break;
+        }
+    }
+
+
+    if (sorted) {
+        std::cout << "Large list sorted successfully." << std::endl;
+    } else {
+        std::cout << "Large list sorting failed." << std::endl;
+        return 1;
+    }
 }
