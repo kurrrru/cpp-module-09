@@ -50,7 +50,7 @@ class Date {
     bool operator>=(const Date& other) const;
 
  private:
-    void convert_form_serial_date(CalendarSystem cal_sys,
+    void convert_from_serial_date(CalendarSystem cal_sys,
         int& era, int& year, int& month, int& day) const;
     void convert_from_serial_date(CalendarSystem cal_sys,
         std::string& date_str, const char* format) const;

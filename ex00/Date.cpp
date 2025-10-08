@@ -94,19 +94,19 @@ int toolbox::Date::get_raw_date() const {
 
 int toolbox::Date::get_day(toolbox::CalendarSystem cal_sys) const {
     int era, year, month, day;
-    convert_form_serial_date(cal_sys, era, year, month, day);
+    convert_from_serial_date(cal_sys, era, year, month, day);
     return day;
 }
 
 int toolbox::Date::get_month(toolbox::CalendarSystem cal_sys) const {
     int era, year, month, day;
-    convert_form_serial_date(cal_sys, era, year, month, day);
+    convert_from_serial_date(cal_sys, era, year, month, day);
     return month;
 }
 
 int toolbox::Date::get_year(toolbox::CalendarSystem cal_sys) const {
     int era, year, month, day;
-    convert_form_serial_date(cal_sys, era, year, month, day);
+    convert_from_serial_date(cal_sys, era, year, month, day);
     return year;
 }
 
@@ -184,7 +184,7 @@ bool toolbox::Date::operator>=(const Date& other) const {
     return !(*this < other);
 }
 
-void toolbox::Date::convert_form_serial_date(toolbox::CalendarSystem cal_sys,
+void toolbox::Date::convert_from_serial_date(toolbox::CalendarSystem cal_sys,
         int& era, int& year, int& month, int& day) const {
     ICalendarSystem& calendar_system = get_calendar_system(cal_sys);
     calendar_system.from_serial_date(_serial_date, era, year, month, day);
