@@ -38,7 +38,7 @@ void PmergeMeSortIndexed(Container<std::pair<T, std::size_t>, std::allocator<std
     createMainChain(pairs, mainChain);
 
     // 4_insert_into_main_chain.hpp
-    insertIntoMainChain<T, Container, Compare>(pairs, mainChain, hasStraggler, straggler);
+    insertIntoMainChain(pairs, mainChain, hasStraggler, straggler, cmp);
 
     // 5_write_back.hpp
     writeBack(container, mainChain);

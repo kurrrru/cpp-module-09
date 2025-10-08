@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <deque>
 #include <iostream>
+#include <list>
 #include <string>
 #include <vector>
 
@@ -91,6 +92,7 @@ int main() {
                     std::cout << cpy[i] << " ";
                 }
                 std::cout << std::endl;
+                return 1;
             }
             else {
                 cnt_cmp = std::max(cnt_cmp, static_cast<std::size_t>(comparer::CLess<int>::getcnt()));
@@ -134,6 +136,7 @@ int main() {
         std::cout << "Large vector sorted successfully." << std::endl;
     } else {
         std::cout << "Large vector sorting failed." << std::endl;
+        return 1;
     }
     for (size_t i = 0; i < 10; ++i) {
         std::cout << d[i] << " ";
@@ -144,5 +147,25 @@ int main() {
     }
     std::cout << std::endl;
 
+    std::list<int> lst;
     return 0;
+
+    // std::list<double> d;
+    // for (size_t i = 0; i < 3000; ++i) {
+    //     d.push_back(std::abs(static_cast<double>((d.size() + i) * 647323 % 50001) / 3.0) + 0.5);
+    // }
+    // PmergeMeSort(d, comparer::CLess<double>());
+    // sorted = true;
+    // for (std::list<double>::iterator it = d.begin(), next_it = ++(d.begin()); next_it != d.end(); ++it, ++next_it) {
+    //     if (*it > *next_it) {
+    //         sorted = false;
+    //         break;
+    //     }
+    // }
+    // if (sorted) {
+    //     std::cout << "Large list sorted successfully." << std::endl;
+    // } else {
+    //     std::cout << "Large list sorting failed." << std::endl;
+    //     return 1;
+    // }
 }
