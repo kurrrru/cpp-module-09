@@ -35,3 +35,7 @@ clean-log:
 
 .PHONY: re
 re: fclean all
+
+.PHONY: test
+test: re
+	./$(NAME)
