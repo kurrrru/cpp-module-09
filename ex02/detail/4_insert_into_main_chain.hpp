@@ -1,9 +1,8 @@
 #pragma once
 
-#include <utility>
-#include <algorithm>
 #include <iterator>
 #include <memory>
+#include <utility>
 
 template<typename T, template<typename, typename> class Container, typename Compare>
 void insertIntoMainChain(Container<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> >, std::allocator<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > > &pairs,

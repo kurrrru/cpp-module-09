@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <utility>
+
 template<typename T, template<typename, typename> class Container, typename Compare>
 void cmpNeighbor(const Container<std::pair<T, std::size_t>, std::allocator<std::pair<T, std::size_t> > > &container,
         Container<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> >, std::allocator<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > > &pairs,

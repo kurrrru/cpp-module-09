@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
 #include <deque>
 // #include <list>
+#include <vector>
 
 struct true_type {
     static const bool value = true;

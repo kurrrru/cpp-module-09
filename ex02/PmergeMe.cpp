@@ -1,7 +1,8 @@
-#include <iostream>
-#include <vector>
-#include <deque>
 #include <algorithm>
+#include <deque>
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include <ex02/PmergeMe.hpp>
 #include <ex02/compare/CLess.hpp>
@@ -114,7 +115,7 @@ int main() {
     }
     std::cout << std::endl;
 
-        std::vector<double> d(5000);
+    std::vector<double> d(5000);
     for (size_t i = 0; i < d.size(); ++i) {
         d[i] = std::abs(static_cast<double>((d.size() + i) * 647323 % 50001) / 3.0) + 0.5;
     }
