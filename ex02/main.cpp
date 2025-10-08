@@ -65,6 +65,28 @@ int main(int argc, char **argv) {
     start_deq = get_microseconds();
     PmergeMeSort(deq, comparer::CLess<int>());
     end_deq = get_microseconds();
+    bool vec_sorted = true;
+    for (size_t i = 1; i < vec.size(); ++i) {
+        if (vec[i - 1] > vec[i]) {
+            vec_sorted = false;
+            break;
+        }
+    }
+    if (!vec_sorted) {
+        std::cerr << "Error: Vector sorting failed." << std::endl;
+        return 1;
+    }
+    bool deq_sorted = true;
+    for (size_t i = 1; i < deq.size(); ++i) {
+        if (deq[i - 1] > deq[i]) {
+            deq_sorted = false;
+            break;
+        }
+    }
+    if (!deq_sorted) {
+        std::cerr << "Error: Deque sorting failed." << std::endl;
+        return 1;
+    }
     std::cout << "After:  ";
     print_vec(vec, width);
     std::cout << "Time to process a range of " << std::setw(4) << vec.size()
