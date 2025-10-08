@@ -4,6 +4,8 @@
 #include <memory>
 #include <utility>
 
+#include <ex02/detail/utils.hpp>
+
 template<typename T, template<typename, typename> class Container, typename Compare>
 void insertIntoMainChain(Container<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> >, std::allocator<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > > &pairs,
         Container<std::pair<std::pair<T, std::size_t>, bool>, std::allocator<std::pair<std::pair<T, std::size_t>, bool> > > &mainChain,
