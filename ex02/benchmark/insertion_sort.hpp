@@ -1,0 +1,17 @@
+#pragma once
+
+#include <algorithm>
+#include <iterator>
+#include <vector>
+
+template<typename Compare>
+void insertionSort(std::vector<int> &container, Compare cmp) {
+    for (std::size_t i = 1; i < container.size(); ++i) {
+        int key = container[i];
+        std::size_t j = i;
+        while (j > 0 && cmp(key, container[j - 1])) {
+            --j;
+        }
+        std::rotate(container.begin() + j, container.begin() + i, container.begin() + i + 1);
+    }
+}

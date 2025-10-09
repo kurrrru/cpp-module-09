@@ -19,7 +19,7 @@
 
 namespace {
     void printResult(const std::string &sortName, std::size_t size, std::size_t maxCntCmp, double avgCntCmp, double maxTime, double avgTime) {
-        std::cout << std::left << std::setw(20) << sortName
+        std::cout << std::left << std::setw(22) << sortName
             << std::right << std::fixed << std::setprecision(2)
             << " | Size: " << std::setw(12) << size
             << " | Max Cmp: " << std::setw(12) << maxCntCmp
@@ -51,10 +51,10 @@ void benchmark() {
     sortFunctions.push_back(std::make_pair(quickSort<comparer::CLess<int> >, "Quick Sort"));
     sortFunctions.push_back(std::make_pair(mergeSort<comparer::CLess<int> >, "Merge Sort"));
     sortFunctions.push_back(std::make_pair(heapSort<comparer::CLess<int> >, "Heap Sort"));
-    // sortFunctions.push_back(std::make_pair(insertionSort<comparer::CLess<int> >, "Insertion Sort"));
+    sortFunctions.push_back(std::make_pair(insertionSort<comparer::CLess<int> >, "Insertion Sort"));
     sortFunctions.push_back(std::make_pair(bubbleSort<comparer::CLess<int> >, "Bubble Sort"));
-    // sortFunctions.push_back(std::make_pair(selectionSort<comparer::CLess<int> >, "Selection Sort"));
-    // sortFunctions.push_back(std::make_pair(binaryInsertionSort<comparer::CLess<int> >, "Binary Insertion Sort"));
+    sortFunctions.push_back(std::make_pair(selectionSort<comparer::CLess<int> >, "Selection Sort"));
+    sortFunctions.push_back(std::make_pair(binaryInsertionSort<comparer::CLess<int> >, "Binary Insertion Sort"));
     // sortFunctions.push_back(std::make_pair(timSort<comparer::CLess<int> >, "Tim Sort"));
     // sortFunctions.push_back(std::make_pair(shellSort<comparer::CLess<int> >, "Shell Sort"));
     // sortFunctions.push_back(std::make_pair(introSort<comparer::CLess<int> >, "Intro Sort"));
