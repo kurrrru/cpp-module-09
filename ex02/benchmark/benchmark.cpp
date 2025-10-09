@@ -40,7 +40,7 @@ namespace {
 }
 
 void benchmark() {
-    const std::size_t numTrials = 10;
+    const std::size_t numTrials = 20;
     const std::size_t testSize = 5000;
     std::vector<std::vector<int> > testVectors(numTrials);
     for (std::size_t i = 0; i < numTrials; ++i) {
