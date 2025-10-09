@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <ex02/PmergeMe.hpp>
+#include <ex02/benchmark/benchmark.hpp>
 #include <ex02/compare/CLess.hpp>
 #include <ex02/compare/CGreater.hpp>
 #include <ex02/clock/clock.hpp>
@@ -106,6 +107,7 @@ int main(int argc, char **argv) {
     //         << (end_lst - start_lst) << " us" << std::endl;
 
     // test();
+    benchmark();
 
     return 0;
 }

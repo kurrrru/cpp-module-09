@@ -8,6 +8,7 @@ SRCS = main.cpp \
     detail/utils.cpp \
 	clock/clock.cpp \
 	utils/test.cpp \
+	benchmark/benchmark.cpp \
 	${TOOLBOXSRCS}
 
 
