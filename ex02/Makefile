@@ -7,7 +7,7 @@ TOOLBOXSRCS = ../toolbox/StepMark.cpp \
 SRCS = main.cpp \
     detail/utils.cpp \
 	clock/clock.cpp \
-	PmergeMe.cpp \
+	utils/test.cpp \
 	${TOOLBOXSRCS}
 
 

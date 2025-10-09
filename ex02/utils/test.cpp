@@ -11,58 +11,7 @@
 
 
 
-int test() {
-    std::vector<int> vec;
-    vec.push_back(34);
-    vec.push_back(7);
-    vec.push_back(23);
-    vec.push_back(32);
-    vec.push_back(5);
-    vec.push_back(62);
-    std::deque<int> deq;
-    deq.push_back(34);
-    deq.push_back(7);
-    deq.push_back(23);
-    deq.push_back(32);
-    deq.push_back(5);
-    deq.push_back(62);
-
-    std::cout << "Original vector: ";
-    for (size_t i = 0; i < vec.size(); ++i) {
-        std::cout << vec[i] << " ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "Original deque: ";
-    for (size_t i = 0; i < deq.size(); ++i) {
-        std::cout << deq[i] << " ";
-    }
-    std::cout << std::endl;
-
-    // mergeSort(vec, comparer::CLess<int>());
-    // mergeSort(deq, comparer::CGreater<int>());
-
-    PmergeMeSort(vec, comparer::CLess<int>());
-    PmergeMeSort(deq, comparer::CGreater<int>());
-
-    // std::sort(vec.begin(), vec.end(), comparer::CLess<int>{});
-    // std::sort(deq.begin(), deq.end(), comparer::CGreater<int>{});
-
-    std::cout << "Sorted vector (ascending): ";
-    for (size_t i = 0; i < vec.size(); ++i) {
-        std::cout << vec[i] << " ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "Sorted deque (descending): ";
-    for (size_t i = 0; i < deq.size(); ++i) {
-        std::cout << deq[i] << " ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "Number of comparisons in vector sort: " << comparer::CLess<int>::getcnt() << std::endl;
-    std::cout << "Number of comparisons in deque sort: " << comparer::CGreater<int>::getcnt() << std::endl;
-
+void test() {
     std::size_t max_size = 8;
     for (std::size_t size = 1; size <= max_size; ++size) {
         std::vector<int> empty_vec;
@@ -92,7 +41,6 @@ int test() {
                     std::cout << cpy[i] << " ";
                 }
                 std::cout << std::endl;
-                return 1;
             }
             else {
                 cnt_cmp = std::max(cnt_cmp, static_cast<std::size_t>(comparer::CLess<int>::getcnt()));
@@ -104,7 +52,7 @@ int test() {
             }
         } while (std::next_permutation(empty_vec.begin(), empty_vec.end()));
 
-        std::cout << "Maximum number of comparisons: " << cnt_cmp << std::endl;
+        std::cout << "Maximum number of comparisons: " << cnt_cmp << " for size " << size << std::endl;
     }
 
     std::vector<std::string> s;
@@ -136,7 +84,6 @@ int test() {
         std::cout << "Large vector sorted successfully." << std::endl;
     } else {
         std::cout << "Large vector sorting failed." << std::endl;
-        return 1;
     }
     for (size_t i = 0; i < 10; ++i) {
         std::cout << d[i] << " ";
@@ -168,7 +115,5 @@ int test() {
         std::cout << "Large list sorted successfully." << std::endl;
     } else {
         std::cout << "Large list sorting failed." << std::endl;
-        return 1;
     }
-    return 0;
 }

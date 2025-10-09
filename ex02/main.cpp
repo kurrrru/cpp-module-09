@@ -11,6 +11,7 @@
 #include <ex02/compare/CLess.hpp>
 #include <ex02/compare/CGreater.hpp>
 #include <ex02/clock/clock.hpp>
+#include <ex02/utils/test.hpp>
 #include <toolbox/string.hpp>
 
 namespace {
@@ -33,8 +34,6 @@ namespace {
         }
     }
 }
-
-int test();
 
 int main(int argc, char **argv) {
     if (argc < 2) {
