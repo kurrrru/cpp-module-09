@@ -15,17 +15,8 @@ struct IsLessThan {
     }
 };
 
-template<typename Iterator, typename Compare>
-void quickSortIt(Iterator begin, Iterator end, Compare cmp);
 } // namespace
 
-
-template<typename Compare>
-void quickSort(std::vector<int> &container, Compare cmp) {
-    quickSortIt(container.begin(), container.end(), cmp);
-}
-
-namespace {
 template<typename Iterator, typename Compare>
 void quickSortIt(Iterator begin, Iterator end, Compare cmp) {
     if (std::distance(begin, end) <= 1) {
@@ -40,4 +31,8 @@ void quickSortIt(Iterator begin, Iterator end, Compare cmp) {
     std::advance(pivot_pos, 1);
     quickSortIt(pivot_pos, end, cmp);
 }
-} // namespace
+
+template<typename Compare>
+void quickSort(std::vector<int> &container, Compare cmp) {
+    quickSortIt(container.begin(), container.end(), cmp);
+}
