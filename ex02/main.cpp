@@ -3,7 +3,7 @@
 #include <deque>
 #include <iomanip>
 #include <iostream>
-#include <list>
+// #include <list>
 #include <string>
 #include <vector>
 
@@ -16,30 +16,29 @@
 #include <toolbox/string.hpp>
 
 namespace {
-    std::size_t longest_integer_width(const std::vector<int>& vec) {
-        int max_val = *std::max_element(vec.begin(), vec.end());
-        return toolbox::to_string(max_val).size();
-    }
+std::size_t longest_integer_width(const std::vector<int>& vec) {
+    int max_val = *std::max_element(vec.begin(), vec.end());
+    return toolbox::to_string(max_val).size();
+}
 
-    void print_vec(const std::vector<int>& vec, std::size_t width) {
-        if (vec.size() <= 10) {
-            for (size_t i = 0; i < vec.size(); ++i) {
-                std::cout << std::setw(width) << vec[i] << " ";
-            }
-            std::cout << std::endl;
-        } else {
-            for (size_t i = 0; i < 4; ++i) {
-                std::cout << std::setw(width) << vec[i] << " ";
-            }
-            std::cout << "[...]" << std::endl;
+void print_vec(const std::vector<int>& vec, std::size_t width) {
+    if (vec.size() <= 10) {
+        for (size_t i = 0; i < vec.size(); ++i) {
+            std::cout << std::setw(width) << vec[i] << " ";
         }
+        std::cout << std::endl;
+    } else {
+        for (size_t i = 0; i < 4; ++i) {
+            std::cout << std::setw(width) << vec[i] << " ";
+        }
+        std::cout << "[...]" << std::endl;
     }
 }
 
-int main(int argc, char **argv) {
+void subject_test(int argc, char **argv) {
     if (argc < 2) {
         std::cerr << "Error: At least one positive integer argument is required." << std::endl;
-        return 1;
+        exit(1);
     }
     std::vector<int> vec(argc - 1);
     try {
@@ -47,13 +46,13 @@ int main(int argc, char **argv) {
             int num = toolbox::stoi(argv[i]);
             if (num <= 0) {
                 std::cerr << "Error: All arguments must be positive integers." << std::endl;
-                return 1;
+                exit(1);
             }
             vec[i - 1] = num;
         }
     } catch (const std::invalid_argument& e) {
         std::cerr << "Error: Conversion failed: " << e.what() << std::endl;
-        return 1;
+        exit(1);
     }
     std::deque<int> deq(vec.begin(), vec.end());
     // std::list<int> lst(vec.begin(), vec.end());
@@ -81,7 +80,7 @@ int main(int argc, char **argv) {
     }
     if (!vec_sorted) {
         std::cerr << "Error: Vector sorting failed." << std::endl;
-        return 1;
+        exit(1);
     }
     bool deq_sorted = true;
     for (size_t i = 1; i < deq.size(); ++i) {
@@ -92,7 +91,7 @@ int main(int argc, char **argv) {
     }
     if (!deq_sorted) {
         std::cerr << "Error: Deque sorting failed." << std::endl;
-        return 1;
+        exit(1);
     }
     std::cout << "After:  ";
     print_vec(vec, width);
@@ -105,7 +104,14 @@ int main(int argc, char **argv) {
     // std::cout << "Time to process a range of " << std::setw(4) << vec.size()
     //         << " elements with std::list   : " << std::setw(10)
     //         << (end_lst - start_lst) << " us" << std::endl;
+}
 
+}  // namespace
+
+int main(int argc, char **argv) {
+    (void)argc, (void)argv, (void)subject_test;
+
+    // subject_test(argc, argv);
     // test();
     benchmark();
 

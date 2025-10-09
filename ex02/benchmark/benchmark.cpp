@@ -20,12 +20,22 @@
 namespace {
     void printResult(const std::string &sortName, std::size_t size, std::size_t maxCntCmp, double avgCntCmp, double maxTime, double avgTime) {
         std::cout << std::left << std::setw(20) << sortName
-            << " | Size: " << std::setw(10) << size
-            << " | Max Cmp: " << std::setw(10) << maxCntCmp
-            << " | Avg Cmp: " << std::setw(10) << avgCntCmp
-            << " | Max Time: " << std::setw(10) << maxTime << " us"
-            << " | Avg Time: " << std::setw(10) << avgTime << " us"
+            << std::right << std::fixed << std::setprecision(2)
+            << " | Size: " << std::setw(12) << size
+            << " | Max Cmp: " << std::setw(12) << maxCntCmp
+            << " | Avg Cmp: " << std::setw(12) << avgCntCmp
+            << " | Max Time: " << std::setw(12) << maxTime << " us"
+            << " | Avg Time: " << std::setw(12) << avgTime << " us"
             << std::endl;
+    }
+
+    bool isSorted(const std::vector<int> &vec) {
+        for (std::size_t i = 1; i < vec.size(); ++i) {
+            if (vec[i] < vec[i - 1]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
@@ -38,11 +48,11 @@ void benchmark() {
     }
 
     std::vector<std::pair<void (*)(std::vector<int> &, comparer::CLess<int>), std::string> > sortFunctions;
-    // sortFunctions.push_back(std::make_pair(quickSort<comparer::CLess<int> >, "Quick Sort"));
+    sortFunctions.push_back(std::make_pair(quickSort<comparer::CLess<int> >, "Quick Sort"));
     sortFunctions.push_back(std::make_pair(mergeSort<comparer::CLess<int> >, "Merge Sort"));
-    // sortFunctions.push_back(std::make_pair(heapSort<comparer::CLess<int> >, "Heap Sort"));
+    sortFunctions.push_back(std::make_pair(heapSort<comparer::CLess<int> >, "Heap Sort"));
     // sortFunctions.push_back(std::make_pair(insertionSort<comparer::CLess<int> >, "Insertion Sort"));
-    // sortFunctions.push_back(std::make_pair(bubbleSort<comparer::CLess<int> >, "Bubble Sort"));
+    sortFunctions.push_back(std::make_pair(bubbleSort<comparer::CLess<int> >, "Bubble Sort"));
     // sortFunctions.push_back(std::make_pair(selectionSort<comparer::CLess<int> >, "Selection Sort"));
     // sortFunctions.push_back(std::make_pair(binaryInsertionSort<comparer::CLess<int> >, "Binary Insertion Sort"));
     // sortFunctions.push_back(std::make_pair(timSort<comparer::CLess<int> >, "Tim Sort"));
@@ -75,6 +85,14 @@ void benchmark() {
             maxCntCmp = cntCmp;
         }
         totalCntCmp += cntCmp;
+        if (!isSorted(pmergeMeTestVectors[i])) {
+            std::cerr << "PmergeMeSort failed to sort the array." << std::endl;
+            std::cout << "Original: ";
+            for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
+                std::cout << testVectors[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
     }
     double avgCntCmp = static_cast<double>(totalCntCmp) / numTrials;
     double avgTime = static_cast<double>(totalTime) / numTrials;
@@ -98,6 +116,14 @@ void benchmark() {
             maxCntCmp = cntCmp;
         }
         totalCntCmp += cntCmp;
+        if (!isSorted(stdSortTestVectors[i])) {
+            std::cerr << "std::sort failed to sort the array." << std::endl;
+            std::cout << "Original: ";
+            for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
+                std::cout << testVectors[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
     }
     avgCntCmp = static_cast<double>(totalCntCmp) / numTrials;
     avgTime = static_cast<double>(totalTime) / numTrials;
@@ -121,6 +147,14 @@ void benchmark() {
             maxCntCmp = cntCmp;
         }
         totalCntCmp += cntCmp;
+        if (!isSorted(stdStableSortTestVectors[i])) {
+            std::cerr << "std::stable_sort failed to sort the array." << std::endl;
+            std::cout << "Original: ";
+            for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
+                std::cout << testVectors[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
     }
     avgCntCmp = static_cast<double>(totalCntCmp) / numTrials;
     avgTime = static_cast<double>(totalTime) / numTrials;
@@ -145,6 +179,14 @@ void benchmark() {
                 maxCntCmp = cntCmp;
             }
             totalCntCmp += cntCmp;
+            if (!isSorted(vec)) {
+                std::cerr << sortFunctions[funcIdx].second << " failed to sort the array." << std::endl;
+                std::cout << "Original: ";
+                for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
+                    std::cout << testVectors[i][j] << " ";
+                }
+                std::cout << std::endl;
+            }
         }
         std::string sortName = sortFunctions[funcIdx].second;
         avgCntCmp = static_cast<double>(totalCntCmp) / numTrials;
