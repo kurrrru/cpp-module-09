@@ -15,3 +15,27 @@ void insertionSort(std::vector<int> &container, Compare cmp) {
         std::rotate(container.begin() + j, container.begin() + i, container.begin() + i + 1);
     }
 }
+
+template<typename Iterator, typename Compare>
+void insertionSortIt(Iterator begin, Iterator end, Compare cmp) {
+    if (std::distance(begin, end) <= 1) {
+        return;
+    }
+    Iterator it = begin;
+    ++it;
+    for (; it != end; ++it) {
+        int key = *it;
+        Iterator j = it;
+        while (j != begin) {
+            Iterator prev = j;
+            --prev;
+            if (cmp(key, *prev)) {
+                --j;
+            } else {
+                break;
+            }
+        }
+        std::rotate(j, it, it + 1);
+    }
+}
+

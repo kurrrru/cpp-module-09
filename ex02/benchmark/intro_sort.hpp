@@ -6,7 +6,7 @@
 #include <vector>
 
 #include <ex02/benchmark/heap_sort.hpp>
-#include <ex02/benchmark/binary_insertion_sort.hpp>
+#include <ex02/benchmark/insertion_sort.hpp>
 
 namespace {
 
@@ -28,8 +28,8 @@ int medianToLast(Iterator begin, Iterator mid, Iterator last, Compare cmp) {
 template<typename Iterator, typename Compare>
 void introSortImpl(Iterator begin, Iterator end, std::size_t depthLimit, Compare cmp) {
     std::size_t size = std::distance(begin, end);
-    if (size <= 16) {
-        binaryInsertionSortIt(begin, end, cmp);
+    if (size <= 32) {
+        insertionSortIt(begin, end, cmp);
         return;
     }
     if (depthLimit == 0) {
