@@ -15,7 +15,7 @@ OBJS = $(SRCS:.cpp=.o)
 
 # compiler
 CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -I.. -pg # -pedantic ... for int64
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -I.. # -pedantic ... for int64
 
 # rules
 .PHONY: all

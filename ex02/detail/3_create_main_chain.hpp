@@ -21,7 +21,7 @@ template<typename T>
 void createMainChain(const std::vector<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
         std::vector<std::pair<std::pair<T, std::size_t>, bool> > &mainChain) {
     mainChain.reserve(pairs.size() + 1);
-    std::pair<T, std::size_t> b_1 = pairs[0].second;
+    std::pair<T, std::size_t> b_1 = pairs.front().second;
     mainChain.push_back(std::make_pair(b_1, false));
     for (std::size_t i = 0; i < pairs.size(); ++i) {
         mainChain.push_back(std::make_pair(pairs[i].first, true));
@@ -33,9 +33,12 @@ template<typename T>
 void createMainChain(const std::deque<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
         std::deque<std::pair<std::pair<T, std::size_t>, bool> > &mainChain) {
     mainChain.resize(pairs.size() + 1);
-    std::pair<T, std::size_t> b_1 = pairs[0].second;
-    mainChain[0] = std::make_pair(b_1, false);
-    for (std::size_t i = 0; i < pairs.size(); ++i) {
-        mainChain[i + 1] = std::make_pair(pairs[i].first, true);
+    std::pair<T, std::size_t> b_1 = pairs.front().second;
+    mainChain.front() = std::make_pair(b_1, false);
+    typename std::deque<std::pair<std::pair<T, std::size_t>, bool> >::iterator mainIt = mainChain.begin();
+    typename std::deque<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > >::const_iterator pairsIt = pairs.begin();
+    ++mainIt;
+    for (; pairsIt != pairs.end(); ++pairsIt, ++mainIt) {
+        *mainIt = std::make_pair(pairsIt->first, true);
     }
 }
