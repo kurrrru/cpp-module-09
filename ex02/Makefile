@@ -40,6 +40,6 @@ clean-log:
 .PHONY: re
 re: fclean all
 
-.PHONY: test
-test: re
+.PHONY: run
+run: re
 	./$(NAME)

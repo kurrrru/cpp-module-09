@@ -176,6 +176,37 @@ void benchmark() {
     avgTime = static_cast<double>(totalTime) / numTrials;
     printResult("std::stable_sort", testSize, maxCntCmp, avgCntCmp, maxTime, avgTime);
 
+    // std::partial_sort
+    std::vector<std::vector<int> > stdPartialSortTestVectors = testVectors;
+    maxTime = 0, totalTime = 0, maxCntCmp = 0, totalCntCmp = 0;
+    for (std::size_t i = 0; i < numTrials; ++i) {
+        comparer::CLess<int>::reset();
+        int64 start = get_microseconds();
+        std::partial_sort(stdPartialSortTestVectors[i].begin(), stdPartialSortTestVectors[i].end(), stdPartialSortTestVectors[i].end(), comparer::CLess<int>());
+        int64 end = get_microseconds();
+        int64 elapsed = end - start;
+        std::size_t cntCmp = comparer::CLess<int>::getcnt();
+        if (elapsed > maxTime) {
+            maxTime = elapsed;
+        }
+        totalTime += elapsed;
+        if (cntCmp > maxCntCmp) {
+            maxCntCmp = cntCmp;
+        }
+        totalCntCmp += cntCmp;
+        if (!isSorted(stdPartialSortTestVectors[i])) {
+            std::cerr << "std::partial_sort failed to sort the array." << std::endl;
+            std::cout << "Original: ";
+            for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
+                std::cout << testVectors[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+    avgCntCmp = static_cast<double>(totalCntCmp) / numTrials;
+    avgTime = static_cast<double>(totalTime) / numTrials;
+    printResult("std::partial_sort", testSize, maxCntCmp, avgCntCmp, maxTime, avgTime);
+
     // Other sorting algorithms
     for (std::size_t funcIdx = 0; funcIdx < sortFunctions.size(); ++funcIdx) {
         maxTime = 0, totalTime = 0, maxCntCmp = 0, totalCntCmp = 0;
