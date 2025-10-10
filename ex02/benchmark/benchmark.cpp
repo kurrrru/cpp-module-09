@@ -20,7 +20,7 @@
 
 namespace {
     void printResult(const std::string &sortName, std::size_t size, std::size_t maxCntCmp, double avgCntCmp, double maxTime, double avgTime) {
-        std::cout << std::left << std::setw(22) << sortName
+        std::cout << std::left << std::setw(24) << sortName
             << std::right << std::fixed << std::setprecision(2)
             << " | Size: " << std::setw(12) << size
             << " | Max Cmp: " << std::setw(12) << maxCntCmp
@@ -61,12 +61,13 @@ void benchmark() {
     sortFunctions.push_back(std::make_pair(shellSort<comparer::CLess<int> >, "Shell Sort"));
     sortFunctions.push_back(std::make_pair(oddEvenSort<comparer::CLess<int> >, "Odd-Even Sort"));
     sortFunctions.push_back(std::make_pair(combSort<comparer::CLess<int> >, "Comb Sort"));
-    // sortFunctions.push_back(std::make_pair(cycleSort<comparer::CLess<int> >, "Cycle Sort"));
+    sortFunctions.push_back(std::make_pair(cycleSort<comparer::CLess<int> >, "Cycle Sort"));
     sortFunctions.push_back(std::make_pair(gnomeSort<comparer::CLess<int> >, "Gnome Sort"));
     sortFunctions.push_back(std::make_pair(shakerSort<comparer::CLess<int> >, "Shaker Sort"));
     // sortFunctions.push_back(std::make_pair(patienceSort<comparer::CLess<int> >, "Patience Sort"));
     // sortFunctions.push_back(std::make_pair(smoothSort<comparer::CLess<int> >, "Smooth Sort"));
     // sortFunctions.push_back(std::make_pair(tournamentSort<comparer::CLess<int> >, "Tournament Sort"));
+    sortFunctions.push_back(std::make_pair(ternarySplitQuickSort<comparer::CLess<int> >, "Ternary Split Quick Sort"));
 
     // \lceil log_2 n! \rceil
     double theoreticalLowerBound = 0;
