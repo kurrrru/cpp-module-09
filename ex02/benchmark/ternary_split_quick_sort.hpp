@@ -4,7 +4,7 @@
 #include <vector>
 
 template<typename Compare>
-void inplaceTernarySplitQuickSort(std::vector<int> &container, int left, int right, Compare cmp) {
+void ternarySplitQuickSortIndex(std::vector<int> &container, int left, int right, Compare cmp) {
     if (left >= right) {
         return;
     }
@@ -24,11 +24,11 @@ void inplaceTernarySplitQuickSort(std::vector<int> &container, int left, int rig
             --gt;
         }
     }
-    inplaceTernarySplitQuickSort(container, left, lt - 1, cmp);
-    inplaceTernarySplitQuickSort(container, gt + 1, right, cmp);
+    ternarySplitQuickSortIndex(container, left, lt - 1, cmp);
+    ternarySplitQuickSortIndex(container, gt + 1, right, cmp);
 }
 
 template<typename Compare>
 void ternarySplitQuickSort(std::vector<int> &container, Compare cmp) {
-    inplaceTernarySplitQuickSort(container, 0, container.size() - 1, cmp);
+    ternarySplitQuickSortIndex(container, 0, container.size() - 1, cmp);
 }
