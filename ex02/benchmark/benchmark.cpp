@@ -45,7 +45,7 @@ void benchmark() {
     const std::size_t testSize = 3000;
     std::vector<std::vector<int> > testVectors(numTrials);
     for (std::size_t i = 0; i < numTrials; ++i) {
-        testVectors[i] = generateRandomSequence<int, std::vector>(testSize, 1, 10000);
+        testVectors[i] = generateRandomSequence<int, std::vector>(testSize, 1, 10000000);
     }
 
     std::vector<std::pair<void (*)(std::vector<int> &, comparer::CLess<int>), std::string> > sortFunctions;
