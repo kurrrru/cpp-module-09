@@ -57,7 +57,7 @@ void benchmark() {
     sortFunctions.push_back(std::make_pair(selectionSort<comparer::CLess<int> >, "Selection Sort"));
     sortFunctions.push_back(std::make_pair(binaryInsertionSort<comparer::CLess<int> >, "Binary Insertion Sort"));
     sortFunctions.push_back(std::make_pair(introSort<comparer::CLess<int> >, "Intro Sort"));
-    // sortFunctions.push_back(std::make_pair(timSort<comparer::CLess<int> >, "Tim Sort"));
+    sortFunctions.push_back(std::make_pair(timSort<comparer::CLess<int> >, "Tim Sort"));
     sortFunctions.push_back(std::make_pair(shellSort<comparer::CLess<int> >, "Shell Sort"));
     sortFunctions.push_back(std::make_pair(oddEvenSort<comparer::CLess<int> >, "Odd-Even Sort"));
     sortFunctions.push_back(std::make_pair(combSort<comparer::CLess<int> >, "Comb Sort"));
