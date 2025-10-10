@@ -13,10 +13,11 @@
 #include <ex02/benchmark/tim_sort.hpp>
 #include <ex02/benchmark/shell_sort.hpp>
 #include <ex02/benchmark/intro_sort.hpp>
-#include <ex02/benchmark/brick_sort.hpp>
+#include <ex02/benchmark/odd_even_sort.hpp>
 #include <ex02/benchmark/comb_sort.hpp>
 #include <ex02/benchmark/cycle_sort.hpp>
 #include <ex02/benchmark/gnome_sort.hpp>
 #include <ex02/benchmark/patience_sort.hpp>
 #include <ex02/benchmark/smooth_sort.hpp>
 #include <ex02/benchmark/tournament_sort.hpp>
+#include <ex02/benchmark/shaker_sort.hpp>

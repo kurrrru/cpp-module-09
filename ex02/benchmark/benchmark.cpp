@@ -1,6 +1,7 @@
 #include <ex02/benchmark/benchmark.hpp>
 
 #include <algorithm>
+#include <cmath>
 #include <ctime>
 #include <deque>
 #include <iomanip>
@@ -40,8 +41,8 @@ namespace {
 }
 
 void benchmark() {
-    const std::size_t numTrials = 20;
-    const std::size_t testSize = 5000;
+    const std::size_t numTrials = 50;
+    const std::size_t testSize = 3000;
     std::vector<std::vector<int> > testVectors(numTrials);
     for (std::size_t i = 0; i < numTrials; ++i) {
         testVectors[i] = generateRandomSequence<int, std::vector>(testSize, 1, 10000);
@@ -58,13 +59,28 @@ void benchmark() {
     sortFunctions.push_back(std::make_pair(introSort<comparer::CLess<int> >, "Intro Sort"));
     // sortFunctions.push_back(std::make_pair(timSort<comparer::CLess<int> >, "Tim Sort"));
     // sortFunctions.push_back(std::make_pair(shellSort<comparer::CLess<int> >, "Shell Sort"));
-    // sortFunctions.push_back(std::make_pair(brickSort<comparer::CLess<int> >, "Brick Sort"));
+    sortFunctions.push_back(std::make_pair(oddEvenSort<comparer::CLess<int> >, "Odd-Even Sort"));
     // sortFunctions.push_back(std::make_pair(combSort<comparer::CLess<int> >, "Comb Sort"));
     // sortFunctions.push_back(std::make_pair(cycleSort<comparer::CLess<int> >, "Cycle Sort"));
-    // sortFunctions.push_back(std::make_pair(gnomeSort<comparer::CLess<int> >, "Gnome Sort"));
+    sortFunctions.push_back(std::make_pair(gnomeSort<comparer::CLess<int> >, "Gnome Sort"));
     // sortFunctions.push_back(std::make_pair(patienceSort<comparer::CLess<int> >, "Patience Sort"));
     // sortFunctions.push_back(std::make_pair(smoothSort<comparer::CLess<int> >, "Smooth Sort"));
     // sortFunctions.push_back(std::make_pair(tournamentSort<comparer::CLess<int> >, "Tournament Sort"));
+
+    // \lceil log_2 n! \rceil
+    double theoreticalLowerBound = 0;
+    for (std::size_t i = 2; i <= testSize; ++i) {
+        theoreticalLowerBound += std::log(static_cast<double>(i)) / std::log(2.0);
+    }
+    std::size_t theoreticalMinCmp = static_cast<std::size_t>(std::ceil(theoreticalLowerBound));
+    printResult("ceil(log2(n!))", testSize, theoreticalMinCmp, theoreticalMinCmp, 0, 0);
+
+    // Ford-Johnson algorithm F(n) = \sum_{i=1}^{n} \lceil log_2 (3i/4) \rceil
+    double F = 0;
+    for (std::size_t i = 1; i <= testSize; ++i) {
+        F += std::ceil(std::log(3.0 * i / 4.0) / std::log(2.0));
+    }
+    printResult("Ford-Johnson F(n)", testSize, static_cast<std::size_t>(F), static_cast<double>(F), 0, 0);
 
     // PmergeMe sort function
     std::vector<std::vector<int> > pmergeMeTestVectors = testVectors;
