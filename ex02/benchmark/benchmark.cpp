@@ -60,7 +60,7 @@ void benchmark() {
     // sortFunctions.push_back(std::make_pair(timSort<comparer::CLess<int> >, "Tim Sort"));
     sortFunctions.push_back(std::make_pair(shellSort<comparer::CLess<int> >, "Shell Sort"));
     sortFunctions.push_back(std::make_pair(oddEvenSort<comparer::CLess<int> >, "Odd-Even Sort"));
-    // sortFunctions.push_back(std::make_pair(combSort<comparer::CLess<int> >, "Comb Sort"));
+    sortFunctions.push_back(std::make_pair(combSort<comparer::CLess<int> >, "Comb Sort"));
     // sortFunctions.push_back(std::make_pair(cycleSort<comparer::CLess<int> >, "Cycle Sort"));
     sortFunctions.push_back(std::make_pair(gnomeSort<comparer::CLess<int> >, "Gnome Sort"));
     sortFunctions.push_back(std::make_pair(shakerSort<comparer::CLess<int> >, "Shaker Sort"));
