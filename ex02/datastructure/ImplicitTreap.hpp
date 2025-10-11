@@ -5,6 +5,7 @@
 #pragma once
 #include <cassert>
 #include <iostream>
+#include <iterator>
 #include <memory>
 #include <vector>
 
@@ -67,22 +68,26 @@ class ImplicitTreap {
     }
 
     value_type query(size_type l, size_type r) {
-        assert(0 <= l && l <= r && r <= size());
+        size_type current_size = size();
+        assert(l <= r && r <= current_size);
         return (query(_root, l, r));
     }
 
     void update(size_type pos, value_type val) {
-        assert(0 <= pos && pos < size()); // pos + 1 <= size()
+        size_type current_size = size();
+        assert(pos < current_size);
         update(_root, pos, pos + 1, val);
     }
 
     void update(size_type l, size_type r, value_type val) {
-        assert(0 <= l && l <= r && r <= size());
+        size_type current_size = size();
+        assert(l <= r && r <= current_size);
         update(_root, l, r, val);
     }
 
     const_reference operator[](size_type pos) const {
-        assert(0 <= pos && pos < size());
+        size_type current_size = size();
+        assert(pos < current_size);
         const node* target_node = find_node_by_index(pos);
         return target_node->_value;
     }
@@ -99,15 +104,16 @@ class ImplicitTreap {
     }
 
     void erase(size_type pos) {
-        assert(0 <= pos && pos < size());
+        size_type current_size = size();
+        assert(pos < current_size);
         erase(_root, pos);
     }
 
-    int size() const {
+    size_type size() const {
         if (!_root) {
-            return (0);
+            return 0;
         }
-        return (cnt(_root));
+        return cnt(_root);
     }
 
     // int lower_bound(size_type l, size_type r, value_type val) {
@@ -119,12 +125,14 @@ class ImplicitTreap {
     // }
 
     void reverse(size_type l, size_type r) {
-        assert(0 <= l && l <= r && r <= size());
+        size_type current_size = size();
+        assert(l <= r && r <= current_size);
         reverse(_root, l, r);
     }
 
     void rotate(size_type l, size_type m, size_type r) {
-        assert(0 <= l && l <= m && m <= r && r <= size());
+        size_type current_size = size();
+        assert(l <= m && m <= r && r <= current_size);
         rotate(_root, l, m, r);
     }
 
@@ -132,6 +140,92 @@ class ImplicitTreap {
         clear(_root);
         _root = NULL;
     }
+
+    class iterator: public std::iterator<std::random_access_iterator_tag, value_type> {
+     public:
+        iterator(): _treap(NULL), _node(NULL) {}
+        iterator(const iterator &other): _treap(other._treap), _node(other._node) {}
+        iterator &operator=(const iterator &other) {
+            if (this != &other) {
+                _treap = other._treap;
+                _node = other._node;
+            }
+            return (*this);
+        }
+        ~iterator() {}
+
+        reference operator*() const {
+            assert(_node);
+            return (_node->_value);
+        }
+        pointer operator->() const {
+            assert(_node);
+            return (&_node->_value);
+        }
+
+        iterator &operator++() {
+            assert(_treap);
+            assert(_node);
+            if (_node->_child[1]) {
+                _node = _node->_child[1];
+                while (_node->_child[0]) {
+                    _treap->pushdown(_node);
+                    _node = _node->_child[0];
+                }
+            } else {
+                node* cur = _node;
+                while (cur->_parent && cur == cur->_parent->_child[1]) {
+                    cur = cur->_parent;
+                }
+                _node = cur->_parent;
+            }
+            return (*this);
+        }
+        iterator operator++(int) {
+            iterator tmp(*this);
+            ++(*this);
+            return (tmp);
+        }
+        iterator &operator--() {
+            assert(_treap);
+            if (!_node) {
+                _node = _treap->_root;
+                if (!_node) {
+                    return (*this);
+                }
+                while (_node->_child[1]) {
+                    _treap->pushdown(_node);
+                    _node = _node->_child[1];
+                }
+                return (*this);
+            }
+            if (_node->_child[0]) {
+                _node = _node->_child[0];
+                while (_node->_child[1]) {
+                    _treap->pushdown(_node);
+                    _node = _node->_child[1];
+                }
+            } else {
+                node* cur = _node;
+                while (cur->_parent && cur == cur->_parent->_child[0]) {
+                    cur = cur->_parent;
+                }
+                _node = cur->_parent;
+            }
+            return (*this);
+        }
+        iterator operator--(int) {
+            iterator tmp(*this);
+            --(*this);
+            return (tmp);
+        }
+        bool operator==(const iterator &other) const {
+            return (_treap == other._treap && _node == other._node);
+        }
+        bool operator!=(const iterator &other) const {
+            return (!(*this == other));
+        }
+    };
 
 private:
     struct xorshift {
@@ -150,7 +244,7 @@ private:
         mutable value_type _acc;
         mutable value_type _lazy;
         int _priority;
-        int _cnt;
+        size_type _cnt;
         mutable bool _rev;
         mutable node *_child[2];
         node *_parent;
@@ -174,9 +268,9 @@ private:
     xorshift _rnd;
     static const unsigned int seed = 1;
 
-    int cnt(const node *t) const {
+    size_type cnt(const node *t) const {
         if (!t) {
-            return (0);
+            return 0;
         }
         return (t->_cnt);
     }
@@ -203,10 +297,31 @@ private:
         update(t);
     }
 
-    void pushdown(const node *t) const {
+    void set_parent(node *child, node *parent) const {
+        if (child) {
+            child->_parent = parent;
+        }
+    }
+
+    void fix_children_parent(node *t) const {
         if (!t) {
             return;
         }
+        set_parent(t->_child[0], t);
+        set_parent(t->_child[1], t);
+    }
+
+    void detach_parent(node *t) const {
+        if (t) {
+            t->_parent = NULL;
+        }
+    }
+
+    void pushdown(node *t) const {
+        if (!t) {
+            return;
+        }
+        fix_children_parent(t);
         if (t->_rev) {
             std::swap(t->_child[0], t->_child[1]);
             if (t->_child[0]) {
@@ -215,16 +330,17 @@ private:
             if (t->_child[1]) {
                 t->_child[1]->_rev ^= 1;
             }
+            fix_children_parent(t);
             t->_rev = false;
         }
         if (t->_lazy != operations::update_id()) {
             if (t->_child[0]) {
                 t->_child[0]->_lazy = operations::update_op(t->_child[0]->_lazy, t->_lazy);
-                t->_child[0]->_acc = operations::apply(t->_child[0]->_acc, t->_lazy, cnt(t->_child[0]));
+                t->_child[0]->_acc = operations::apply(t->_child[0]->_acc, t->_lazy, static_cast<int>(cnt(t->_child[0])));
             }
             if (t->_child[1]) {
                 t->_child[1]->_lazy = operations::update_op(t->_child[1]->_lazy, t->_lazy);
-                t->_child[1]->_acc = operations::apply(t->_child[1]->_acc, t->_lazy, cnt(t->_child[1]));
+                t->_child[1]->_acc = operations::apply(t->_child[1]->_acc, t->_lazy, static_cast<int>(cnt(t->_child[1])));
             }
             t->_value = operations::apply(t->_value, t->_lazy, 1);
             t->_lazy = operations::update_id();
@@ -236,32 +352,56 @@ private:
             l = r = NULL;
         } else {
             pushdown(t);
-            int cur_key = cnt(t->_child[0]);
+            int cur_key = static_cast<int>(cnt(t->_child[0]));
             if (key > cur_key) {
                 l = t;
                 split(t->_child[1], key - cur_key - 1, l->_child[1], r);
+                fix_children_parent(l);
+                detach_parent(l);
+                detach_parent(r);
+                fix_children_parent(r);
             } else {
                 r = t;
                 split(t->_child[0], key, l, r->_child[0]);
+                fix_children_parent(r);
+                detach_parent(r);
+                detach_parent(l);
+                fix_children_parent(l);
             }
             pushup(t);
         }
     }
 
     void merge(node *&t, node *l, node *r) {
-        pushdown(l);
-        pushdown(r);
         if (!l) {
             t = r;
-        } else if (!r) {
+            detach_parent(t);
+            fix_children_parent(t);
+            if (t) {
+                pushup(t);
+            }
+            return;
+        }
+        if (!r) {
             t = l;
-        } else if (l->_priority > r->_priority) {
+            detach_parent(t);
+            fix_children_parent(t);
+            if (t) {
+                pushup(t);
+            }
+            return;
+        }
+        pushdown(l);
+        pushdown(r);
+        if (l->_priority > r->_priority) {
             t = l;
             merge(t->_child[1], l->_child[1], r);
         } else {
             t = r;
             merge(t->_child[0], l, r->_child[0]);
         }
+        fix_children_parent(t);
+        detach_parent(t);
         pushup(t);
     }
 
@@ -313,8 +453,10 @@ private:
         node *mid;
         split(t, l, left, right);
         split(right, r - l, mid, right);
-        mid->_lazy = operations::update_op(mid->_lazy, val);
-        mid->_acc = operations::apply(mid->_acc, val, cnt(mid));
+        if (mid) {
+            mid->_lazy = operations::update_op(mid->_lazy, val);
+            mid->_acc = operations::apply(mid->_acc, val, static_cast<int>(cnt(mid)));
+        }
         merge(right, mid, right);
         merge(t, left, right);
     }
