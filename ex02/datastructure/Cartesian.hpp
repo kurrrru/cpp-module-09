@@ -5,7 +5,21 @@
 #include <utility>
 #include <vector>
 
-template<template<typename> typename Compare>
+template<typename Compare>
+struct ComparePair {
+    bool operator()(const std::pair<int, int> &a, const std::pair<int, int> &b) const {
+        if (Compare()(a.first, b.first)) {
+            return true;
+        } else if (Compare()(b.first, a.first)) {
+            return false;
+        } else {
+            return Compare()(a.second, b.second);
+        }
+    }
+};
+
+
+template<typename Compare>
 class Cartesian {
  public:
     Cartesian(): _root(-1), _n(0), _parent(), _right(), _left(), _arr() {
@@ -43,7 +57,7 @@ class Cartesian {
         std::priority_queue<
             std::pair<int, int>,
             std::vector<std::pair<int, int> >,
-            Compare<std::pair<int, int> > > pq;
+            ComparePair<Compare> > pq;
 
         pq.push(std::make_pair(_arr[_root], _root));
 
@@ -84,7 +98,7 @@ class Cartesian {
                 st.push_back(i);
                 continue;
             }
-            while (!st.empty() && Compare<int>()(_arr[st.back()], _arr[i])) {
+            while (!st.empty() && Compare()(_arr[st.back()], _arr[i])) {
                 st.pop_back();
             }
             if (st.empty()) {

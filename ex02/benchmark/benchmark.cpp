@@ -68,6 +68,7 @@ void benchmark() {
     // sortFunctions.push_back(std::make_pair(smoothSort<comparer::CLess<int> >, "Smooth Sort"));
     sortFunctions.push_back(std::make_pair(tournamentSort<comparer::CLess<int> >, "Tournament Sort"));
     sortFunctions.push_back(std::make_pair(ternarySplitQuickSort<comparer::CLess<int> >, "Ternary Split Quick Sort"));
+    sortFunctions.push_back(std::make_pair(cartesianTreeSort<comparer::CLess<int> >, "Cartesian Tree Sort"));
 
     // \lceil log_2 n! \rceil
     double theoreticalLowerBound = 0;

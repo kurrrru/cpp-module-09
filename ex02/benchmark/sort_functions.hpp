@@ -22,3 +22,4 @@
 #include <ex02/benchmark/tournament_sort.hpp>
 #include <ex02/benchmark/shaker_sort.hpp>
 #include <ex02/benchmark/ternary_split_quick_sort.hpp>
+#include <ex02/benchmark/cartesian_tree_sort.hpp>
