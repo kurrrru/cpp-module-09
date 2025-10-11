@@ -66,7 +66,7 @@ void benchmark() {
     sortFunctions.push_back(std::make_pair(shakerSort<comparer::CLess<int> >, "Shaker Sort"));
     // sortFunctions.push_back(std::make_pair(patienceSort<comparer::CLess<int> >, "Patience Sort"));
     // sortFunctions.push_back(std::make_pair(smoothSort<comparer::CLess<int> >, "Smooth Sort"));
-    // sortFunctions.push_back(std::make_pair(tournamentSort<comparer::CLess<int> >, "Tournament Sort"));
+    sortFunctions.push_back(std::make_pair(tournamentSort<comparer::CLess<int> >, "Tournament Sort"));
     sortFunctions.push_back(std::make_pair(ternarySplitQuickSort<comparer::CLess<int> >, "Ternary Split Quick Sort"));
 
     // \lceil log_2 n! \rceil
