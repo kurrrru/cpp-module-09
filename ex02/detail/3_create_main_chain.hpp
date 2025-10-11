@@ -16,7 +16,7 @@ void createMainChain(const Container<std::pair<std::pair<T, std::size_t>, std::p
     }
 }
 
-// vectorにテンプレート特殊化する
+// vector
 template<typename T>
 void createMainChain(const std::vector<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
         std::vector<std::pair<std::pair<T, std::size_t>, bool> > &mainChain) {
@@ -28,7 +28,7 @@ void createMainChain(const std::vector<std::pair<std::pair<T, std::size_t>, std:
     }
 }
 
-// dequeにテンプレート特殊化する
+// deque
 template<typename T>
 void createMainChain(const std::deque<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
         std::deque<std::pair<std::pair<T, std::size_t>, bool> > &mainChain) {

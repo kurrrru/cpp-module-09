@@ -26,7 +26,7 @@ void cmpNeighbor(const Container<std::pair<T, std::size_t>, std::allocator<std::
     }
 }
 
-// // vectorにテンプレート特殊化する
+// // vector
 template<typename T, typename Compare>
 void cmpNeighbor(const std::vector<std::pair<T, std::size_t> > &container,
         std::vector<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
@@ -51,7 +51,7 @@ void cmpNeighbor(const std::vector<std::pair<T, std::size_t> > &container,
     }
 }
 
-// // dequeにテンプレート特殊化する
+// // deque
 template<typename T, typename Compare>
 void cmpNeighbor(const std::deque<std::pair<T, std::size_t> > &container,
         std::deque<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,

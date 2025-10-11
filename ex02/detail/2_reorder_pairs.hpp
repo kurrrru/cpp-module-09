@@ -17,7 +17,7 @@ void reorderPairs(Container<std::pair<std::pair<T, std::size_t>, std::pair<T, st
 
 }
 
-// vectorにテンプレート特殊化する
+// vector
 template<typename T>
 void reorderPairs(std::vector<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
         const std::vector<std::pair<T, std::size_t> > &bigger) {
@@ -29,7 +29,7 @@ void reorderPairs(std::vector<std::pair<std::pair<T, std::size_t>, std::pair<T, 
     pairs.swap(orderedPairs);
 }
 
-// dequeにテンプレート特殊化する
+// deque
 template<typename T>
 void reorderPairs(std::deque<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
         const std::deque<std::pair<T, std::size_t> > &bigger) {
