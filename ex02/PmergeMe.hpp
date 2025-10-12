@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <ex02/PmergeMeIndexed.hpp>
+#include <ex02/datastructure/ImplicitTreap.hpp>
 
 template<typename T, template<typename, typename> class Container, typename Compare>
 void PmergeMeSort(Container<T, std::allocator<T> > &container, Compare cmp) {
@@ -52,3 +53,15 @@ void PmergeMeSort(std::vector<T, std::allocator<T> > &container, Compare cmp) {
     }
 }
 
+template<typename T, typename Compare>
+void PmergeMeSort(ImplicitTreap<T> &container, Compare cmp) {
+    ImplicitTreap<std::pair<T, std::size_t> > indexedContainer;
+    for (std::size_t i = 0; i < container.size(); ++i) {
+        indexedContainer.insert(i, std::make_pair(container[i], i));
+    }
+    PmergeMeSortIndexed(indexedContainer, cmp);
+    for (std::size_t i = 0; i < container.size(); ++i) {
+        std::pair<T, std::size_t> entry = indexedContainer[i];
+        container[i] = entry.first;
+    }
+}

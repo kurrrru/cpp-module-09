@@ -3,7 +3,7 @@
 #include <deque>
 #include <iomanip>
 #include <iostream>
-// #include <list>
+#include <list>
 #include <string>
 #include <vector>
 
@@ -12,6 +12,7 @@
 #include <ex02/compare/CLess.hpp>
 #include <ex02/compare/CGreater.hpp>
 #include <ex02/clock/clock.hpp>
+#include <ex02/datastructure/ImplicitTreap.hpp>
 #include <ex02/utils/test.hpp>
 #include <toolbox/string.hpp>
 
@@ -55,7 +56,8 @@ void subject_test(int argc, char **argv) {
         exit(1);
     }
     std::deque<int> deq(vec.begin(), vec.end());
-    // std::list<int> lst(vec.begin(), vec.end());
+    std::list<int> lst(vec.begin(), vec.end());
+    ImplicitTreap<int> treap(vec);
     std::size_t width = longest_integer_width(vec);
     std::cout << "Before: ";
     print_vec(vec, width);
@@ -67,10 +69,15 @@ void subject_test(int argc, char **argv) {
     start_deq = get_microseconds();
     PmergeMeSort(deq, comparer::CLess<int>());
     end_deq = get_microseconds();
-    // int64 start_lst, end_lst;
-    // start_lst = get_microseconds();
-    // PmergeMeSort(lst, comparer::CLess<int>());
-    // end_lst = get_microseconds();
+    int64 start_lst, end_lst;
+    start_lst = get_microseconds();
+    PmergeMeSort(lst, comparer::CLess<int>());
+    end_lst = get_microseconds();
+    int64 start_treap, end_treap;
+    start_treap = get_microseconds();
+    PmergeMeSort(treap, comparer::CLess<int>());
+    end_treap = get_microseconds();
+
     bool vec_sorted = true;
     for (size_t i = 1; i < vec.size(); ++i) {
         if (vec[i - 1] > vec[i]) {
@@ -93,6 +100,17 @@ void subject_test(int argc, char **argv) {
         std::cerr << "Error: Deque sorting failed." << std::endl;
         exit(1);
     }
+    bool treap_sorted = true;
+    for (size_t i = 1; i < treap.size(); ++i) {
+        if (treap[i - 1] > treap[i]) {
+            treap_sorted = false;
+            break;
+        }
+    }
+    if (!treap_sorted) {
+        std::cerr << "Error: Treap sorting failed." << std::endl;
+        exit(1);
+    }
     std::cout << "After:  ";
     print_vec(vec, width);
     std::cout << "Time to process a range of " << std::setw(4) << vec.size()
@@ -101,9 +119,12 @@ void subject_test(int argc, char **argv) {
     std::cout << "Time to process a range of " << std::setw(4) << vec.size()
             << " elements with std::deque  : " << std::setw(10)
             << (end_deq - start_deq) << " us" << std::endl;
-    // std::cout << "Time to process a range of " << std::setw(4) << vec.size()
-    //         << " elements with std::list   : " << std::setw(10)
-    //         << (end_lst - start_lst) << " us" << std::endl;
+    std::cout << "Time to process a range of " << std::setw(4) << vec.size()
+            << " elements with std::list   : " << std::setw(10)
+            << (end_lst - start_lst) << " us" << std::endl;
+    std::cout << "Time to process a range of " << std::setw(4) << vec.size()
+            << " elements with ImplicitTreap: " << std::setw(10)
+            << (end_treap - start_treap) << " us" << std::endl;
 }
 
 }  // namespace

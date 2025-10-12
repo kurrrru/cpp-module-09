@@ -4,6 +4,8 @@
 #include <memory>
 #include <utility>
 
+#include <ex02/datastructure/ImplicitTreap.hpp>
+
 template<typename T, template<typename, typename> class Container>
 void reorderPairs(Container<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> >, std::allocator<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > > &pairs,
         const Container<std::pair<T, std::size_t>, std::allocator<std::pair<T, std::size_t> > > &bigger) {
@@ -39,3 +41,17 @@ void reorderPairs(std::deque<std::pair<std::pair<T, std::size_t>, std::pair<T, s
     }
     pairs.swap(orderedPairs);
 }
+
+// ImplicitTreap
+template<typename T>
+void reorderPairs(ImplicitTreap<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
+        const ImplicitTreap<std::pair<T, std::size_t> > &bigger) {
+    ImplicitTreap<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > orderedPairs;
+    for (std::size_t i = 0; i < bigger.size(); ++i) {
+        orderedPairs.insert(i, pairs[bigger[i].second]);
+    }
+    pairs.swap(orderedPairs);
+}
+
+
+

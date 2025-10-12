@@ -3,6 +3,8 @@
 #include <memory>
 #include <utility>
 
+#include <ex02/datastructure/ImplicitTreap.hpp>
+
 template<typename T, template<typename, typename> class Container, typename Compare>
 void cmpNeighbor(const Container<std::pair<T, std::size_t>, std::allocator<std::pair<T, std::size_t> > > &container,
         Container<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> >, std::allocator<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > > &pairs,
@@ -71,6 +73,28 @@ void cmpNeighbor(const std::deque<std::pair<T, std::size_t> > &container,
         } else {
             pairs[i] = std::make_pair(first, second);
             bigger[i] = std::make_pair(first.first, i);
+        }
+    }
+}
+
+// ImplicitTreap
+template<typename T, typename Compare>
+void cmpNeighbor(const ImplicitTreap<T> &container,
+        ImplicitTreap<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
+        ImplicitTreap<std::pair<T, std::size_t> > &bigger,
+        Compare cmp) {
+    std::size_t num_elements = container.size();
+    std::size_t bigger_size = num_elements / 2;
+
+    for (std::size_t i = 0; i < bigger_size; ++i) {
+        std::pair<T, std::size_t> first = container[2 * i];
+        std::pair<T, std::size_t> second = container[2 * i + 1];
+        if (cmp(first.first, second.first)) {
+            pairs.insert(i, std::make_pair(second, first));
+            bigger.insert(i, std::make_pair(second.first, i));
+        } else {
+            pairs.insert(i, std::make_pair(first, second));
+            bigger.insert(i, std::make_pair(first.first, i));
         }
     }
 }

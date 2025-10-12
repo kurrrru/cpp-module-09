@@ -22,7 +22,7 @@ namespace {
     void printResult(const std::string &sortName, std::size_t size, std::size_t maxCntCmp, double avgCntCmp, double maxTime, double avgTime) {
         std::cout << std::left << std::setw(24) << sortName
             << std::right << std::fixed << std::setprecision(2)
-            << " | Size: " << std::setw(12) << size
+            << " | Size: " << std::setw(8) << size
             << " | Max Cmp: " << std::setw(12) << maxCntCmp
             << " | Avg Cmp: " << std::setw(12) << avgCntCmp
             << " | Max Time: " << std::setw(12) << maxTime << " us"
