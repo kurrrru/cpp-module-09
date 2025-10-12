@@ -38,8 +38,10 @@ class Cartesian {
     }
 
     Cartesian &operator=(const Cartesian &other) {
-        Cartesian tmp(other);
-        swap(tmp);
+        if (this != &other) {
+            Cartesian tmp(other);
+            swap(tmp);
+        }
         return (*this);
     }
 
