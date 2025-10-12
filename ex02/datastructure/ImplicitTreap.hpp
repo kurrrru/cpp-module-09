@@ -8,6 +8,7 @@
 #include <iostream>
 #include <iterator>
 #include <memory>
+#include <utility>
 #include <vector>
 
 struct monoid_range_add_range_sum {
@@ -55,6 +56,36 @@ struct monoid_range_add_range_sum {
     }
 };
 
+template<typename Value>
+struct monoid_point_assign {
+    typedef Value value_type;
+    static value_type query_op(const value_type &, const value_type &b) {
+        return b;
+    }
+    static value_type query_id() {
+        return value_type();
+    }
+    static value_type update_op(const value_type &, const value_type &b) {
+        return b;
+    }
+    static value_type update_id() {
+        return value_type();
+    }
+    static value_type apply(const value_type &a, const value_type &b, int) {
+        return (b == update_id() ? a : b);
+    }
+};
+
+template<typename T>
+struct monoid_traits {
+    typedef monoid_range_add_range_sum type;
+};
+
+template<typename First, typename Second>
+struct monoid_traits<std::pair<First, Second> > {
+    typedef monoid_point_assign<std::pair<First, Second> > type;
+};
+
 /**
  * @brief Sequence container implemented as an implicit treap with lazy propagation.
  *
@@ -72,6 +103,7 @@ class ImplicitTreap {
     struct node;
  public:
     class value_proxy;
+     class iterator;
     typedef T                                        value_type;
     typedef Allocator                                allocator_type;
     typedef typename Allocator::reference            reference;
@@ -81,7 +113,7 @@ class ImplicitTreap {
     typedef std::size_t                              size_type;
     typedef std::ptrdiff_t                           difference_type;
 
-    typedef monoid_range_add_range_sum               operations;
+    typedef typename monoid_traits<value_type>::type operations;
 
     /**
      * @brief Construct an empty treap with an optional allocator.
@@ -293,6 +325,45 @@ class ImplicitTreap {
             throw;
         }
         insert(_root, pos, item);
+    }
+
+    void push_back(const value_type &val) {
+        insert(size(), val);
+    }
+
+    void push_front(const value_type &val) {
+        insert(0, val);
+    }
+
+    value_proxy front() {
+        size_type current_size = size();
+        assert(current_size > 0);
+        return (*this)[0];
+    }
+
+    value_type front() const {
+        size_type current_size = size();
+        assert(current_size > 0);
+        return (*this)[0];
+    }
+
+    value_proxy back() {
+        size_type current_size = size();
+        assert(current_size > 0);
+        return (*this)[current_size - 1];
+    }
+
+    value_type back() const {
+        size_type current_size = size();
+        assert(current_size > 0);
+        return (*this)[current_size - 1];
+    }
+
+    iterator insert(iterator position, const value_type &val) {
+        size_type index = node_index(position._node);
+        insert(index, val);
+        node *inserted = find_node_by_index(index);
+        return iterator(this, inserted);
     }
 
     /**
@@ -664,6 +735,7 @@ class ImplicitTreap {
         typedef typename ImplicitTreap::difference_type difference_type;
         typedef value_proxy reference;
         typedef value_type* pointer;
+        friend class ImplicitTreap;
 
         /**
          * @brief Construct an end iterator.
@@ -1500,8 +1572,24 @@ private:
         if (!t) {
             return;
         }
-        std::vector<node *> path;
+        node *buffer[64];
+        size_type depth = 0;
         node *cur = t;
+        while (cur && depth < sizeof(buffer) / sizeof(buffer[0])) {
+            buffer[depth++] = cur;
+            cur = cur->_parent;
+        }
+        if (!cur) {
+            while (depth > 0) {
+                pushdown(buffer[--depth]);
+            }
+            return;
+        }
+        std::vector<node *> path;
+        path.reserve(depth + 16);
+        for (size_type i = 0; i < depth; ++i) {
+            path.push_back(buffer[i]);
+        }
         while (cur) {
             path.push_back(cur);
             cur = cur->_parent;
