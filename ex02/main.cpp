@@ -38,7 +38,8 @@ void print_vec(const std::vector<int>& vec, std::size_t width) {
 
 void subject_test(int argc, char **argv) {
     if (argc < 2) {
-        std::cerr << "Error: At least one positive integer argument is required." << std::endl;
+        std::cerr << "Error: At least one positive "
+            "integer argument is required." << std::endl;
         exit(1);
     }
     std::vector<int> vec(argc - 1);
@@ -46,7 +47,8 @@ void subject_test(int argc, char **argv) {
         for (int i = 1; i < argc; ++i) {
             int num = toolbox::stoi(argv[i]);
             if (num <= 0) {
-                std::cerr << "Error: All arguments must be positive integers." << std::endl;
+                std::cerr << "Error: All arguments must be "
+                    "positive integers." << std::endl;
                 exit(1);
             }
             vec[i - 1] = num;
@@ -66,25 +68,29 @@ void subject_test(int argc, char **argv) {
     start_vec = get_microseconds();
     PmergeMeSort(vec, comparer::CLess<int>());
     end_vec = get_microseconds();
-    std::cout << "Number of comparisons: " << comparer::CLess<int>::getcnt() << std::endl;
+    std::cout << "Number of comparisons: "
+        << comparer::CLess<int>::getcnt() << std::endl;
     comparer::CLess<int>::reset();
     int64 start_deq, end_deq;
     start_deq = get_microseconds();
     PmergeMeSort(deq, comparer::CLess<int>());
     end_deq = get_microseconds();
-    std::cout << "Number of comparisons: " << comparer::CLess<int>::getcnt() << std::endl;
+    std::cout << "Number of comparisons: "
+        << comparer::CLess<int>::getcnt() << std::endl;
     comparer::CLess<int>::reset();
     int64 start_lst, end_lst;
     start_lst = get_microseconds();
     PmergeMeSort(lst, comparer::CLess<int>());
     end_lst = get_microseconds();
-    std::cout << "Number of comparisons: " << comparer::CLess<int>::getcnt() << std::endl;
+    std::cout << "Number of comparisons: "
+        << comparer::CLess<int>::getcnt() << std::endl;
     comparer::CLess<int>::reset();
     int64 start_treap, end_treap;
     start_treap = get_microseconds();
     PmergeMeSort(treap, comparer::CLess<int>());
     end_treap = get_microseconds();
-    std::cout << "Number of comparisons: " << comparer::CLess<int>::getcnt() << std::endl;
+    std::cout << "Number of comparisons: "
+        << comparer::CLess<int>::getcnt() << std::endl;
 
     bool vec_sorted = true;
     for (size_t i = 1; i < vec.size(); ++i) {
@@ -109,7 +115,8 @@ void subject_test(int argc, char **argv) {
         exit(1);
     }
     bool lst_sorted = true;
-    for (std::list<int>::iterator it = lst.begin(), next_it = lst.begin(); it != lst.end(); ++it) {
+    for (std::list<int>::iterator it = lst.begin(), next_it = lst.begin();
+        it != lst.end(); ++it) {
         next_it = it;
         ++next_it;
         if (next_it != lst.end() && *it > *next_it) {
