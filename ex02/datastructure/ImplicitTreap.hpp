@@ -395,7 +395,13 @@ class ImplicitTreap {
      * @return Number of elements strictly less than @p val.
      */
     int lower_bound(size_type l, size_type r, value_type val) {
-        return (lower_bound(_root, val));
+        node *left, *right, *mid;
+        split(_root, l, left, right);
+        split(right, r - l, mid, right);
+        int result = lower_bound(mid, val);
+        merge(right, mid, right);
+        merge(_root, left, right);
+        return (l + result);
     }
 
     /**
@@ -406,7 +412,13 @@ class ImplicitTreap {
      * @return Number of elements less than or equal to @p val.
      */
     int upper_bound(size_type l, size_type r, value_type val) {
-        return (upper_bound(_root, val));
+        node *left, *right, *mid;
+        split(_root, l, left, right);
+        split(right, r - l, mid, right);
+        int result = upper_bound(mid, val);
+        merge(right, mid, right);
+        merge(_root, left, right);
+        return (l + result);
     }
 
     /**
@@ -1470,6 +1482,20 @@ private:
         return operations::query_op(res, prefix_sum(t->_child[1], pos - left_cnt - 1));
     }
 
+
+    void print_node(std::ostream &out, node *t, int depth) {
+        if (!t) {
+            out << "NULL";
+            return;
+        }
+        pushdown(t);
+        out << "(";
+        print_node(out, t->_child[0], depth + 1);
+        out << "(" << t->_value << "," << t->_priority <<  ")";
+        print_node(out, t->_child[1], depth + 1);
+        out << ")";
+    }
+
     /**
      * @brief Locate the first index where a prefix sum crosses a threshold.
      * @param t Subtree root searched from the treap root context.
@@ -1483,23 +1509,31 @@ private:
         value_type sum = operations::query_id();
         node *cur = t;
         size_type result = total;
+        // print_node(std::cout, _root, 0);
+        // std::cout << std::endl;
         while (cur) {
             pushdown(cur);
             node *left = cur->_child[0];
             value_type left_sum = operations::query_op(sum, acc(left));
+            // std::cout << "At idx " << idx << " with left count " << cnt(left)
+            //     << " left_sum " << left_sum << " cur value " << cur->_value << std::endl;
             if ((!strict && left_sum >= target) || (strict && left_sum > target)) {
+                // std::cout << "Going left" << std::endl;
                 cur = left;
                 continue;
             }
             idx += cnt(left);
             sum = left_sum;
             value_type with_current = operations::query_op(sum, cur->_value);
-            ++idx;
+            // ++idx;
             if ((!strict && with_current >= target) || (strict && with_current > target)) {
+                // std::cout << "Found at idx " << idx << std::endl;
                 result = idx;
                 break;
             }
+            ++idx;
             sum = with_current;
+            // std::cout << "Going right" << std::endl;
             cur = cur->_child[1];
         }
         return (result);

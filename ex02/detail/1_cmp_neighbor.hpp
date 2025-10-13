@@ -3,6 +3,7 @@
 #include <memory>
 #include <utility>
 
+#include <ex02/compare/CLess.hpp>
 #include <ex02/datastructure/ImplicitTreap.hpp>
 
 template<typename T, template<typename, typename> class Container, typename Compare>
@@ -28,7 +29,7 @@ void cmpNeighbor(const Container<std::pair<T, std::size_t>, std::allocator<std::
     }
 }
 
-// // vector
+// vector
 template<typename T, typename Compare>
 void cmpNeighbor(const std::vector<std::pair<T, std::size_t> > &container,
         std::vector<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
@@ -53,7 +54,7 @@ void cmpNeighbor(const std::vector<std::pair<T, std::size_t> > &container,
     }
 }
 
-// // deque
+// deque
 template<typename T, typename Compare>
 void cmpNeighbor(const std::deque<std::pair<T, std::size_t> > &container,
         std::deque<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
@@ -79,7 +80,7 @@ void cmpNeighbor(const std::deque<std::pair<T, std::size_t> > &container,
 
 // ImplicitTreap
 template<typename T, typename Compare>
-void cmpNeighbor(const ImplicitTreap<T> &container,
+void cmpNeighbor(const ImplicitTreap<std::pair<T, std::size_t> > &container,
         ImplicitTreap<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
         ImplicitTreap<std::pair<T, std::size_t> > &bigger,
         Compare cmp) {

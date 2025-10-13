@@ -62,21 +62,29 @@ void subject_test(int argc, char **argv) {
     std::cout << "Before: ";
     print_vec(vec, width);
     int64 start_vec, end_vec;
+    comparer::CLess<int>::reset();
     start_vec = get_microseconds();
     PmergeMeSort(vec, comparer::CLess<int>());
     end_vec = get_microseconds();
+    std::cout << "Number of comparisons: " << comparer::CLess<int>::getcnt() << std::endl;
+    comparer::CLess<int>::reset();
     int64 start_deq, end_deq;
     start_deq = get_microseconds();
     PmergeMeSort(deq, comparer::CLess<int>());
     end_deq = get_microseconds();
+    std::cout << "Number of comparisons: " << comparer::CLess<int>::getcnt() << std::endl;
+    comparer::CLess<int>::reset();
     int64 start_lst, end_lst;
     start_lst = get_microseconds();
     PmergeMeSort(lst, comparer::CLess<int>());
     end_lst = get_microseconds();
+    std::cout << "Number of comparisons: " << comparer::CLess<int>::getcnt() << std::endl;
+    comparer::CLess<int>::reset();
     int64 start_treap, end_treap;
     start_treap = get_microseconds();
     PmergeMeSort(treap, comparer::CLess<int>());
     end_treap = get_microseconds();
+    std::cout << "Number of comparisons: " << comparer::CLess<int>::getcnt() << std::endl;
 
     bool vec_sorted = true;
     for (size_t i = 1; i < vec.size(); ++i) {
@@ -98,6 +106,19 @@ void subject_test(int argc, char **argv) {
     }
     if (!deq_sorted) {
         std::cerr << "Error: Deque sorting failed." << std::endl;
+        exit(1);
+    }
+    bool lst_sorted = true;
+    for (std::list<int>::iterator it = lst.begin(), next_it = lst.begin(); it != lst.end(); ++it) {
+        next_it = it;
+        ++next_it;
+        if (next_it != lst.end() && *it > *next_it) {
+            lst_sorted = false;
+            break;
+        }
+    }
+    if (!lst_sorted) {
+        std::cerr << "Error: List sorting failed." << std::endl;
         exit(1);
     }
     bool treap_sorted = true;
@@ -132,9 +153,9 @@ void subject_test(int argc, char **argv) {
 int main(int argc, char **argv) {
     (void)argc, (void)argv, (void)subject_test;
 
-    // subject_test(argc, argv);
+    subject_test(argc, argv);
     // test();
-    benchmark();
+    // benchmark();
 
     return 0;
 }

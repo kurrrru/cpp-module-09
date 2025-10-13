@@ -113,8 +113,7 @@ void insertIntoMainChain(ImplicitTreap<std::pair<std::pair<T, std::size_t>, std:
     typedef ImplicitTreap<int> FlagTreap;
     FlagTreap biggerFlags;
     for (std::size_t idx = 0; idx < mainChain.size(); ++idx) {
-        std::pair<std::pair<T, std::size_t>, bool> entry = mainChain[idx];
-        biggerFlags.insert(idx, entry.second ? 1 : 0);
+        biggerFlags.insert(idx, idx > 0 ? 1 : 0);
     }
 
     ComparePairFirstFirst<T, Compare> comparator;

@@ -376,5 +376,44 @@ int main() {
     test_mixed_operations_range_sum();
     benchmark_range_add_range_sum();
 
+    const int vec_raw[] = {0, 1, 1, 0};
+    std::vector<int> vec(vec_raw, vec_raw + sizeof(vec_raw) / sizeof(vec_raw[0]));
+    ImplicitTreap<int> treap4(vec);
+    assert(treap4.query_lower_bound(0, treap4.size(), 0) == 0);
+    assert(treap4.query_lower_bound(0, treap4.size(), 1) == 1);
+    assert(treap4.query_lower_bound(0, treap4.size(), 2) == 2);
+    assert(treap4.query_lower_bound(0, treap4.size(), 3) == 4);
+    assert(treap4.query_upper_bound(0, treap4.size(), 0) == 1);
+    assert(treap4.query_upper_bound(0, treap4.size(), 1) == 2);
+    assert(treap4.query_upper_bound(0, treap4.size(), 2) == 4);
+    assert(treap4.query_upper_bound(0, treap4.size(), 3) == 4);
+
+    const int vec2_raw[] = {1, 1, 2, 4, 4, 4, 5, 6, 8, 9};
+    std::vector<int> vec2(vec2_raw, vec2_raw + sizeof(vec2_raw) / sizeof(vec2_raw[0]));
+    ImplicitTreap<int> treap5(vec2);
+    assert(treap5.lower_bound(0, treap5.size(), 0) == 0);
+    assert(treap5.lower_bound(0, treap5.size(), 1) == 0);
+    assert(treap5.lower_bound(0, treap5.size(), 2) == 2);
+    assert(treap5.lower_bound(0, treap5.size(), 3) == 3);
+    assert(treap5.lower_bound(0, treap5.size(), 4) == 3);
+    assert(treap5.lower_bound(0, treap5.size(), 5) == 6);
+    assert(treap5.lower_bound(0, treap5.size(), 6) == 7);
+    assert(treap5.lower_bound(0, treap5.size(), 7) == 8);
+    assert(treap5.lower_bound(0, treap5.size(), 8) == 8);
+    assert(treap5.lower_bound(0, treap5.size(), 9) == 9);
+    assert(treap5.lower_bound(0, treap5.size(), 10) == 10);
+    assert(treap5.upper_bound(0, treap5.size(), 0) == 0);
+    assert(treap5.upper_bound(0, treap5.size(), 1) == 2);
+    assert(treap5.upper_bound(0, treap5.size(), 2) == 3);
+    assert(treap5.upper_bound(0, treap5.size(), 3) == 3);
+    assert(treap5.upper_bound(0, treap5.size(), 4) == 6);
+    assert(treap5.upper_bound(0, treap5.size(), 5) == 7);
+    assert(treap5.upper_bound(0, treap5.size(), 6) == 8);
+    assert(treap5.upper_bound(0, treap5.size(), 7) == 8);
+    assert(treap5.upper_bound(0, treap5.size(), 8) == 9);
+    assert(treap5.upper_bound(0, treap5.size(), 9) == 10);
+    assert(treap5.upper_bound(0, treap5.size(), 10) == 10);
+    
+
     return 0;
 }
