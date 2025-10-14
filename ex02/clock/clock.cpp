@@ -1,11 +1,13 @@
+#pragma once
+
 #include <ex02/clock/clock.hpp>
 
 #ifdef _WIN32
 #include <windows.h>
 #else
-#include <unistd.h>   // _POSIX_TIMERS をチェックするために必要
-#include <time.h>     // clock_gettime, timespec
-#include <sys/time.h> // gettimeofday, timeval
+#include <unistd.h>
+#include <time.h>
+#include <sys/time.h>
 #endif
 
 int64 get_microseconds() {

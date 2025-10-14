@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 
 #if defined(_MSC_VER) || defined(__BORLANDC__)

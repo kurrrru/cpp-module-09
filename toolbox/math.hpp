@@ -1,10 +1,8 @@
 #pragma once
 
-namespace toolbox
-{
+namespace toolbox {
 
-namespace math
-{
+namespace math {
 
 /**
 * @brief Computes the greatest common divisor of two numbers.
@@ -24,6 +22,6 @@ T gcd(T a, T b) {
     return a;
 }
 
-} // namespace math
+}  // namespace math
 
-} // namespace toolbox
+}  // namespace toolbox
