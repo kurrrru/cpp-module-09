@@ -6,10 +6,11 @@
 #include <vector>
 
 #include <ex02/PmergeMe.hpp>
+#include <ex02/clock/clock.hpp>
 #include <ex02/compare/CLess.hpp>
 #include <ex02/compare/CGreater.hpp>
-
-
+#include <ex02/datastructure/ImplicitTreap.hpp>
+#include <ex02/utils/random_seq.hpp>
 
 void test() {
     std::size_t max_size = 8;
@@ -115,5 +116,49 @@ void test() {
         std::cout << "Large list sorted successfully." << std::endl;
     } else {
         std::cout << "Large list sorting failed." << std::endl;
+    }
+
+    std::size_t treap_size = 100000;
+    std::vector<int> vec = generateRandomSequence<int, std::vector>(treap_size, -5000000, 5000000);
+    ImplicitTreap<int> treap(vec);
+    comparer::CLess<int>::reset();
+    int64 start, end;
+    start = get_microseconds();
+    PmergeMeSort(treap, comparer::CLess<int>());
+    end = get_microseconds();
+    std::cout << "Sorting " << treap_size << " elements in ImplicitTreap took "
+        << (end - start) << " microseconds, with "
+        << comparer::CLess<int>::getcnt() << " comparisons." << std::endl;
+    sorted = true;
+    for (std::size_t i = 1; i < treap.size(); ++i) {
+        if (treap[i - 1] > treap[i]) {
+            sorted = false;
+            break;
+        }
+    }
+    if (sorted) {
+        std::cout << "Large ImplicitTreap sorted successfully." << std::endl;
+    } else {
+        std::cout << "Large ImplicitTreap sorting failed." << std::endl;
+    }
+    treap = ImplicitTreap<int>(vec);
+    comparer::CGreater<int>::reset();
+    start = get_microseconds();
+    PmergeMeSort(treap, comparer::CGreater<int>());
+    end = get_microseconds();
+    std::cout << "Sorting " << treap_size << " elements in ImplicitTreap in descending order took "
+        << (end - start) << " microseconds, with "
+        << comparer::CGreater<int>::getcnt() << " comparisons." << std::endl;
+    sorted = true;
+    for (std::size_t i = 1; i < treap.size(); ++i) {
+        if (treap[i - 1] < treap[i]) {
+            sorted = false;
+            break;
+        }
+    }
+    if (sorted) {
+        std::cout << "Large ImplicitTreap sorted in descending order successfully." << std::endl;
+    } else {
+        std::cout << "Large ImplicitTreap sorting in descending order failed." << std::endl;
     }
 }
