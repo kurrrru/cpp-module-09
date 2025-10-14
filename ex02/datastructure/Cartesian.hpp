@@ -7,7 +7,8 @@
 
 template<typename Compare>
 struct ComparePair {
-    bool operator()(const std::pair<int, int> &a, const std::pair<int, int> &b) const {
+    bool operator()(const std::pair<int, int> &a,
+        const std::pair<int, int> &b) const {
         if (Compare()(a.first, b.first)) {
             return true;
         } else if (Compare()(b.first, a.first)) {

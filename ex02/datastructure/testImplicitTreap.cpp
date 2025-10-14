@@ -1,9 +1,3 @@
-#define private public
-#define protected public
-#include "ImplicitTreap.hpp"
-#undef private
-#undef protected
-
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
@@ -11,6 +5,12 @@
 #include <iostream>
 #include <numeric>
 #include <vector>
+
+#define private public
+#define protected public
+#include <ex02/datastructure/ImplicitTreap.hpp>
+#undef private
+#undef protected
 
 namespace {
 
@@ -22,7 +22,8 @@ struct ValidationInfo {
     int sum;
 };
 
-ValidationInfo validate_node(const ImplicitTreap<int>::node *node, const ImplicitTreap<int>::node *parent) {
+ValidationInfo validate_node(const ImplicitTreap<int>::node *node,
+    const ImplicitTreap<int>::node *parent) {
     if (!node) {
         ValidationInfo info;
         info.ok = true;
@@ -56,7 +57,8 @@ void materialize(ImplicitTreap<int> &treap) {
     }
 }
 
-void expect_sequence(ImplicitTreap<int> &treap, const std::vector<int> &expected) {
+void expect_sequence(ImplicitTreap<int> &treap,
+    const std::vector<int> &expected) {
     materialize(treap);
     assert(treap.size() == expected.size());
     for (std::size_t i = 0; i < expected.size(); ++i) {
@@ -64,18 +66,23 @@ void expect_sequence(ImplicitTreap<int> &treap, const std::vector<int> &expected
     }
     assert(validate_parent_links(treap));
     if (!expected.empty()) {
-        int total = treap.query(0, static_cast<treap_size_type>(expected.size()));
-        int expected_total = std::accumulate(expected.begin(), expected.end(), 0);
+        int total = treap.query(0,
+            static_cast<treap_size_type>(expected.size()));
+        int expected_total = std::accumulate(expected.begin(),
+            expected.end(), 0);
         assert(total == expected_total);
     }
 }
 
-void verify_all_ranges(ImplicitTreap<int> &treap, const std::vector<int> &mirror) {
+void verify_all_ranges(ImplicitTreap<int> &treap,
+    const std::vector<int> &mirror) {
     expect_sequence(treap, mirror);
     for (std::size_t l = 0; l < mirror.size(); ++l) {
         for (std::size_t r = l + 1; r <= mirror.size(); ++r) {
-            int expected_sum = std::accumulate(mirror.begin() + l, mirror.begin() + r, 0);
-            assert(treap.query(static_cast<treap_size_type>(l), static_cast<treap_size_type>(r)) == expected_sum);
+            int expected_sum = std::accumulate(mirror.begin() + l,
+                mirror.begin() + r, 0);
+            assert(treap.query(static_cast<treap_size_type>(l),
+                static_cast<treap_size_type>(r)) == expected_sum);
         }
     }
 }
@@ -110,7 +117,8 @@ void test_range_add_range_sum_behavior() {
 
     for (std::size_t i = 0; i < update_count; ++i) {
         const RangeUpdate &u = updates[i];
-        treap.update(static_cast<treap_size_type>(u.l), static_cast<treap_size_type>(u.r), u.delta);
+        treap.update(static_cast<treap_size_type>(u.l),
+            static_cast<treap_size_type>(u.r), u.delta);
         for (std::size_t j = u.l; j < u.r; ++j) {
             expected[j] += u.delta;
         }
@@ -127,7 +135,8 @@ void test_range_add_range_sum_behavior() {
             for (std::size_t idx = l; idx < r; ++idx) {
                 expected_sum += expected[idx];
             }
-            assert(treap.query(static_cast<treap_size_type>(l), static_cast<treap_size_type>(r)) == expected_sum);
+            assert(treap.query(static_cast<treap_size_type>(l),
+                static_cast<treap_size_type>(r)) == expected_sum);
         }
     }
 }
@@ -153,12 +162,14 @@ void benchmark_range_add_range_sum() {
 
     std::clock_t update_start = std::clock();
     for (int op = 0; op < operations; ++op) {
-        size_type l = static_cast<size_type>(std::rand() % static_cast<int>(total_size));
+        size_type l = static_cast<size_type>(std::rand()
+            % static_cast<int>(total_size));
         size_type max_len = total_size - l;
         if (max_len > static_cast<size_type>(64)) {
             max_len = static_cast<size_type>(64);
         }
-        size_type length = static_cast<size_type>(1 + std::rand() % static_cast<int>(max_len));
+        size_type length = static_cast<size_type>(1 + std::rand()
+            % static_cast<int>(max_len));
         size_type r = l + length;
         int delta = (std::rand() % 11) - 5;
         treap.update(l, r, delta);
@@ -171,12 +182,14 @@ void benchmark_range_add_range_sum() {
     std::clock_t query_start = std::clock();
     long long checksum = 0;
     for (int op = 0; op < operations; ++op) {
-        size_type l = static_cast<size_type>(std::rand() % static_cast<int>(total_size));
+        size_type l = static_cast<size_type>(std::rand()
+            % static_cast<int>(total_size));
         size_type max_len = total_size - l;
         if (max_len > static_cast<size_type>(128)) {
             max_len = static_cast<size_type>(128);
         }
-        size_type length = static_cast<size_type>(1 + std::rand() % static_cast<int>(max_len));
+        size_type length = static_cast<size_type>(1 + std::rand()
+            % static_cast<int>(max_len));
         size_type r = l + length;
         int treap_sum = treap.query(l, r);
         int expected_sum = 0;
@@ -188,9 +201,12 @@ void benchmark_range_add_range_sum() {
     }
     std::clock_t query_end = std::clock();
 
-    double build_ms = static_cast<double>(build_end - build_start) * 1000.0 / CLOCKS_PER_SEC;
-    double update_ms = static_cast<double>(update_end - update_start) * 1000.0 / CLOCKS_PER_SEC;
-    double query_ms = static_cast<double>(query_end - query_start) * 1000.0 / CLOCKS_PER_SEC;
+    double build_ms = static_cast<double>(build_end - build_start)
+        * 1000.0 / CLOCKS_PER_SEC;
+    double update_ms = static_cast<double>(update_end - update_start)
+        * 1000.0 / CLOCKS_PER_SEC;
+    double query_ms = static_cast<double>(query_end - query_start)
+        * 1000.0 / CLOCKS_PER_SEC;
 
     std::cout << "Benchmark Range Add/Range Sum (N=" << total_size
               << ", ops=" << operations << ")\n";
@@ -265,16 +281,19 @@ void test_mixed_operations_range_sum() {
     }
 
     if (mirror.size() > 3) {
-        treap_size_type block_end = static_cast<treap_size_type>(std::min<std::size_t>(mirror.size(), 7));
+        treap_size_type block_end = static_cast<treap_size_type>(
+            std::min<std::size_t>(mirror.size(), 7));
         if (block_end > 3) {
             treap.rotate(1, 3, block_end);
-            std::rotate(mirror.begin() + 1, mirror.begin() + 3, mirror.begin() + block_end);
+            std::rotate(mirror.begin() + 1, mirror.begin() + 3,
+                mirror.begin() + block_end);
             verify_all_ranges(treap, mirror);
         }
     }
 
     if (mirror.size() > 2) {
-        treap_size_type erase_pos = static_cast<treap_size_type>(mirror.size() - 2);
+        treap_size_type erase_pos = static_cast<treap_size_type>(
+            mirror.size() - 2);
         treap.erase(erase_pos);
         mirror.erase(mirror.end() - 2);
         verify_all_ranges(treap, mirror);
@@ -297,7 +316,8 @@ int main() {
     ImplicitTreap<int> treap;
     std::vector<int> expected;
     const int initial_raw[] = {5, 3, 8, 1, 4, 7, 9, 2, 6};
-    const std::size_t initial_count = sizeof(initial_raw) / sizeof(initial_raw[0]);
+    const std::size_t initial_count = sizeof(initial_raw)
+        / sizeof(initial_raw[0]);
 
     for (std::size_t i = 0; i < initial_count; ++i) {
         treap.insert(i, initial_raw[i]);
@@ -315,7 +335,8 @@ int main() {
 
     const ImplicitTreap<int>::size_type ql = 2;
     const ImplicitTreap<int>::size_type qr = 6;
-    int expected_sum = std::accumulate(expected.begin() + ql, expected.begin() + qr, 0);
+    int expected_sum = std::accumulate(expected.begin() + ql,
+        expected.begin() + qr, 0);
     int treap_sum = treap.query(ql, qr);
     assert(treap_sum == expected_sum);
 
@@ -330,12 +351,14 @@ int main() {
     expect_sequence(treap, expected);
 
     const ImplicitTreap<int>::size_type rev_l = 1;
-    const ImplicitTreap<int>::size_type rev_r = static_cast<ImplicitTreap<int>::size_type>(expected.size() - 1);
+    const ImplicitTreap<int>::size_type rev_r
+        = static_cast<ImplicitTreap<int>::size_type>(expected.size() - 1);
     treap.reverse(rev_l, rev_r);
     std::reverse(expected.begin() + rev_l, expected.begin() + rev_r);
     expect_sequence(treap, expected);
 
-    treap.rotate(0, 3, static_cast<ImplicitTreap<int>::size_type>(expected.size()));
+    treap.rotate(0, 3,
+        static_cast<ImplicitTreap<int>::size_type>(expected.size()));
     std::rotate(expected.begin(), expected.begin() + 3, expected.end());
     expect_sequence(treap, expected);
 
@@ -377,7 +400,8 @@ int main() {
     benchmark_range_add_range_sum();
 
     const int vec_raw[] = {0, 1, 1, 0};
-    std::vector<int> vec(vec_raw, vec_raw + sizeof(vec_raw) / sizeof(vec_raw[0]));
+    std::vector<int> vec(vec_raw, vec_raw + sizeof(vec_raw)
+        / sizeof(vec_raw[0]));
     ImplicitTreap<int> treap4(vec);
     assert(treap4.query_lower_bound(0, treap4.size(), 0) == 0);
     assert(treap4.query_lower_bound(0, treap4.size(), 1) == 1);
@@ -389,7 +413,8 @@ int main() {
     assert(treap4.query_upper_bound(0, treap4.size(), 3) == 4);
 
     const int vec2_raw[] = {1, 1, 2, 4, 4, 4, 5, 6, 8, 9};
-    std::vector<int> vec2(vec2_raw, vec2_raw + sizeof(vec2_raw) / sizeof(vec2_raw[0]));
+    std::vector<int> vec2(vec2_raw, vec2_raw + sizeof(vec2_raw)
+        / sizeof(vec2_raw[0]));
     ImplicitTreap<int> treap5(vec2);
     assert(treap5.lower_bound(0, treap5.size(), 0) == 0);
     assert(treap5.lower_bound(0, treap5.size(), 1) == 0);
@@ -413,7 +438,31 @@ int main() {
     assert(treap5.upper_bound(0, treap5.size(), 8) == 9);
     assert(treap5.upper_bound(0, treap5.size(), 9) == 10);
     assert(treap5.upper_bound(0, treap5.size(), 10) == 10);
-    
+
+    for (ImplicitTreap<int>::iterator it = treap5.begin();
+        it != treap5.end(); ++it) {
+        std::cout << *it << ' ';
+    }
+    std::cout << std::endl;
+    for (ImplicitTreap<int>::const_iterator it = treap5.begin();
+        it != treap5.end(); ++it) {
+        std::cout << *it << ' ';
+    }
+    std::cout << std::endl;
+
+    // reverse iteration
+    for (ImplicitTreap<int>::iterator it = treap5.end();
+        it != treap5.begin();) {
+        --it;
+        std::cout << *it << ' ';
+    }
+    std::cout << std::endl;
+    for (ImplicitTreap<int>::const_iterator it = treap5.end();
+        it != treap5.begin();) {
+        --it;
+        std::cout << *it << ' ';
+    }
+    std::cout << std::endl;
 
     return 0;
 }

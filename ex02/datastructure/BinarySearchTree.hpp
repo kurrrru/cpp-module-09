@@ -23,11 +23,12 @@ class BinarySearchTree {
     void clear() {
         clear(_root);
     }
+
  private:
     struct Node {
         int _value;
         Node* _child[2];  // _child[0]: left, _child[1]: right
-        Node(int val) : _value(val) {
+        explicit Node(int val) : _value(val) {
             _child[0] = NULL;
             _child[1] = NULL;
         }

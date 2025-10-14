@@ -526,6 +526,16 @@ class ImplicitTreap {
         ~const_iterator() {}
 
         /**
+         * @brief Construct a const_iterator from a mutable iterator.
+         * @param other The iterator to convert.
+         */
+        const_iterator(const iterator &other)
+            : _treap(other._treap), _index(other._treap ?
+            other._treap->node_index(other.base_node()) : 0),
+            _cache() 
+        {
+        }
+        /**
          * @brief Dereference to obtain the value at the current position.
          * @return Value stored at the iterator's position.
          */
