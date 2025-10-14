@@ -1106,7 +1106,7 @@ private:
 
     typedef typename Allocator::template rebind<node>::other node_allocator_type;
     
-    node *_root = NULL;
+    node *_root;
     node_allocator_type _node_alloc;
     xorshift _rnd;
     static const unsigned int seed = 1;

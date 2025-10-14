@@ -14,10 +14,10 @@ struct CGreater {
     static void reset() {
         _cnt = 0;
     }
-private:
+ private:
     static int _cnt;
 };
 
 template<typename T>
 int CGreater<T>::_cnt = 0;
-}
+}  // namespace comparer

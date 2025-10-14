@@ -9,10 +9,14 @@
 #include <ex02/datastructure/ImplicitTreap.hpp>
 #include <ex02/detail/utils.hpp>
 
-template<typename T, template<typename, typename> class Container, typename Compare>
-void insertIntoMainChain(Container<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> >, std::allocator<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > > &pairs,
-        Container<std::pair<std::pair<T, std::size_t>, bool>, std::allocator<std::pair<std::pair<T, std::size_t>, bool> > > &mainChain,
-        bool hasStraggler, const std::pair<T, std::size_t> &straggler, Compare cmp) {
+template<typename T, template<typename, typename> class Container,
+    template<typename> class Compare>
+void insertIntoMainChain(Container<typename ValIdx<T>::ptype,
+    typename ValIdx<T>::palloc> &pairs,
+    Container<typename ValIdx<T>::btype,
+    typename ValIdx<T>::balloc> &mainChain,
+    bool hasStraggler, const typename ValIdx<T>::type &straggler,
+    Compare<T> cmp) {
     (void)cmp;
     if (hasStraggler) {
         pairs.push_back(std::make_pair(std::make_pair(T(), 0), straggler));
@@ -27,13 +31,19 @@ void insertIntoMainChain(Container<std::pair<std::pair<T, std::size_t>, std::pai
             if (i <= 1) {
                 break;
             }
-            typename Container<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> >, std::allocator<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > >::iterator pair_it = pairs.begin();
+            typename Container<typename ValIdx<T>::ptype,
+                typename ValIdx<T>::palloc>::iterator pair_it = pairs.begin();
             std::advance(pair_it, i - 1);
-            const std::pair<T, std::size_t> &insert_value = pair_it->second;
-            typename Container<std::pair<std::pair<T, std::size_t>, bool>, std::allocator<std::pair<std::pair<T, std::size_t>, bool> > >::iterator end_iterator = mainChain.end();
+            const typename ValIdx<T>::type &insert_value = pair_it->second;
+            typename Container<typename ValIdx<T>::btype,
+                typename ValIdx<T>::balloc>
+                ::iterator end_iterator = mainChain.end();
             if (pair_it->first.first != T()) {
                 std::size_t bigger_cnt = 0;
-                for (typename Container<std::pair<std::pair<T, std::size_t>, bool>, std::allocator<std::pair<std::pair<T, std::size_t>, bool> > >::iterator it = mainChain.begin(); it != mainChain.end(); ++it) {
+                for (typename Container<typename ValIdx<T>::btype,
+                    typename ValIdx<T>::balloc>
+                    ::iterator it = mainChain.begin();
+                    it != mainChain.end(); ++it) {
                     if (it->second) {
                         ++bigger_cnt;
                     }
@@ -43,11 +53,14 @@ void insertIntoMainChain(Container<std::pair<std::pair<T, std::size_t>, std::pai
                     }
                 }
             }
-            typename Container<std::pair<std::pair<T, std::size_t>, bool>, std::allocator<std::pair<std::pair<T, std::size_t>, bool> > >::iterator insert_position = std::lower_bound(
-                mainChain.begin(), end_iterator, std::make_pair(insert_value, false),
-                ComparePairFirstFirst<T, Compare>()
-            );
-            mainChain.insert(insert_position, std::make_pair(insert_value, false));
+            typename Container<typename ValIdx<T>::btype,
+                typename ValIdx<T>::balloc>
+                ::iterator insert_position = std::lower_bound(
+                mainChain.begin(), end_iterator,
+                std::make_pair(insert_value, false),
+                ComparePairFirstFirst<T, Compare>());
+            mainChain.insert(insert_position,
+                std::make_pair(insert_value, false));
         }
         if (jacobsthal.first >= pairs.size()) {
             break;
@@ -56,10 +69,11 @@ void insertIntoMainChain(Container<std::pair<std::pair<T, std::size_t>, std::pai
 }
 
 // vector
-template<typename T, typename Compare>
-void insertIntoMainChain(std::vector<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
-        std::vector<std::pair<std::pair<T, std::size_t>, bool> > &mainChain,
-        bool hasStraggler, const std::pair<T, std::size_t> &straggler, Compare cmp) {
+template<typename T, template<typename> class Compare>
+void insertIntoMainChain(std::vector<typename ValIdx<T>::ptype> &pairs,
+        std::vector<typename ValIdx<T>::btype> &mainChain,
+        bool hasStraggler, const typename ValIdx<T>::type &straggler,
+        Compare<T> cmp) {
     (void)cmp;
     if (hasStraggler) {
         pairs.push_back(std::make_pair(std::make_pair(T(), 0), straggler));
@@ -74,8 +88,9 @@ void insertIntoMainChain(std::vector<std::pair<std::pair<T, std::size_t>, std::p
             if (i <= 1) {
                 break;
             }
-            const std::pair<T, std::size_t> &insert_value = pairs[i - 1].second;
-            typename std::vector<std::pair<std::pair<T, std::size_t>, bool> >::iterator end_iterator = mainChain.end();
+            const typename ValIdx<T>::type &insert_value = pairs[i - 1].second;
+            typename std::vector<typename ValIdx<T>::btype>
+                ::iterator end_iterator = mainChain.end();
             if (pairs[i - 1].first.first != T()) {
                 std::size_t bigger_cnt = 0;
                 for (std::size_t j = 0; j < mainChain.size(); ++j) {
@@ -88,11 +103,13 @@ void insertIntoMainChain(std::vector<std::pair<std::pair<T, std::size_t>, std::p
                     }
                 }
             }
-            typename std::vector<std::pair<std::pair<T, std::size_t>, bool> >::iterator insert_position = std::lower_bound(
-                mainChain.begin(), end_iterator, std::make_pair(insert_value, false),
-                ComparePairFirstFirst<T, Compare>()
-            );
-            mainChain.insert(insert_position, std::make_pair(insert_value, false));
+            typename std::vector<typename ValIdx<T>::btype>
+                ::iterator insert_position = std::lower_bound(
+                mainChain.begin(), end_iterator,
+                std::make_pair(insert_value, false),
+                ComparePairFirstFirst<T, Compare>());
+            mainChain.insert(insert_position,
+                std::make_pair(insert_value, false));
         }
         if (jacobsthal.first >= pairs.size()) {
             break;
@@ -101,13 +118,15 @@ void insertIntoMainChain(std::vector<std::pair<std::pair<T, std::size_t>, std::p
 }
 
 // ImplicitTreap
-template<typename T, typename Compare>
-void insertIntoMainChain(ImplicitTreap<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
-        ImplicitTreap<std::pair<std::pair<T, std::size_t>, bool> > &mainChain,
-        bool hasStraggler, const std::pair<T, std::size_t> &straggler, Compare cmp) {
+template<typename T, template<typename> class Compare>
+void insertIntoMainChain(ImplicitTreap<typename ValIdx<T>::ptype> &pairs,
+        ImplicitTreap<typename ValIdx<T>::btype> &mainChain,
+        bool hasStraggler, const typename ValIdx<T>::type &straggler,
+        Compare<T> cmp) {
     (void)cmp;
     if (hasStraggler) {
-        pairs.insert(pairs.end(), std::make_pair(std::make_pair(T(), 0), straggler));
+        pairs.insert(pairs.end(), std::make_pair(std::make_pair(T(), 0),
+            straggler));
     }
 
     typedef ImplicitTreap<int> FlagTreap;
@@ -127,13 +146,15 @@ void insertIntoMainChain(ImplicitTreap<std::pair<std::pair<T, std::size_t>, std:
             if (i <= 1) {
                 break;
             }
-            std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > currentPair = pairs[i - 1];
-            const std::pair<T, std::size_t> &insert_value = currentPair.second;
+            typename ValIdx<T>::ptype currentPair = pairs[i - 1];
+            const typename ValIdx<T>::type &insert_value = currentPair.second;
 
             std::size_t searchLimit = mainChain.size();
             if (currentPair.first.first != T()) {
-                typename FlagTreap::value_type target = static_cast<typename FlagTreap::value_type>(i);
-                std::size_t targetIndex = biggerFlags.query_lower_bound(0, biggerFlags.size(), target);
+                typename FlagTreap::value_type
+                    target = static_cast<typename FlagTreap::value_type>(i);
+                std::size_t targetIndex = biggerFlags.query_lower_bound(0,
+                    biggerFlags.size(), target);
                 if (targetIndex < biggerFlags.size()) {
                     searchLimit = targetIndex;
                 }
@@ -141,10 +162,11 @@ void insertIntoMainChain(ImplicitTreap<std::pair<std::pair<T, std::size_t>, std:
 
             std::size_t left = 0;
             std::size_t right = searchLimit;
-            std::pair<std::pair<T, std::size_t>, bool> probe = std::make_pair(insert_value, false);
+            typename ValIdx<T>::btype
+                probe = std::make_pair(insert_value, false);
             while (left < right) {
                 std::size_t mid = left + (right - left) / 2;
-                std::pair<std::pair<T, std::size_t>, bool> midValue = mainChain[mid];
+                typename ValIdx<T>::btype midValue = mainChain[mid];
                 if (comparator(midValue, probe)) {
                     left = mid + 1;
                 } else {
@@ -152,9 +174,14 @@ void insertIntoMainChain(ImplicitTreap<std::pair<std::pair<T, std::size_t>, std:
                 }
             }
 
-            typename ImplicitTreap<std::pair<std::pair<T, std::size_t>, bool> >::iterator insert_position = mainChain.begin() + static_cast<typename ImplicitTreap<std::pair<std::pair<T, std::size_t>, bool> >::difference_type>(left);
-            mainChain.insert(insert_position, std::make_pair(insert_value, false));
-            biggerFlags.insert(biggerFlags.begin() + static_cast<typename FlagTreap::difference_type>(left), 0);
+            typename ImplicitTreap<typename ValIdx<T>::btype>
+                ::iterator insert_position = mainChain.begin()
+                + static_cast<typename ImplicitTreap<std::pair<std::pair<T,
+                std::size_t>, bool> >::difference_type>(left);
+            mainChain.insert(insert_position,
+                std::make_pair(insert_value, false));
+            biggerFlags.insert(biggerFlags.begin()
+                + static_cast<typename FlagTreap::difference_type>(left), 0);
         }
         if (jacobsthal.first >= pairs.size()) {
             break;

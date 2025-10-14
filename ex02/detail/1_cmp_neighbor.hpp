@@ -1,23 +1,30 @@
 #pragma once
 
+#include <deque>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include <ex02/compare/CLess.hpp>
 #include <ex02/datastructure/ImplicitTreap.hpp>
+#include <ex02/detail/utils.hpp>
 
-template<typename T, template<typename, typename> class Container, typename Compare>
-void cmpNeighbor(const Container<std::pair<T, std::size_t>, std::allocator<std::pair<T, std::size_t> > > &container,
-        Container<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> >, std::allocator<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > > &pairs,
-        Container<std::pair<T, std::size_t>, std::allocator<std::pair<T, std::size_t> > > &bigger,
-        Compare cmp) {
+template<typename T, template<typename, typename> class Container,
+    template<typename> class Compare>
+void cmpNeighbor(const Container<typename ValIdx<T>::type,
+        typename ValIdx<T>::alloc> &container,
+        Container<typename ValIdx<T>::ptype,
+        typename ValIdx<T>::palloc> &pairs,
+        Container<typename ValIdx<T>::type, typename ValIdx<T>::alloc> &bigger,
+        Compare<T> cmp) {
     std::size_t num_elements = container.size();
     std::size_t bigger_size = num_elements / 2;
-    typename Container<std::pair<T, std::size_t>, std::allocator<std::pair<T, std::size_t> > >::const_iterator it = container.begin();
+    typename Container<typename ValIdx<T>::type,
+        typename ValIdx<T>::alloc>::const_iterator it = container.begin();
     for (std::size_t i = 0; i < bigger_size; ++i) {
-        std::pair<T, std::size_t> first = *it;
+        typename ValIdx<T>::type first = *it;
         ++it;
-        std::pair<T, std::size_t> second = *it;
+        typename ValIdx<T>::type second = *it;
         ++it;
         if (cmp(first.first, second.first)) {
             pairs.push_back(std::make_pair(second, first));
@@ -30,11 +37,11 @@ void cmpNeighbor(const Container<std::pair<T, std::size_t>, std::allocator<std::
 }
 
 // vector
-template<typename T, typename Compare>
-void cmpNeighbor(const std::vector<std::pair<T, std::size_t> > &container,
-        std::vector<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
-        std::vector<std::pair<T, std::size_t> > &bigger,
-        Compare cmp) {
+template<typename T, template<typename> class Compare>
+void cmpNeighbor(const std::vector<typename ValIdx<T>::type> &container,
+        std::vector<typename ValIdx<T>::ptype> &pairs,
+        std::vector<typename ValIdx<T>::type> &bigger,
+        Compare<T> cmp) {
     std::size_t num_elements = container.size();
     std::size_t bigger_size = num_elements / 2;
 
@@ -42,8 +49,8 @@ void cmpNeighbor(const std::vector<std::pair<T, std::size_t> > &container,
     bigger.reserve(bigger_size);
 
     for (std::size_t i = 0; i < bigger_size; ++i) {
-        std::pair<T, std::size_t> first = container[2 * i];
-        std::pair<T, std::size_t> second = container[2 * i + 1];
+        typename ValIdx<T>::type first = container[2 * i];
+        typename ValIdx<T>::type second = container[2 * i + 1];
         if (cmp(first.first, second.first)) {
             pairs.push_back(std::make_pair(second, first));
             bigger.push_back(std::make_pair(second.first, i));
@@ -55,19 +62,19 @@ void cmpNeighbor(const std::vector<std::pair<T, std::size_t> > &container,
 }
 
 // deque
-template<typename T, typename Compare>
-void cmpNeighbor(const std::deque<std::pair<T, std::size_t> > &container,
-        std::deque<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
-        std::deque<std::pair<T, std::size_t> > &bigger,
-        Compare cmp) {
+template<typename T, template<typename> class Compare>
+void cmpNeighbor(const std::deque<typename ValIdx<T>::type> &container,
+        std::deque<typename ValIdx<T>::ptype> &pairs,
+        std::deque<typename ValIdx<T>::type> &bigger,
+        Compare<T> cmp) {
     std::size_t num_elements = container.size();
     std::size_t bigger_size = num_elements / 2;
 
     pairs.resize(bigger_size);
     bigger.resize(bigger_size);
     for (std::size_t i = 0; i < bigger_size; ++i) {
-        std::pair<T, std::size_t> first = container[2 * i];
-        std::pair<T, std::size_t> second = container[2 * i + 1];
+        typename ValIdx<T>::type first = container[2 * i];
+        typename ValIdx<T>::type second = container[2 * i + 1];
         if (cmp(first.first, second.first)) {
             pairs[i] = std::make_pair(second, first);
             bigger[i] = std::make_pair(second.first, i);
@@ -79,17 +86,17 @@ void cmpNeighbor(const std::deque<std::pair<T, std::size_t> > &container,
 }
 
 // ImplicitTreap
-template<typename T, typename Compare>
-void cmpNeighbor(const ImplicitTreap<std::pair<T, std::size_t> > &container,
-        ImplicitTreap<std::pair<std::pair<T, std::size_t>, std::pair<T, std::size_t> > > &pairs,
-        ImplicitTreap<std::pair<T, std::size_t> > &bigger,
-        Compare cmp) {
+template<typename T, template<typename> class Compare>
+void cmpNeighbor(const ImplicitTreap<typename ValIdx<T>::type> &container,
+        ImplicitTreap<typename ValIdx<T>::ptype> &pairs,
+        ImplicitTreap<typename ValIdx<T>::type> &bigger,
+        Compare<T> cmp) {
     std::size_t num_elements = container.size();
     std::size_t bigger_size = num_elements / 2;
 
     for (std::size_t i = 0; i < bigger_size; ++i) {
-        std::pair<T, std::size_t> first = container[2 * i];
-        std::pair<T, std::size_t> second = container[2 * i + 1];
+        typename ValIdx<T>::type first = container[2 * i];
+        typename ValIdx<T>::type second = container[2 * i + 1];
         if (cmp(first.first, second.first)) {
             pairs.insert(i, std::make_pair(second, first));
             bigger.insert(i, std::make_pair(second.first, i));

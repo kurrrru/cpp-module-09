@@ -15,7 +15,7 @@ SRCS = main.cpp \
 OBJS = $(SRCS:.cpp=.o)
 
 # compiler
-CXX = c++
+CXX = clang++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -I.. -O3 # -pedantic ... for int64
 
 # rules

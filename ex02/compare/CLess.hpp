@@ -15,10 +15,10 @@ struct CLess {
     static void reset() {
         _cnt = 0;
     }
-private:
+ private:
     static int _cnt;
 };
 
 template<typename T>
 int CLess<T>::_cnt = 0;
-}
+}  // namespace comparer
