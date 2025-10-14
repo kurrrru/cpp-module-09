@@ -40,7 +40,7 @@ bool isSorted(const std::vector<int> &vec) {
     }
     return true;
 }
-}
+}  // namespace
 
 void benchmark() {
     const std::size_t numTrials = 50;

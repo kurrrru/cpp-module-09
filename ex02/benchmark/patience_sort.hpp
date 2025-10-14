@@ -4,10 +4,9 @@
 #include <limits>
 #include <vector>
 
-namespace {
 template<typename Compare>
-std::vector<int> mergePiles(std::vector<std::vector<int> > piles, std::size_t n,
-    Compare cmp) {
+std::vector<int> mergePiles(std::vector<std::vector<int> > piles,
+        std::size_t n, Compare cmp) {
     std::vector<int> result;
     result.reserve(n);
     while (true) {
@@ -30,7 +29,6 @@ std::vector<int> mergePiles(std::vector<std::vector<int> > piles, std::size_t n,
     }
     return result;
 }
-}  // namespace
 
 template<typename Compare>
 void patienceSort(std::vector<int> &container, Compare cmp) {

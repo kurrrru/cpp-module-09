@@ -4,8 +4,6 @@
 #include <cstddef>
 #include <vector>
 
-namespace {
-
 struct Run {
     std::size_t start;
     std::size_t length;
@@ -23,7 +21,8 @@ std::size_t minRunLength(std::size_t n) {
 }
 
 template<typename Compare>
-std::size_t countRunAndMakeAscending(std::vector<int> &container, std::size_t start, Compare cmp) {
+std::size_t countRunAndMakeAscending(std::vector<int> &container,
+    std::size_t start, Compare cmp) {
     const std::size_t size = container.size();
     if (start >= size - 1) {
         return size - start;
@@ -31,12 +30,14 @@ std::size_t countRunAndMakeAscending(std::vector<int> &container, std::size_t st
 
     std::size_t runEnd = start + 2;
     if (cmp(container[start + 1], container[start])) {
-        while (runEnd < size && cmp(container[runEnd], container[runEnd - 1])) {
+        while (runEnd < size && cmp(container[runEnd],
+            container[runEnd - 1])) {
             ++runEnd;
         }
         std::reverse(container.begin() + start, container.begin() + runEnd);
     } else {
-        while (runEnd < size && !cmp(container[runEnd], container[runEnd - 1])) {
+        while (runEnd < size && !cmp(container[runEnd],
+            container[runEnd - 1])) {
             ++runEnd;
         }
     }
@@ -44,7 +45,8 @@ std::size_t countRunAndMakeAscending(std::vector<int> &container, std::size_t st
 }
 
 template<typename Compare>
-void mergeAt(std::vector<int> &container, std::vector<Run> &runStack, std::size_t idx, Compare cmp) {
+void mergeAt(std::vector<int> &container, std::vector<Run> &runStack,
+    std::size_t idx, Compare cmp) {
     Run &left = runStack[idx];
     Run &right = runStack[idx + 1];
     std::inplace_merge(container.begin() + left.start,
@@ -56,12 +58,14 @@ void mergeAt(std::vector<int> &container, std::vector<Run> &runStack, std::size_
 }
 
 template<typename Compare>
-void mergeCollapse(std::vector<int> &container, std::vector<Run> &runStack, Compare cmp) {
+void mergeCollapse(std::vector<int> &container, std::vector<Run> &runStack,
+    Compare cmp) {
     while (runStack.size() > 1) {
         std::size_t n = runStack.size() - 1;
         std::size_t lenX = runStack[n].length;
         std::size_t lenY = runStack[n - 1].length;
-        std::size_t lenZ = (n >= 2) ? runStack[n - 2].length : static_cast<std::size_t>(-1);
+        std::size_t lenZ = (n >= 2) ? runStack[n - 2].length
+            : static_cast<std::size_t>(-1);
 
         if (n >= 2 && lenZ <= lenY + lenX) {
             if (lenZ < lenX) {
@@ -78,7 +82,8 @@ void mergeCollapse(std::vector<int> &container, std::vector<Run> &runStack, Comp
 }
 
 template<typename Compare>
-void mergeForceCollapse(std::vector<int> &container, std::vector<Run> &runStack, Compare cmp) {
+void mergeForceCollapse(std::vector<int> &container,
+    std::vector<Run> &runStack, Compare cmp) {
     while (runStack.size() > 1) {
         std::size_t n = runStack.size() - 1;
         if (n >= 2 && runStack[n - 2].length < runStack[n].length) {
@@ -88,8 +93,6 @@ void mergeForceCollapse(std::vector<int> &container, std::vector<Run> &runStack,
         }
     }
 }
-
-} // namespace
 
 template<typename Compare>
 void timSort(std::vector<int> &container, Compare cmp) {
@@ -108,8 +111,11 @@ void timSort(std::vector<int> &container, Compare cmp) {
             std::size_t forced = std::min(minRun, container.size() - start);
             for (std::size_t i = start + runLen; i < start + forced; ++i) {
                 int key = container[i];
-                std::vector<int>::iterator pos = std::lower_bound(container.begin() + start, container.begin() + i, key, cmp);
-                std::rotate(pos, container.begin() + i, container.begin() + i + 1);
+                std::vector<int>::iterator pos = std::lower_bound(
+                    container.begin() + start,
+                    container.begin() + i, key, cmp);
+                std::rotate(pos, container.begin() + i,
+                    container.begin() + i + 1);
             }
             runLen = forced;
         }

@@ -17,7 +17,8 @@ std::size_t pow(std::size_t base, std::size_t exp) {
     return result;
 }
 
-void generateGapSequence(std::vector<std::size_t> &gaps, std::size_t max_value) {
+void generateGapSequence(std::vector<std::size_t> &gaps,
+        std::size_t max_value) {
     gaps.clear();
     gaps.push_back(1);
     std::size_t k = 1;

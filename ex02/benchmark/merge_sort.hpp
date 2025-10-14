@@ -15,6 +15,7 @@ void mergeSort(std::vector<int> &container, Compare cmp) {
     std::vector<int> right(container.begin() + mid, container.end());
     mergeSort(left, cmp);
     mergeSort(right, cmp);
-    std::merge(left.begin(), left.end(), right.begin(), right.end(), container.begin(), cmp);
+    std::merge(left.begin(), left.end(), right.begin(), right.end(),
+        container.begin(), cmp);
 }
 

@@ -1,9 +1,8 @@
 #pragma once
 
 #include <algorithm>
+#include <utility>
 #include <vector>
-
-namespace {
 
 template<typename Compare>
 struct IsLessThan {
@@ -15,8 +14,6 @@ struct IsLessThan {
     }
 };
 
-} // namespace
-
 template<typename Iterator, typename Compare>
 void quickSortIt(Iterator begin, Iterator end, Compare cmp) {
     if (std::distance(begin, end) <= 1) {
@@ -25,7 +22,8 @@ void quickSortIt(Iterator begin, Iterator end, Compare cmp) {
     Iterator last = end;
     std::advance(last, -1);
     int pivot = *last;
-    Iterator pivot_pos = std::partition(begin, last, IsLessThan<Compare>(pivot, cmp));
+    Iterator pivot_pos = std::partition(begin, last,
+        IsLessThan<Compare>(pivot, cmp));
     std::swap(*pivot_pos, *last);
     quickSortIt(begin, pivot_pos, cmp);
     std::advance(pivot_pos, 1);

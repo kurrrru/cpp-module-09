@@ -1,10 +1,12 @@
 #pragma once
 
 #include <algorithm>
+#include <utility>
 #include <vector>
 
 template<typename Compare>
-void ternarySplitQuickSortIndex(std::vector<int> &container, int left, int right, Compare cmp) {
+void ternarySplitQuickSortIndex(std::vector<int> &container,
+    int left, int right, Compare cmp) {
     if (left >= right) {
         return;
     }

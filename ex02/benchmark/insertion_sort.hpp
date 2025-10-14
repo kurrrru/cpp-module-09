@@ -12,7 +12,8 @@ void insertionSort(std::vector<int> &container, Compare cmp) {
         while (j > 0 && cmp(key, container[j - 1])) {
             --j;
         }
-        std::rotate(container.begin() + j, container.begin() + i, container.begin() + i + 1);
+        std::rotate(container.begin() + j, container.begin() + i,
+            container.begin() + i + 1);
     }
 }
 
