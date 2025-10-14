@@ -18,25 +18,26 @@
 #include <toolbox/string.hpp>
 
 namespace {
-    void printResult(const std::string &sortName, std::size_t size, std::size_t maxCntCmp, double avgCntCmp, double maxTime, double avgTime) {
-        std::cout << std::left << std::setw(24) << sortName
-            << std::right << std::fixed << std::setprecision(2)
-            << " | Size: " << std::setw(8) << size
-            << " | Max Cmp: " << std::setw(12) << maxCntCmp
-            << " | Avg Cmp: " << std::setw(12) << avgCntCmp
-            << " | Max Time: " << std::setw(12) << maxTime << " us"
-            << " | Avg Time: " << std::setw(12) << avgTime << " us"
-            << std::endl;
-    }
+void printResult(const std::string &sortName, std::size_t size,
+    std::size_t maxCntCmp, double avgCntCmp, double maxTime, double avgTime) {
+    std::cout << std::left << std::setw(24) << sortName
+        << std::right << std::fixed << std::setprecision(2)
+        << " | Size: " << std::setw(6) << size
+        << " | Max Cmp: " << std::setw(12) << maxCntCmp
+        << " | Avg Cmp: " << std::setw(12) << avgCntCmp
+        << " | Max Time: " << std::setw(12) << maxTime << " us"
+        << " | Avg Time: " << std::setw(12) << avgTime << " us"
+        << std::endl;
+}
 
-    bool isSorted(const std::vector<int> &vec) {
-        for (std::size_t i = 1; i < vec.size(); ++i) {
-            if (vec[i] < vec[i - 1]) {
-                return false;
-            }
+bool isSorted(const std::vector<int> &vec) {
+    for (std::size_t i = 1; i < vec.size(); ++i) {
+        if (vec[i] < vec[i - 1]) {
+            return false;
         }
-        return true;
     }
+    return true;
+}
 }
 
 void benchmark() {
@@ -44,30 +45,51 @@ void benchmark() {
     const std::size_t testSize = 3000;
     std::vector<std::vector<int> > testVectors(numTrials);
     for (std::size_t i = 0; i < numTrials; ++i) {
-        testVectors[i] = generateRandomSequence<int, std::vector>(testSize, 1, 10000000);
+        testVectors[i] = generateRandomSequence<int,
+            std::vector>(testSize, 1, 10000000);
     }
 
-    std::vector<std::pair<void (*)(std::vector<int> &, comparer::CLess<int>), std::string> > sortFunctions;
-    sortFunctions.push_back(std::make_pair(quickSort<comparer::CLess<int> >, "Quick Sort"));
-    sortFunctions.push_back(std::make_pair(mergeSort<comparer::CLess<int> >, "Merge Sort"));
-    sortFunctions.push_back(std::make_pair(heapSort<comparer::CLess<int> >, "Heap Sort"));
-    sortFunctions.push_back(std::make_pair(insertionSort<comparer::CLess<int> >, "Insertion Sort"));
-    sortFunctions.push_back(std::make_pair(bubbleSort<comparer::CLess<int> >, "Bubble Sort"));
-    sortFunctions.push_back(std::make_pair(selectionSort<comparer::CLess<int> >, "Selection Sort"));
-    sortFunctions.push_back(std::make_pair(binaryInsertionSort<comparer::CLess<int> >, "Binary Insertion Sort"));
-    sortFunctions.push_back(std::make_pair(introSort<comparer::CLess<int> >, "Intro Sort"));
-    sortFunctions.push_back(std::make_pair(timSort<comparer::CLess<int> >, "Tim Sort"));
-    sortFunctions.push_back(std::make_pair(shellSort<comparer::CLess<int> >, "Shell Sort"));
-    sortFunctions.push_back(std::make_pair(oddEvenSort<comparer::CLess<int> >, "Odd-Even Sort"));
-    sortFunctions.push_back(std::make_pair(combSort<comparer::CLess<int> >, "Comb Sort"));
-    sortFunctions.push_back(std::make_pair(cycleSort<comparer::CLess<int> >, "Cycle Sort"));
-    sortFunctions.push_back(std::make_pair(gnomeSort<comparer::CLess<int> >, "Gnome Sort"));
-    sortFunctions.push_back(std::make_pair(shakerSort<comparer::CLess<int> >, "Shaker Sort"));
-    // sortFunctions.push_back(std::make_pair(patienceSort<comparer::CLess<int> >, "Patience Sort"));
-    // sortFunctions.push_back(std::make_pair(smoothSort<comparer::CLess<int> >, "Smooth Sort"));
-    sortFunctions.push_back(std::make_pair(tournamentSort<comparer::CLess<int> >, "Tournament Sort"));
-    sortFunctions.push_back(std::make_pair(ternarySplitQuickSort<comparer::CLess<int> >, "Ternary Split Quick Sort"));
-    sortFunctions.push_back(std::make_pair(cartesianTreeSort<comparer::CLess<int> >, "Cartesian Tree Sort"));
+    std::vector<std::pair<void (*)(std::vector<int> &,
+        comparer::CLess<int>), std::string> > sortFunctions;
+    sortFunctions.push_back(std::make_pair(
+        quickSort<comparer::CLess<int> >, "Quick Sort"));
+    sortFunctions.push_back(std::make_pair(
+        mergeSort<comparer::CLess<int> >, "Merge Sort"));
+    sortFunctions.push_back(std::make_pair(
+        heapSort<comparer::CLess<int> >, "Heap Sort"));
+    sortFunctions.push_back(std::make_pair(
+        insertionSort<comparer::CLess<int> >, "Insertion Sort"));
+    sortFunctions.push_back(std::make_pair(
+        bubbleSort<comparer::CLess<int> >, "Bubble Sort"));
+    sortFunctions.push_back(std::make_pair(
+        selectionSort<comparer::CLess<int> >, "Selection Sort"));
+    sortFunctions.push_back(std::make_pair(
+        binaryInsertionSort<comparer::CLess<int> >, "Binary Insertion Sort"));
+    sortFunctions.push_back(std::make_pair(
+        introSort<comparer::CLess<int> >, "Intro Sort"));
+    sortFunctions.push_back(std::make_pair(
+        timSort<comparer::CLess<int> >, "Tim Sort"));
+    sortFunctions.push_back(std::make_pair(
+        shellSort<comparer::CLess<int> >, "Shell Sort"));
+    sortFunctions.push_back(std::make_pair(
+        oddEvenSort<comparer::CLess<int> >, "Odd-Even Sort"));
+    sortFunctions.push_back(std::make_pair(
+        combSort<comparer::CLess<int> >, "Comb Sort"));
+    sortFunctions.push_back(std::make_pair(
+        cycleSort<comparer::CLess<int> >, "Cycle Sort"));
+    sortFunctions.push_back(std::make_pair(
+        gnomeSort<comparer::CLess<int> >, "Gnome Sort"));
+    sortFunctions.push_back(std::make_pair(
+        shakerSort<comparer::CLess<int> >, "Shaker Sort"));
+    sortFunctions.push_back(std::make_pair(
+        patienceSort<comparer::CLess<int> >, "Patience Sort"));
+    sortFunctions.push_back(std::make_pair(
+        tournamentSort<comparer::CLess<int> >, "Tournament Sort"));
+    sortFunctions.push_back(std::make_pair(
+        ternarySplitQuickSort<comparer::CLess<int> >,
+        "Ternary Split Quick Sort"));
+    sortFunctions.push_back(std::make_pair(
+        cartesianTreeSort<comparer::CLess<int> >, "Cartesian Tree Sort"));
 
     // \lceil log_2 n! \rceil
     double theoreticalLowerBound = 0;

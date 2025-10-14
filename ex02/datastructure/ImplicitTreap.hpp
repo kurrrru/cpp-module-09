@@ -1,7 +1,3 @@
-// - operator[]
-// - iterator
-// - i番目のbiggerを取得 // RSQ? accの上で二分探索
-
 #pragma once
 #include <algorithm>
 #include <cassert>
@@ -11,6 +7,9 @@
 #include <utility>
 #include <vector>
 
+/**
+ * @brief Monoid modeling range addition queries with lazy propagation support.
+ */
 struct monoid_range_add_range_sum {
     /**
      * @brief Combine two query results using addition.
@@ -22,8 +21,8 @@ struct monoid_range_add_range_sum {
         return (a + b);
     }
     /**
-     * @brief Identity element for range sum queries.
-     * @return Zero, representing an empty range.
+     * @brief Identity element of the range-sum monoid used for queries.
+     * @return Additive identity (0), which leaves any prefix sum unchanged.
      */
     static int query_id() {
         return (0);
@@ -38,8 +37,8 @@ struct monoid_range_add_range_sum {
         return (a + b);
     }
     /**
-     * @brief Identity element for range updates.
-     * @return Zero, representing no pending update.
+     * @brief Identity element of the range-update monoid.
+     * @return Additive identity (0), meaning no increment is pending.
      */
     static int update_id() {
         return (0);
@@ -56,18 +55,44 @@ struct monoid_range_add_range_sum {
     }
 };
 
+/**
+ * @brief Monoid representing point assignment semantics for pairs and custom values.
+ *
+ * This monoid overwrites values during queries and updates, mirroring direct assignment
+ * operations that discard the prior state.
+ */
 template<typename Value>
 struct monoid_point_assign {
     typedef Value value_type;
+    /**
+     * @brief Combine two query results by returning the most recent assignment.
+     * @param a Ignored previous value.
+     * @param b New value to propagate forward.
+     * @return The newly assigned value @p b.
+     */
     static value_type query_op(const value_type &, const value_type &b) {
         return b;
     }
+    /**
+     * @brief Identity element of the point-assign query monoid.
+     * @return Default-constructed value acting as the neutral element.
+     */
     static value_type query_id() {
         return value_type();
     }
+    /**
+     * @brief Compose two updates, keeping the last assignment.
+     * @param a Ignored existing pending assignment.
+     * @param b Replacement value that overrides previous updates.
+     * @return The overriding assignment @p b.
+     */
     static value_type update_op(const value_type &, const value_type &b) {
         return b;
     }
+    /**
+     * @brief Identity element of the point-assign update monoid.
+     * @return Default-constructed value signifying no pending overwrite.
+     */
     static value_type update_id() {
         return value_type();
     }
@@ -76,11 +101,19 @@ struct monoid_point_assign {
     }
 };
 
+/**
+ * @brief Primary traits mapping values to their default monoid implementations.
+ *
+ * For scalar values the range-add & range-sum monoid is used by default.
+ */
 template<typename T>
 struct monoid_traits {
     typedef monoid_range_add_range_sum type;
 };
 
+/**
+ * @brief Traits specialization selecting point-assign semantics for pair values.
+ */
 template<typename First, typename Second>
 struct monoid_traits<std::pair<First, Second> > {
     typedef monoid_point_assign<std::pair<First, Second> > type;
@@ -360,7 +393,7 @@ class ImplicitTreap {
     }
 
     iterator insert(iterator position, const value_type &val) {
-        size_type index = node_index(position._node);
+    size_type index = node_index(position.base_node());
         insert(index, val);
         node *inserted = find_node_by_index(index);
         return iterator(this, inserted);
@@ -747,7 +780,6 @@ class ImplicitTreap {
         typedef typename ImplicitTreap::difference_type difference_type;
         typedef value_proxy reference;
         typedef value_type* pointer;
-        friend class ImplicitTreap;
 
         /**
          * @brief Construct an end iterator.
@@ -987,6 +1019,15 @@ class ImplicitTreap {
          */
         bool operator>=(const iterator &other) const {
             return !(*this < other);
+        }
+
+
+        /**
+         * @brief Expose the underlying node pointer for container internals.
+         * @return Pointer to the node referenced by the iterator.
+         */
+        node *base_node() const {
+            return _node;
         }
 
 

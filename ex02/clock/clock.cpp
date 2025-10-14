@@ -1,5 +1,3 @@
-#pragma once
-
 #include <ex02/clock/clock.hpp>
 
 #ifdef _WIN32
