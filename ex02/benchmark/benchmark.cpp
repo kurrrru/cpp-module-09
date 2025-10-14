@@ -23,10 +23,12 @@ void printResult(const std::string &sortName, std::size_t size,
     std::cout << std::left << std::setw(24) << sortName
         << std::right << std::fixed << std::setprecision(2)
         << " | Size: " << std::setw(6) << size
-        << " | Max Cmp: " << std::setw(12) << maxCntCmp
-        << " | Avg Cmp: " << std::setw(12) << avgCntCmp
-        << " | Max Time: " << std::setw(12) << maxTime << " us"
-        << " | Avg Time: " << std::setw(12) << avgTime << " us"
+        << " | Max Cmp: " << std::setw(8) << maxCntCmp
+        << " | Avg Cmp: " << std::setw(11) << avgCntCmp
+        << " | Max Time: " << std::setw(6) << std::setprecision(0) << maxTime
+        << " us"
+        << " | Avg Time: " << std::setw(9) << std::setprecision(2) << avgTime
+        << " us"
         << std::endl;
 }
 
@@ -84,6 +86,8 @@ void benchmark() {
     sortFunctions.push_back(std::make_pair(
         patienceSort<comparer::CLess<int> >, "Patience Sort"));
     sortFunctions.push_back(std::make_pair(
+        treeSort<comparer::CLess<int> >, "Tree Sort"));
+    sortFunctions.push_back(std::make_pair(
         tournamentSort<comparer::CLess<int> >, "Tournament Sort"));
     sortFunctions.push_back(std::make_pair(
         ternarySplitQuickSort<comparer::CLess<int> >,
@@ -94,17 +98,21 @@ void benchmark() {
     // \lceil log_2 n! \rceil
     double theoreticalLowerBound = 0;
     for (std::size_t i = 2; i <= testSize; ++i) {
-        theoreticalLowerBound += std::log(static_cast<double>(i)) / std::log(2.0);
+        theoreticalLowerBound
+            += std::log(static_cast<double>(i)) / std::log(2.0);
     }
-    std::size_t theoreticalMinCmp = static_cast<std::size_t>(std::ceil(theoreticalLowerBound));
-    printResult("ceil(log2(n!))", testSize, theoreticalMinCmp, theoreticalMinCmp, 0, 0);
+    std::size_t theoreticalMinCmp
+        = static_cast<std::size_t>(std::ceil(theoreticalLowerBound));
+    printResult("ceil(log2(n!))", testSize,
+        theoreticalMinCmp, theoreticalMinCmp, 0, 0);
 
     // Ford-Johnson algorithm F(n) = \sum_{i=1}^{n} \lceil log_2 (3i/4) \rceil
     double F = 0;
     for (std::size_t i = 1; i <= testSize; ++i) {
         F += std::ceil(std::log(3.0 * i / 4.0) / std::log(2.0));
     }
-    printResult("Ford-Johnson F(n)", testSize, static_cast<std::size_t>(F), static_cast<double>(F), 0, 0);
+    printResult("Ford-Johnson F(n)", testSize,
+        static_cast<std::size_t>(F), static_cast<double>(F), 0, 0);
 
     // PmergeMe sort function
     std::vector<std::vector<int> > pmergeMeTestVectors = testVectors;
@@ -144,7 +152,8 @@ void benchmark() {
     for (std::size_t i = 0; i < numTrials; ++i) {
         comparer::CLess<int>::reset();
         int64 start = get_microseconds();
-        std::sort(stdSortTestVectors[i].begin(), stdSortTestVectors[i].end(), comparer::CLess<int>());
+        std::sort(stdSortTestVectors[i].begin(),
+            stdSortTestVectors[i].end(), comparer::CLess<int>());
         int64 end = get_microseconds();
         int64 elapsed = end - start;
         std::size_t cntCmp = comparer::CLess<int>::getcnt();
@@ -175,7 +184,8 @@ void benchmark() {
     for (std::size_t i = 0; i < numTrials; ++i) {
         comparer::CLess<int>::reset();
         int64 start = get_microseconds();
-        std::stable_sort(stdStableSortTestVectors[i].begin(), stdStableSortTestVectors[i].end(), comparer::CLess<int>());
+        std::stable_sort(stdStableSortTestVectors[i].begin(),
+            stdStableSortTestVectors[i].end(), comparer::CLess<int>());
         int64 end = get_microseconds();
         int64 elapsed = end - start;
         std::size_t cntCmp = comparer::CLess<int>::getcnt();
@@ -188,7 +198,8 @@ void benchmark() {
         }
         totalCntCmp += cntCmp;
         if (!isSorted(stdStableSortTestVectors[i])) {
-            std::cerr << "std::stable_sort failed to sort the array." << std::endl;
+            std::cerr << "std::stable_sort failed to sort the array."
+                << std::endl;
             std::cout << "Original: ";
             for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
                 std::cout << testVectors[i][j] << " ";
@@ -198,7 +209,8 @@ void benchmark() {
     }
     avgCntCmp = static_cast<double>(totalCntCmp) / numTrials;
     avgTime = static_cast<double>(totalTime) / numTrials;
-    printResult("std::stable_sort", testSize, maxCntCmp, avgCntCmp, maxTime, avgTime);
+    printResult("std::stable_sort", testSize, maxCntCmp,
+        avgCntCmp, maxTime, avgTime);
 
     // std::partial_sort
     std::vector<std::vector<int> > stdPartialSortTestVectors = testVectors;
@@ -206,7 +218,9 @@ void benchmark() {
     for (std::size_t i = 0; i < numTrials; ++i) {
         comparer::CLess<int>::reset();
         int64 start = get_microseconds();
-        std::partial_sort(stdPartialSortTestVectors[i].begin(), stdPartialSortTestVectors[i].end(), stdPartialSortTestVectors[i].end(), comparer::CLess<int>());
+        std::partial_sort(stdPartialSortTestVectors[i].begin(),
+            stdPartialSortTestVectors[i].end(),
+            stdPartialSortTestVectors[i].end(), comparer::CLess<int>());
         int64 end = get_microseconds();
         int64 elapsed = end - start;
         std::size_t cntCmp = comparer::CLess<int>::getcnt();
@@ -219,7 +233,8 @@ void benchmark() {
         }
         totalCntCmp += cntCmp;
         if (!isSorted(stdPartialSortTestVectors[i])) {
-            std::cerr << "std::partial_sort failed to sort the array." << std::endl;
+            std::cerr << "std::partial_sort failed to sort the array."
+                << std::endl;
             std::cout << "Original: ";
             for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
                 std::cout << testVectors[i][j] << " ";
@@ -229,7 +244,8 @@ void benchmark() {
     }
     avgCntCmp = static_cast<double>(totalCntCmp) / numTrials;
     avgTime = static_cast<double>(totalTime) / numTrials;
-    printResult("std::partial_sort", testSize, maxCntCmp, avgCntCmp, maxTime, avgTime);
+    printResult("std::partial_sort", testSize, maxCntCmp,
+        avgCntCmp, maxTime, avgTime);
 
     // Other sorting algorithms
     for (std::size_t funcIdx = 0; funcIdx < sortFunctions.size(); ++funcIdx) {
@@ -251,7 +267,8 @@ void benchmark() {
             }
             totalCntCmp += cntCmp;
             if (!isSorted(vec)) {
-                std::cerr << sortFunctions[funcIdx].second << " failed to sort the array." << std::endl;
+                std::cerr << sortFunctions[funcIdx].second
+                    << " failed to sort the array." << std::endl;
                 std::cout << "Original: ";
                 for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
                     std::cout << testVectors[i][j] << " ";
@@ -262,6 +279,7 @@ void benchmark() {
         std::string sortName = sortFunctions[funcIdx].second;
         avgCntCmp = static_cast<double>(totalCntCmp) / numTrials;
         avgTime = static_cast<double>(totalTime) / numTrials;
-        printResult(sortName, testSize, maxCntCmp, avgCntCmp, maxTime, avgTime);
+        printResult(sortName, testSize, maxCntCmp,
+            avgCntCmp, maxTime, avgTime);
     }
 }
