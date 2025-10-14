@@ -498,31 +498,36 @@ class ImplicitTreap {
     /**
      * @brief Immutable bidirectional iterator over the treap.
      */
-    class const_iterator: public std::iterator<std::bidirectional_iterator_tag,
-        value_type> {
+    class const_iterator {
+     public:
+        typedef std::bidirectional_iterator_tag iterator_category;
+        typedef T value_type;
+        typedef typename ImplicitTreap::difference_type difference_type;
+        typedef const value_type &reference;
+        typedef const value_type *pointer;
+
+     private:
         const ImplicitTreap *_treap;
         size_type _index;
-        mutable value_type _cache;
 
      public:
         /**
          * @brief Construct an end iterator.
          */
-        const_iterator(): _treap(NULL), _index(0), _cache() {}
+        const_iterator(): _treap(NULL), _index(0) {}
         /**
          * @brief Construct an iterator positioned at an index.
          * @param treap Container being traversed.
          * @param index Zero-based position within the treap.
          */
         const_iterator(const ImplicitTreap *treap, size_type index)
-            : _treap(treap), _index(index), _cache() {}
+            : _treap(treap), _index(index) {}
         /**
          * @brief Copy-construct the iterator.
          * @param other Iterator to copy state from.
          */
         const_iterator(const const_iterator &other)
-            : _treap(other._treap), _index(other._index),
-            _cache(other._cache) {}
+            : _treap(other._treap), _index(other._index) {}
         /**
          * @brief Copy-assign from another iterator.
          * @param other Iterator to copy state from.
@@ -532,7 +537,6 @@ class ImplicitTreap {
             if (this != &other) {
                 _treap = other._treap;
                 _index = other._index;
-                _cache = other._cache;
             }
             return *this;
         }
@@ -547,28 +551,29 @@ class ImplicitTreap {
          */
         const_iterator(const iterator &other)
             : _treap(other._treap), _index(other._treap ?
-            other._treap->node_index(other.base_node()) : 0),
-            _cache() {
+            other._treap->node_index(other.base_node()) : 0) {
         }
-        /**
-         * @brief Dereference to obtain the value at the current position.
-         * @return Value stored at the iterator's position.
-         */
+    /**
+     * @brief Dereference to obtain the value at the current position.
+     * @return Value stored at the iterator's position.
+     */
         value_type operator*() const {
             assert(_treap);
             assert(_index < _treap->size());
-            _cache = (*_treap)[_index];
-            return _cache;
+            const node *target = _treap->find_node_by_index(_index);
+            assert(target);
+            return _treap->node_value_ref(target);
         }
-        /**
-         * @brief Arrow operator returning a pointer to the cached value.
-         * @return Pointer to the cached value.
-         */
+    /**
+     * @brief Arrow operator returning a pointer to the materialized value.
+     * @return Pointer to the value stored in the treap at the iterator's position.
+     */
         const value_type *operator->() const {
             assert(_treap);
             assert(_index < _treap->size());
-            _cache = (*_treap)[_index];
-            return &_cache;
+            const node *target = _treap->find_node_by_index(_index);
+            assert(target);
+            return _treap->node_value_ptr(target);
         }
 
         /**
@@ -1442,6 +1447,18 @@ class ImplicitTreap {
         }
         const node* right = next_rev ? t->_child[0] : t->_child[1];
         return value_at_const(right, pos - left_cnt - 1, next_lazy, next_rev);
+    }
+
+    const value_type &node_value_ref(const node *t) const {
+        assert(t);
+        ImplicitTreap *self = const_cast<ImplicitTreap *>(this);
+        node *mutable_node = const_cast<node *>(t);
+        self->materialize_node(mutable_node);
+        return mutable_node->_value;
+    }
+
+    const value_type *node_value_ptr(const node *t) const {
+        return &node_value_ref(t);
     }
 
     /**
