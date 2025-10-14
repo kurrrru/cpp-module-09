@@ -18,14 +18,14 @@ struct monoid_range_add_range_sum {
      * @return The aggregated range sum.
      */
     static int query_op(int a, int b) {
-        return (a + b);
+        return a + b;
     }
     /**
      * @brief Identity element of the range-sum monoid used for queries.
      * @return Additive identity (0), which leaves any prefix sum unchanged.
      */
     static int query_id() {
-        return (0);
+        return 0;
     }
     /**
      * @brief Combine two lazy update values.
@@ -34,14 +34,14 @@ struct monoid_range_add_range_sum {
      * @return Accumulated lazy value after composition.
      */
     static int update_op(int a, int b) {
-        return (a + b);
+        return a + b;
     }
     /**
      * @brief Identity element of the range-update monoid.
      * @return Additive identity (0), meaning no increment is pending.
      */
     static int update_id() {
-        return (0);
+        return 0;
     }
     /**
      * @brief Apply a lazy update to an aggregated value.
@@ -51,7 +51,7 @@ struct monoid_range_add_range_sum {
      * @return Updated aggregate after applying the lazy increment.
      */
     static int apply(int a, int b, int len) {
-        return (b == update_id() ? a : a + b * len);
+        return b == update_id() ? a : a + b * len;
     }
 };
 
@@ -99,7 +99,7 @@ struct monoid_point_assign {
         return value_type();
     }
     static value_type apply(const value_type &a, const value_type &b, int) {
-        return (b == update_id() ? a : b);
+        return b == update_id() ? a : b;
     }
 };
 
@@ -172,7 +172,7 @@ class ImplicitTreap {
      * @param vec Source vector whose values are inserted in order.
      * @param alloc Allocator instance copied for node management.
      */
-    ImplicitTreap(std::vector<value_type> &vec,
+    ImplicitTreap(const std::vector<value_type> &vec,
         const Allocator &alloc = Allocator())
         : _root(NULL), _node_alloc(alloc), _rnd(seed) {
         for (size_type i = 0; i < vec.size(); i++) {
@@ -212,7 +212,7 @@ class ImplicitTreap {
             ImplicitTreap tmp(other);
             swap(tmp);
         }
-        return (*this);
+        return *this;
     }
 
     /**
@@ -234,7 +234,7 @@ class ImplicitTreap {
     value_type query(size_type l, size_type r) {
         size_type current_size = size();
         assert(l <= r && r <= current_size);
-        return (query(_root, l, r));
+        return query(_root, l, r);
     }
 
     /**
@@ -249,27 +249,27 @@ class ImplicitTreap {
         size_type current_size = size();
         assert(l <= r && r <= current_size);
         if (l >= r) {
-            return (r);
+            return r;
         }
         if (val <= operations::query_id()) {
-            return (l);
+            return l;
         }
         value_type prefix_l = prefix_sum(_root, l);
         value_type prefix_r = prefix_sum(_root, r);
         value_type target = operations::query_op(prefix_l, val);
         if (target > prefix_r) {
-            return (r);
+            return r;
         }
         size_type idx = prefix_bound(_root, target, false);
         size_type limit = r;
         size_type total = cnt(_root);
         if (idx > limit || idx > total) {
-            return (r);
+            return r;
         }
         if (idx < l) {
-            return (l);
+            return l;
         }
-        return (idx);
+        return idx;
     }
 
     /**
@@ -285,26 +285,26 @@ class ImplicitTreap {
         size_type current_size = size();
         assert(l <= r && r <= current_size);
         if (l >= r) {
-            return (r);
+            return r;
         }
         if (val < operations::query_id()) {
-            return (l);
+            return l;
         }
         value_type prefix_l = prefix_sum(_root, l);
         value_type prefix_r = prefix_sum(_root, r);
         value_type target = operations::query_op(prefix_l, val);
         if (prefix_r <= target) {
-            return (r);
+            return r;
         }
         size_type idx = prefix_bound(_root, target, true);
         size_type total = cnt(_root);
         if (idx > r || idx > total) {
-            return (r);
+            return r;
         }
         if (idx < l) {
-            return (l);
+            return l;
         }
-        return (idx);
+        return idx;
     }
 
     /**
@@ -444,7 +444,7 @@ class ImplicitTreap {
         int result = lower_bound(mid, val);
         merge(right, mid, right);
         merge(_root, left, right);
-        return (l + result);
+        return l + result;
     }
 
     /**
@@ -461,7 +461,7 @@ class ImplicitTreap {
         int result = upper_bound(mid, val);
         merge(right, mid, right);
         merge(_root, left, right);
-        return (l + result);
+        return l + result;
     }
 
     /**
@@ -534,7 +534,7 @@ class ImplicitTreap {
                 _index = other._index;
                 _cache = other._cache;
             }
-            return (*this);
+            return *this;
         }
         /**
          * @brief Destroy the iterator.
@@ -579,7 +579,7 @@ class ImplicitTreap {
             assert(_treap);
             assert(_index < _treap->size());
             ++_index;
-            return (*this);
+            return *this;
         }
         /**
          * @brief Advance to the next position, returning the previous state.
@@ -588,7 +588,7 @@ class ImplicitTreap {
         const_iterator operator++(int) {
             const_iterator tmp(*this);
             ++(*this);
-            return (tmp);
+            return tmp;
         }
         /**
          * @brief Move to the previous position.
@@ -598,7 +598,7 @@ class ImplicitTreap {
             assert(_treap);
             assert(_index > 0);
             --_index;
-            return (*this);
+            return *this;
         }
         /**
          * @brief Move to the previous position, returning the prior state.
@@ -607,7 +607,7 @@ class ImplicitTreap {
         const_iterator operator--(int) {
             const_iterator tmp(*this);
             --(*this);
-            return (tmp);
+            return tmp;
         }
         /**
          * @brief Compare iterators for equality.
@@ -616,7 +616,7 @@ class ImplicitTreap {
          * index.
          */
         bool operator==(const const_iterator &other) const {
-            return (_treap == other._treap && _index == other._index);
+            return _treap == other._treap && _index == other._index;
         }
         /**
          * @brief Compare iterators for inequality.
@@ -624,7 +624,7 @@ class ImplicitTreap {
          * @return True if either container or index differs.
          */
         bool operator!=(const const_iterator &other) const {
-            return (!(*this == other));
+            return !(*this == other);
         }
 
         /**
@@ -638,7 +638,7 @@ class ImplicitTreap {
             assert(target >= 0
                 && target <= static_cast<difference_type>(_treap->size()));
             _index = static_cast<size_type>(target);
-            return (*this);
+            return *this;
         }
 
         /**
@@ -647,7 +647,8 @@ class ImplicitTreap {
          * @return Reference to this iterator.
          */
         const_iterator &operator-=(difference_type n) {
-            return (*this += -n);
+            *this += -n;
+            return *this;
         }
 
         /**
@@ -699,7 +700,7 @@ class ImplicitTreap {
          * @return True if this iterator follows @p other.
          */
         bool operator>(const const_iterator &other) const {
-            return (other < *this);
+            return other < *this;
         }
 
         /**
@@ -753,7 +754,7 @@ class ImplicitTreap {
             assert(_treap);
             assert(_node);
             _treap->assign_node_value(_node, val);
-            return (*this);
+            return *this;
         }
         /**
          * @brief Assign from another proxy.
@@ -761,7 +762,8 @@ class ImplicitTreap {
          * @return Reference to this proxy.
          */
         ValueProxy &operator=(const ValueProxy &other) {
-            return (*this = static_cast<value_type>(other));
+            *this = static_cast<value_type>(other);
+            return *this;
         }
         /**
          * @brief Destroy the proxy without taking ownership actions.
@@ -774,7 +776,7 @@ class ImplicitTreap {
         operator value_type() const {
             assert(_treap);
             assert(_node);
-            return (_treap->node_value(_node));
+            return _treap->node_value(_node);
         }
         /**
          * @brief Arrow operator exposing a mutable pointer.
@@ -784,7 +786,7 @@ class ImplicitTreap {
             assert(_treap);
             assert(_node);
             _treap->materialize_node(_node);
-            return (&_node->_value);
+            return &_node->_value;
         }
         /**
          * @brief Arrow operator exposing a const pointer.
@@ -794,7 +796,7 @@ class ImplicitTreap {
             assert(_treap);
             assert(_node);
             _treap->materialize_node(_node);
-            return (&_node->_value);
+            return &_node->_value;
         }
 
      private:
@@ -839,7 +841,7 @@ class ImplicitTreap {
                 _treap = other._treap;
                 _node = other._node;
             }
-            return (*this);
+            return *this;
         }
         /**
          * @brief Destroy the iterator.
@@ -863,7 +865,7 @@ class ImplicitTreap {
             assert(_treap);
             assert(_node);
             _treap->materialize_node(_node);
-            return (&_node->_value);
+            return &_node->_value;
         }
 
         /**
@@ -886,7 +888,7 @@ class ImplicitTreap {
                 }
                 _node = cur->_parent;
             }
-            return (*this);
+            return *this;
         }
         /**
          * @brief Advance to the next node, returning prior state.
@@ -895,7 +897,7 @@ class ImplicitTreap {
         iterator operator++(int) {
             iterator tmp(*this);
             ++(*this);
-            return (tmp);
+            return tmp;
         }
         /**
          * @brief Move to the previous in-order node.
@@ -906,13 +908,13 @@ class ImplicitTreap {
             if (!_node) {
                 _node = _treap->_root;
                 if (!_node) {
-                    return (*this);
+                    return *this;
                 }
                 while (_node->_child[1]) {
                     _treap->pushdown(_node);
                     _node = _node->_child[1];
                 }
-                return (*this);
+                return *this;
             }
             if (_node->_child[0]) {
                 _node = _node->_child[0];
@@ -927,7 +929,7 @@ class ImplicitTreap {
                 }
                 _node = cur->_parent;
             }
-            return (*this);
+            return *this;
         }
         /**
          * @brief Move to the previous node, returning prior state.
@@ -936,7 +938,7 @@ class ImplicitTreap {
         iterator operator--(int) {
             iterator tmp(*this);
             --(*this);
-            return (tmp);
+            return tmp;
         }
         /**
          * @brief Check iterator equality.
@@ -944,7 +946,7 @@ class ImplicitTreap {
          * @return True if both reference the same node in the same container.
          */
         bool operator==(const iterator &other) const {
-            return (_treap == other._treap && _node == other._node);
+            return _treap == other._treap && _node == other._node;
         }
         /**
          * @brief Check iterator inequality.
@@ -952,7 +954,7 @@ class ImplicitTreap {
          * @return True if they differ in container or node.
          */
         bool operator!=(const iterator &other) const {
-            return (!(*this == other));
+            return !(*this == other);
         }
 
         /**
@@ -974,7 +976,7 @@ class ImplicitTreap {
                 _node = _treap->find_node_by_index(static_cast<size_type>(
                     target));
             }
-            return (*this);
+            return *this;
         }
 
         /**
@@ -983,7 +985,8 @@ class ImplicitTreap {
          * @return Reference to this iterator.
          */
         iterator &operator-=(difference_type n) {
-            return (*this += -n);
+            *this += -n;
+            return *this;
         }
 
         /**
@@ -1019,7 +1022,7 @@ class ImplicitTreap {
                 _treap->node_index(_node));
             difference_type rhs = static_cast<difference_type>(
                 _treap->node_index(other._node));
-            return (lhs - rhs);
+            return lhs - rhs;
         }
 
         /**
@@ -1029,8 +1032,7 @@ class ImplicitTreap {
          */
         bool operator<(const iterator &other) const {
             assert(_treap == other._treap);
-            return (_treap->node_index(_node)
-                < _treap->node_index(other._node));
+            return _treap->node_index(_node) < _treap->node_index(other._node);
         }
 
         /**
@@ -1039,7 +1041,7 @@ class ImplicitTreap {
          * @return True if this iterator follows @p other.
          */
         bool operator>(const iterator &other) const {
-            return (other < *this);
+            return other < *this;
         }
 
         /**
@@ -1150,7 +1152,7 @@ class ImplicitTreap {
             _state ^= _state << 13;
             _state ^= _state >> 17;
             _state ^= _state << 5;
-            return (_state);
+            return _state;
         }
     };
 
@@ -1201,7 +1203,7 @@ class ImplicitTreap {
         if (!t) {
             return 0;
         }
-        return (t->_cnt);
+        return t->_cnt;
     }
 
     /**
@@ -1211,9 +1213,9 @@ class ImplicitTreap {
      */
     value_type acc(const node *t) const {
         if (!t) {
-            return (operations::query_id());
+            return operations::query_id();
         }
-        return (t->_acc);
+        return t->_acc;
     }
 
     /**
@@ -1546,7 +1548,7 @@ class ImplicitTreap {
         }
         merge(right, mid, right);
         merge(t, left, right);
-        return (res);
+        return res;
     }
 
     /**
@@ -1557,7 +1559,7 @@ class ImplicitTreap {
      */
     value_type prefix_sum(node *t, size_type pos) {
         if (!t || pos == 0) {
-            return (operations::query_id());
+            return operations::query_id();
         }
         pushdown(t);
         size_type left_cnt = cnt(t->_child[0]);
@@ -1621,7 +1623,7 @@ class ImplicitTreap {
             sum = with_current;
             cur = cur->_child[1];
         }
-        return (result);
+        return result;
     }
 
     /**
@@ -1738,10 +1740,10 @@ class ImplicitTreap {
      */
     value_type node_value(node *t) {
         if (!t) {
-            return (operations::query_id());
+            return operations::query_id();
         }
         materialize_node(t);
-        return (t->_value);
+        return t->_value;
     }
 
     /**
@@ -1779,13 +1781,13 @@ class ImplicitTreap {
      */
     int lower_bound(node *t, value_type val) {
         if (!t) {
-            return (0);
+            return 0;
         }
         pushdown(t);
         if (t->_value >= val) {
-            return (lower_bound(t->_child[0], val));
+            return lower_bound(t->_child[0], val);
         }
-        return (cnt(t->_child[0]) + 1 + lower_bound(t->_child[1], val));
+        return cnt(t->_child[0]) + 1 + lower_bound(t->_child[1], val);
     }
 
     /**
@@ -1796,13 +1798,13 @@ class ImplicitTreap {
      */
     int upper_bound(node *t, value_type val) {
         if (!t) {
-            return (0);
+            return 0;
         }
         pushdown(t);
         if (t->_value > val) {
-            return (upper_bound(t->_child[0], val));
+            return upper_bound(t->_child[0], val);
         }
-        return (cnt(t->_child[0]) + 1 + upper_bound(t->_child[1], val));
+        return cnt(t->_child[0]) + 1 + upper_bound(t->_child[1], val);
     }
 
     /**
