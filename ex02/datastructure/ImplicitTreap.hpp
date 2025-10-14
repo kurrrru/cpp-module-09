@@ -135,8 +135,8 @@ class ImplicitTreap {
  private:
     struct node;
  public:
-    class value_proxy;
-     class iterator;
+    class ValueProxy;
+    class iterator;
     typedef T                                        value_type;
     typedef Allocator                                allocator_type;
     typedef typename Allocator::reference            reference;
@@ -325,12 +325,12 @@ class ImplicitTreap {
      * @param pos Position of the element to access.
      * @return Proxy reference that materializes lazy state on demand.
      */
-    value_proxy operator[](size_type pos) {
+    ValueProxy operator[](size_type pos) {
         size_type current_size = size();
         assert(pos < current_size);
         node* target_node = find_node_by_index(pos);
         assert(target_node);
-        return value_proxy(this, target_node);
+        return ValueProxy(this, target_node);
     }
 
     /**
@@ -368,7 +368,7 @@ class ImplicitTreap {
         insert(0, val);
     }
 
-    value_proxy front() {
+    ValueProxy front() {
         size_type current_size = size();
         assert(current_size > 0);
         return (*this)[0];
@@ -380,7 +380,7 @@ class ImplicitTreap {
         return (*this)[0];
     }
 
-    value_proxy back() {
+    ValueProxy back() {
         size_type current_size = size();
         assert(current_size > 0);
         return (*this)[current_size - 1];
@@ -701,27 +701,31 @@ class ImplicitTreap {
     /**
      * @brief Proxy object providing read-write access with lazy materialization.
      */
-    class value_proxy {
+    class ValueProxy {
      public:
+        /**
+         * @brief Create an empty proxy pointing to no node (canonical form).
+         */
+        ValueProxy(): _treap(NULL), _node(NULL) {}
         /**
          * @brief Construct a proxy bound to a node.
          * @param treap Owning container.
          * @param n Node being referenced.
          */
-        value_proxy(ImplicitTreap *treap, node *n)
+        ValueProxy(ImplicitTreap *treap, node *n)
             : _treap(treap), _node(n) {}
         /**
          * @brief Copy-construct the proxy.
          * @param other Proxy to duplicate.
          */
-        value_proxy(const value_proxy &other)
+        ValueProxy(const ValueProxy &other)
             : _treap(other._treap), _node(other._node) {}
         /**
          * @brief Assign a value to the referenced node.
          * @param val New value to store.
          * @return Reference to this proxy.
          */
-        value_proxy &operator=(const value_type &val) {
+        ValueProxy &operator=(const value_type &val) {
             assert(_treap);
             assert(_node);
             _treap->assign_node_value(_node, val);
@@ -732,9 +736,13 @@ class ImplicitTreap {
          * @param other Proxy whose value is read.
          * @return Reference to this proxy.
          */
-        value_proxy &operator=(const value_proxy &other) {
+        ValueProxy &operator=(const ValueProxy &other) {
             return (*this = static_cast<value_type>(other));
         }
+        /**
+         * @brief Destroy the proxy without taking ownership actions.
+         */
+        ~ValueProxy() {}
         /**
          * @brief Implicit conversion to the referenced value.
          * @return Materialized value stored in the node.
@@ -778,7 +786,7 @@ class ImplicitTreap {
         typedef std::bidirectional_iterator_tag iterator_category;
         typedef typename ImplicitTreap::value_type value_type;
         typedef typename ImplicitTreap::difference_type difference_type;
-        typedef value_proxy reference;
+        typedef ValueProxy reference;
         typedef value_type* pointer;
 
         /**
@@ -1092,7 +1100,7 @@ class ImplicitTreap {
         return end();
     }
 
-private:
+ private:
     /**
      * @brief Simple xorshift32 pseudo-random generator.
      */
