@@ -1,7 +1,9 @@
+#include <ex02/utils/test.hpp>
+
 #include <algorithm>
 #include <deque>
 #include <iostream>
-#include <list>
+// #include <list>
 #include <string>
 #include <vector>
 
@@ -42,10 +44,12 @@ void test() {
                     std::cout << cpy[i] << " ";
                 }
                 std::cout << std::endl;
-            }
-            else {
-                cnt_cmp = std::max(cnt_cmp, static_cast<std::size_t>(comparer::CLess<int>::getcnt()));
-                // std::cout << "Sorted successfully with " << comparer::CLess<int>::getcnt() << " comparisons for permutation: ";
+            } else {
+                cnt_cmp = std::max(cnt_cmp,
+                    static_cast<std::size_t>(comparer::CLess<int>::getcnt()));
+                // std::cout << "Sorted successfully with "
+                //     << comparer::CLess<int>::getcnt()
+                //     << " comparisons for permutation: ";
                 // for (size_t i = 0; i < empty_vec.size(); ++i) {
                 //     std::cout << empty_vec[i] << " ";
                 // }
@@ -53,7 +57,8 @@ void test() {
             }
         } while (std::next_permutation(empty_vec.begin(), empty_vec.end()));
 
-        std::cout << "Maximum number of comparisons: " << cnt_cmp << " for size " << size << std::endl;
+        std::cout << "Maximum number of comparisons: "
+            << cnt_cmp << " for size " << size << std::endl;
     }
 
     std::vector<std::string> s;
@@ -71,7 +76,8 @@ void test() {
 
     std::vector<double> d(5000);
     for (size_t i = 0; i < d.size(); ++i) {
-        d[i] = std::abs(static_cast<double>((d.size() + i) * 647323 % 50001) / 3.0) + 0.5;
+        d[i] = std::abs(static_cast<double>((d.size() + i)
+            * 647323 % 50001) / 3.0) + 0.5;
     }
     PmergeMeSort(d, comparer::CLess<double>());
     bool sorted = true;
@@ -94,32 +100,34 @@ void test() {
         std::cout << d[i] << " ";
     }
     std::cout << std::endl;
-
-    std::list<int> lst;
-
-    std::list<double> ld;
-    for (size_t i = 0; i < 3000; ++i) {
-        ld.push_back(std::abs(static_cast<double>((ld.size() + i) * 647323 % 50001) / 3.0) + 0.5);
-    }
-    PmergeMeSort(ld, comparer::CLess<double>());
-    sorted = true;
-    for (std::list<double>::iterator it = ld.begin(); it != ld.end(); it++) {
-        std::list<double>::iterator next_it = it;
-        ++next_it;
-        if (next_it != ld.end() && *it > *next_it) {
-            sorted = false;
-            break;
-        }
-    }
-
-    if (sorted) {
-        std::cout << "Large list sorted successfully." << std::endl;
-    } else {
-        std::cout << "Large list sorting failed." << std::endl;
-    }
+    // {
+    //     std::list<int> lst;
+    //     std::list<double> ld;
+    //     for (size_t i = 0; i < 3000; ++i) {
+    //         ld.push_back(std::abs(static_cast<double>((ld.size() + i)
+    //             * 647323 % 50001) / 3.0) + 0.5);
+    //     }
+    //     PmergeMeSort(ld, comparer::CLess<double>());
+    //     sorted = true;
+    //     for (std::list<double>::iterator it = ld.begin();
+    //         it != ld.end(); it++) {
+    //         std::list<double>::iterator next_it = it;
+    //         ++next_it;
+    //         if (next_it != ld.end() && *it > *next_it) {
+    //             sorted = false;
+    //             break;
+    //         }
+    //     }
+    //     if (sorted) {
+    //         std::cout << "Large list sorted successfully." << std::endl;
+    //     } else {
+    //         std::cout << "Large list sorting failed." << std::endl;
+    //     }
+    // }
 
     std::size_t treap_size = 100000;
-    std::vector<int> vec = generateRandomSequence<int, std::vector>(treap_size, -5000000, 5000000);
+    std::vector<int> vec = generateRandomSequence<int,
+        std::vector>(treap_size, -5000000, 5000000);
     ImplicitTreap<int> treap(vec);
     comparer::CLess<int>::reset();
     int64 start, end;
@@ -146,7 +154,8 @@ void test() {
     start = get_microseconds();
     PmergeMeSort(treap, comparer::CGreater<int>());
     end = get_microseconds();
-    std::cout << "Sorting " << treap_size << " elements in ImplicitTreap in descending order took "
+    std::cout << "Sorting " << treap_size
+        << " elements in ImplicitTreap in descending order took "
         << (end - start) << " microseconds, with "
         << comparer::CGreater<int>::getcnt() << " comparisons." << std::endl;
     sorted = true;
@@ -157,8 +166,10 @@ void test() {
         }
     }
     if (sorted) {
-        std::cout << "Large ImplicitTreap sorted in descending order successfully." << std::endl;
+        std::cout << "Large ImplicitTreap sorted "
+            << "in descending order successfully." << std::endl;
     } else {
-        std::cout << "Large ImplicitTreap sorting in descending order failed." << std::endl;
+        std::cout << "Large ImplicitTreap sorting "
+            << "in descending order failed." << std::endl;
     }
 }

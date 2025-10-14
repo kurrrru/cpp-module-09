@@ -6,7 +6,6 @@
 #include <deque>
 #include <iomanip>
 #include <iostream>
-#include <list>
 #include <string>
 #include <vector>
 

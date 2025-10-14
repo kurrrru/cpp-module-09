@@ -5,7 +5,8 @@
 #include <ctime>
 
 template<typename T, template<typename, typename> class Container>
-Container<T, std::allocator<T> > generateRandomSequence(std::size_t size, T minValue, T maxValue) {
+Container<T, std::allocator<T> > generateRandomSequence(std::size_t size,
+    T minValue, T maxValue) {
     Container<T, std::allocator<T> > container;
     static bool seeded = false;
     if (!seeded) {

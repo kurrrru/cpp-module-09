@@ -7,6 +7,7 @@ TOOLBOXSRCS = ../toolbox/StepMark.cpp \
 SRCS = main.cpp \
     detail/utils.cpp \
 	clock/clock.cpp \
+	utils/subject_test.cpp \
 	utils/test.cpp \
 	benchmark/benchmark.cpp \
 	${TOOLBOXSRCS}
