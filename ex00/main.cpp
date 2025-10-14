@@ -60,7 +60,6 @@ void convert_and_print(const BitcoinExchange &btc,
 }
 
 int main(int argc, char **argv) {
-
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " <data file>" << std::endl;
         return 1;
