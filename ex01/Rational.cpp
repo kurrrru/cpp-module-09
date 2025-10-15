@@ -1,10 +1,13 @@
 #include <ex01/Rational.hpp>
 
-#include <toolbox/math.hpp>
-#include <iostream>
-#include <stdexcept>
 #include <algorithm>
+#include <iostream>
 #include <limits>
+#include <stdexcept>
+#include <utility>
+
+#include <toolbox/math.hpp>
+
 
 Rational::Rational() : _numerator(0), _denominator(1) {
 }
@@ -62,24 +65,26 @@ void Rational::normalize() {
 }
 
 Rational Rational::operator+(const Rational &other) const {
-    return Rational(_numerator * other._denominator + other._numerator * _denominator,
-                    _denominator * other._denominator);
+    return Rational(_numerator * other._denominator
+        + other._numerator * _denominator, _denominator * other._denominator);
 }
 
 Rational Rational::operator-(const Rational &other) const {
-    return Rational(_numerator * other._denominator - other._numerator * _denominator,
-                    _denominator * other._denominator);
+    return Rational(_numerator * other._denominator
+        - other._numerator * _denominator, _denominator * other._denominator);
 }
 
 Rational Rational::operator*(const Rational &other) const {
-    return Rational(_numerator * other._numerator, _denominator * other._denominator);
+    return Rational(_numerator * other._numerator,
+        _denominator * other._denominator);
 }
 
 Rational Rational::operator/(const Rational &other) const {
     if (other._numerator == 0) {
         throw std::invalid_argument("Division by zero");
     }
-    return Rational(_numerator * other._denominator, _denominator * other._numerator);
+    return Rational(_numerator * other._denominator,
+        _denominator * other._numerator);
 }
 
 Rational &Rational::operator+=(const Rational &other) {
@@ -103,7 +108,8 @@ Rational &Rational::operator/=(const Rational &other) {
 }
 
 bool Rational::operator==(const Rational &other) const {
-    return _numerator == other._numerator && _denominator == other._denominator;
+    return _numerator == other._numerator
+        && _denominator == other._denominator;
 }
 
 bool Rational::operator!=(const Rational &other) const {
@@ -120,7 +126,8 @@ bool Rational::operator<(const Rational &other) const {
     }
     if (_numerator < std::numeric_limits<int>::max() / other._denominator &&
         other._numerator < std::numeric_limits<int>::max() / _denominator) {
-        return _numerator * other._denominator < other._numerator * _denominator;
+        return _numerator * other._denominator
+            < other._numerator * _denominator;
     }
     int left_int = _numerator / _denominator;
     int right_int = other._numerator / other._denominator;
@@ -132,7 +139,8 @@ bool Rational::operator<(const Rational &other) const {
     if (left_rem == 0 || right_rem == 0) {
         return left_rem < right_rem;
     }
-    return Rational(other._denominator, right_rem) < Rational(_denominator, left_rem);
+    return Rational(other._denominator, right_rem)
+        < Rational(_denominator, left_rem);
 }
 
 bool Rational::operator<=(const Rational &other) const {
