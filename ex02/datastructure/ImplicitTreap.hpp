@@ -185,7 +185,7 @@ class ImplicitTreap {
      * @param val Value assigned to each inserted element.
      * @param alloc Allocator instance copied for node management.
      */
-    ImplicitTreap(size_type size, value_type val,
+    ImplicitTreap(size_type size, value_type val = value_type(),
         const Allocator &alloc = Allocator())
         : _root(NULL), _node_alloc(alloc), _rnd(seed) {
         for (size_type i = 0; i < size; i++) {
@@ -403,7 +403,7 @@ class ImplicitTreap {
     }
 
     iterator insert(iterator position, const value_type &val) {
-    size_type index = node_index(position.base_node());
+        size_type index = node_index(position.base_node());
         insert(index, val);
         node *inserted = find_node_by_index(index);
         return iterator(this, inserted);
@@ -553,10 +553,10 @@ class ImplicitTreap {
             : _treap(other._treap), _index(other._treap ?
             other._treap->node_index(other.base_node()) : 0) {
         }
-    /**
-     * @brief Dereference to obtain the value at the current position.
-     * @return Value stored at the iterator's position.
-     */
+        /**
+         * @brief Dereference to obtain the value at the current position.
+         * @return Value stored at the iterator's position.
+         */
         value_type operator*() const {
             assert(_treap);
             assert(_index < _treap->size());
@@ -564,10 +564,10 @@ class ImplicitTreap {
             assert(target);
             return _treap->node_value_ref(target);
         }
-    /**
-     * @brief Arrow operator returning a pointer to the materialized value.
-     * @return Pointer to the value stored in the treap at the iterator's position.
-     */
+        /**
+         * @brief Arrow operator returning a pointer to the materialized value.
+         * @return Pointer to the value stored in the treap at the iterator's position.
+         */
         const value_type *operator->() const {
             assert(_treap);
             assert(_index < _treap->size());
