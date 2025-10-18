@@ -2,7 +2,8 @@ NAME = RPN
 
 # sources
 TOOLBOXSRCS = ../toolbox/StepMark.cpp \
-			../toolbox/color.cpp
+			../toolbox/color.cpp \
+            ../toolbox/string.cpp
 SRCS = main.cpp \
     Rational.cpp \
 	${TOOLBOXSRCS}
