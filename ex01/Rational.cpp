@@ -49,7 +49,7 @@ std::pair<int, int> Rational::as_pair() const {
 
 void Rational::normalize() {
     if (_denominator == 0) {
-        throw std::invalid_argument("Denominator cannot be zero");
+        throw std::runtime_error("Denominator cannot be zero");
     }
     if (_numerator == 0) {
         _denominator = 1;
@@ -81,7 +81,7 @@ Rational Rational::operator*(const Rational &other) const {
 
 Rational Rational::operator/(const Rational &other) const {
     if (other._numerator == 0) {
-        throw std::invalid_argument("Division by zero");
+        throw std::runtime_error("Division by zero");
     }
     return Rational(_numerator * other._denominator,
         _denominator * other._numerator);
