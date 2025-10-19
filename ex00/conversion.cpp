@@ -6,31 +6,10 @@
 #include <fstream>
 #include <sstream>
 
+namespace {
 bool retrieve_date_and_value(const std::string &line,
-    std::string &date_str, std::string &value_str) {
-    std::size_t pos_delimiter = line.find("|");
-    if (pos_delimiter == std::string::npos) {
-        std::cerr << "Error: bad input => " << line << std::endl;
-        return false;
-    }
-    std::size_t date_str_end = pos_delimiter;
-    while (date_str_end > 0 && line[date_str_end - 1] == ' ') {
-        --date_str_end;
-    }
-    date_str = line.substr(0, date_str_end);
-    std::size_t value_str_start = pos_delimiter + 1;
-    while (value_str_start < line.size() &&
-        line[value_str_start] == ' ') {
-        ++value_str_start;
-    }
-    std::size_t value_str_end = line.size();
-    while (value_str_end > value_str_start &&
-        line[value_str_end - 1] == ' ') {
-        --value_str_end;
-    }
-    value_str = line.substr(value_str_start, value_str_end - value_str_start);
-    return true;
-}
+    std::string &date_str, std::string &value_str);
+}  // namespace
 
 void convert_and_print(const BitcoinExchange &btc,
     const std::string &file_name) {
@@ -83,3 +62,31 @@ void convert_and_print(const BitcoinExchange &btc,
         }
     }
 }
+
+namespace {
+bool retrieve_date_and_value(const std::string &line,
+    std::string &date_str, std::string &value_str) {
+    std::size_t pos_delimiter = line.find("|");
+    if (pos_delimiter == std::string::npos) {
+        std::cerr << "Error: bad input => " << line << std::endl;
+        return false;
+    }
+    std::size_t date_str_end = pos_delimiter;
+    while (date_str_end > 0 && line[date_str_end - 1] == ' ') {
+        --date_str_end;
+    }
+    date_str = line.substr(0, date_str_end);
+    std::size_t value_str_start = pos_delimiter + 1;
+    while (value_str_start < line.size() &&
+        line[value_str_start] == ' ') {
+        ++value_str_start;
+    }
+    std::size_t value_str_end = line.size();
+    while (value_str_end > value_str_start &&
+        line[value_str_end - 1] == ' ') {
+        --value_str_end;
+    }
+    value_str = line.substr(value_str_start, value_str_end - value_str_start);
+    return true;
+}
+}  // namespace
