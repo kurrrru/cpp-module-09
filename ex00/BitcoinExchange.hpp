@@ -18,6 +18,7 @@ class BitcoinExchange {
 
     void load_data(const std::string &data_filename);
     double get_exchange_rate(const toolbox::Date &date) const;
+    bool empty() const;
  private:
     std::map<toolbox::Date, double> _exchange_rates;
 };

@@ -35,33 +35,49 @@ BitcoinExchange::BitcoinExchange(const std::string &data_filename)
 void BitcoinExchange::load_data(const std::string &data_filename) {
     std::ifstream file(data_filename.c_str());
     if (!file.is_open()) {
-        throw std::runtime_error("Failed to open data file: " + data_filename);
+        std::cerr << "Warning: failed to open data file: " << data_filename
+            << " (the database will be empty)" << std::endl;
+        return;
     }
     std::string line;
     if (!std::getline(file, line)) {
-        throw std::runtime_error("Data file is empty: " + data_filename);
+        std::cerr << "Warning: data file is empty: " << data_filename
+            << " (the database will be empty)" << std::endl;
+        return;
     }
     if (line != "date,exchange_rate") {
-        throw std::runtime_error("Invalid header in data file: "
-            + data_filename);
+        std::cerr << "Warning: invalid header in data file: " << data_filename
+            << "(Expecting 'date,exchange_rate')" << std::endl;
     }
     std::map<toolbox::Date, double> new_map;
     while (std::getline(file, line)) {
         std::size_t pos_delimiter = line.find(",");
         if (pos_delimiter == std::string::npos) {
-            throw std::runtime_error(
-                "Invalid line format (missing delimiter) in data file: "
-                + line);
+            std::cerr << "Warning: invalid line format "
+                << "(missing delimiter) in data file: "
+                << line << "(this line will be ignored)" << std::endl;
+            continue;
         }
         std::string date_str = line.substr(0, pos_delimiter);
         std::string value_str = line.substr(pos_delimiter + 1);
         if (date_str.empty() || value_str.empty()) {
-            throw std::runtime_error(
-                "Invalid line format (empty date or value) in data file: "
-                + line);
+            std::cerr << "Warning: invalid line format "
+                << "(empty date or value) in data file: "
+                << line << "(this line will be ignored)" << std::endl;
+            continue;
         }
-        toolbox::Date date(toolbox::GREGORIAN, date_str, "%Y-%m-%d", true);
-        double value = toolbox::stod(value_str);
+        toolbox::Date date;
+        double value;
+        try {
+            date = toolbox::Date(toolbox::GREGORIAN, date_str,
+                "%Y-%m-%d", true);
+            value = toolbox::stod(value_str);
+        } catch (const std::exception &e) {
+            std::cerr << "Warning: invalid data in line: " << line
+                << " (" << e.what() << ") (this line will be ignored)"
+                << std::endl;
+            continue;
+        }
         new_map[date] = value;
     }
     std::swap(_exchange_rates, new_map);
@@ -76,4 +92,8 @@ double BitcoinExchange::get_exchange_rate(const toolbox::Date &date) const {
     }
     --it;
     return it->second;
+}
+
+bool BitcoinExchange::empty() const {
+    return _exchange_rates.empty();
 }

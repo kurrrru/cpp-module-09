@@ -12,6 +12,7 @@ SRCS = main.cpp \
 	calendar_system/NonProlepticGregorianCalendar.cpp \
 	Date.cpp \
 	BitcoinExchange.cpp \
+	conversion.cpp \
 	${TOOLBOXSRCS}
 
 
