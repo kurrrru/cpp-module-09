@@ -102,7 +102,7 @@ void operand_push(std::stack<Rational, std::list<Rational> > &st,
     const std::string &token) {
     size_t slash_pos = token.find('/');
     if (slash_pos == std::string::npos) {
-        int num = toolbox::stoi(token.c_str());
+        BigInt num = BigInt(token);
         st.push(Rational(num));
     } else {
         if (slash_pos == 0 || slash_pos == token.size() - 1) {
@@ -115,8 +115,8 @@ void operand_push(std::stack<Rational, std::list<Rational> > &st,
             throw std::invalid_argument("Invalid rational number format: '"
                 + token + "'");
         }
-        int num = toolbox::stoi(num_str.c_str());
-        int denom = toolbox::stoi(denom_str.c_str());
+        BigInt num = BigInt(num_str);
+        BigInt denom = BigInt(denom_str);
 
         // this may throw an exception if denom == 0
         st.push(Rational(num, denom));

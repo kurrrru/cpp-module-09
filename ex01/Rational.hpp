@@ -3,18 +3,20 @@
 #include <iostream>
 #include <utility>
 
+#include <ex01/BigInt.hpp>
+
 class Rational {
  public:
     Rational();
-    explicit Rational(int numerator);
-    Rational(int numerator, int denominator);
+    explicit Rational(BigInt numerator);
+    Rational(BigInt numerator, BigInt denominator);
     Rational(const Rational &other);
     Rational &operator=(const Rational &other);
     ~Rational();
 
-    int numerator() const;
-    int denominator() const;
-    std::pair<int, int> as_pair() const;
+    BigInt numerator() const;
+    BigInt denominator() const;
+    std::pair<BigInt, BigInt> as_pair() const;
 
     Rational operator+(const Rational &other) const;
     Rational operator-(const Rational &other) const;
@@ -37,8 +39,8 @@ class Rational {
     Rational abs() const;
 
  private:
-    int _numerator;
-    int _denominator;
+    BigInt _numerator;
+    BigInt _denominator;
     void normalize();
 };
 

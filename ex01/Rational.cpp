@@ -7,15 +7,27 @@
 #include <utility>
 
 #include <toolbox/math.hpp>
+#include <ex01/BigInt.hpp>
+
+namespace {
+
+BigInt gcd(const BigInt& a, const BigInt& b) {
+    if (b.isZero()) {
+        return a;
+    }
+    return gcd(b, a % b);
+}
+}
 
 
 Rational::Rational() : _numerator(0), _denominator(1) {
 }
 
-Rational::Rational(int numerator) : _numerator(numerator), _denominator(1) {
+Rational::Rational(BigInt numerator) : _numerator(numerator),
+    _denominator(BigInt(1)) {
 }
 
-Rational::Rational(int numerator, int denominator)
+Rational::Rational(BigInt numerator, BigInt denominator)
     : _numerator(numerator), _denominator(denominator) {
     normalize();
 }
@@ -35,31 +47,31 @@ Rational &Rational::operator=(const Rational &other) {
 Rational::~Rational() {
 }
 
-int Rational::numerator() const {
+BigInt Rational::numerator() const {
     return _numerator;
 }
 
-int Rational::denominator() const {
+BigInt Rational::denominator() const {
     return _denominator;
 }
 
-std::pair<int, int> Rational::as_pair() const {
+std::pair<BigInt, BigInt> Rational::as_pair() const {
     return std::make_pair(_numerator, _denominator);
 }
 
 void Rational::normalize() {
-    if (_denominator == 0) {
+    if (_denominator.isZero()) {
         throw std::runtime_error("Denominator cannot be zero");
     }
-    if (_numerator == 0) {
-        _denominator = 1;
+    if (_numerator.isZero()) {
+        _denominator = BigInt(1);
         return;
     }
-    if (_denominator < 0) {
+    if (_denominator.isNegative()) {
         _numerator = -_numerator;
         _denominator = -_denominator;
     }
-    int g = toolbox::math::gcd(std::abs(_numerator), _denominator);
+    BigInt g = gcd(_numerator.abs(), _denominator);
     _numerator /= g;
     _denominator /= g;
 }
@@ -80,7 +92,7 @@ Rational Rational::operator*(const Rational &other) const {
 }
 
 Rational Rational::operator/(const Rational &other) const {
-    if (other._numerator == 0) {
+    if (other._numerator.isZero()) {
         throw std::runtime_error("Division by zero");
     }
     return Rational(_numerator * other._denominator,
@@ -117,30 +129,15 @@ bool Rational::operator!=(const Rational &other) const {
 }
 
 bool Rational::operator<(const Rational &other) const {
-    if ((_numerator < 0) != (other._numerator < 0)) {
+    if ((_numerator.isNegative()) != (other._numerator.isNegative())) {
         return _numerator < other._numerator;
     }
-    // && (other._numerator < 0) is implicitly satisfieds
-    if ((_numerator < 0) /* && (other._numerator < 0) */) {
+    // && (other._numerator.isNegative()) is implicitly satisfied
+    if ((_numerator.isNegative())) {
         return -other < -(*this);
     }
-    if (_numerator < std::numeric_limits<int>::max() / other._denominator &&
-        other._numerator < std::numeric_limits<int>::max() / _denominator) {
-        return _numerator * other._denominator
-            < other._numerator * _denominator;
-    }
-    int left_int = _numerator / _denominator;
-    int right_int = other._numerator / other._denominator;
-    if (left_int != right_int) {
-        return left_int < right_int;
-    }
-    int left_rem = _numerator - left_int * _denominator;
-    int right_rem = other._numerator - right_int * other._denominator;
-    if (left_rem == 0 || right_rem == 0) {
-        return left_rem < right_rem;
-    }
-    return Rational(other._denominator, right_rem)
-        < Rational(_denominator, left_rem);
+    return _numerator * other._denominator
+        < other._numerator * _denominator;
 }
 
 bool Rational::operator<=(const Rational &other) const {
@@ -160,12 +157,12 @@ Rational Rational::operator-() const {
 }
 
 Rational Rational::abs() const {
-    return Rational(std::abs(_numerator), _denominator);
+    return Rational(_numerator.abs(), _denominator);
 }
 
 std::ostream &operator<<(std::ostream &os, const Rational &r) {
-    std::pair<int, int> p = r.as_pair();
-    if (p.second == 1) {
+    std::pair<BigInt, BigInt> p = r.as_pair();
+    if (p.second == BigInt(1)) {
         os << p.first;
     } else {
         os << p.first << "/" << p.second;
