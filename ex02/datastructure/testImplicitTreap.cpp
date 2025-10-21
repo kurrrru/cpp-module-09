@@ -28,21 +28,23 @@ ValidationInfo validate_node(const ImplicitTreap<int>::node *node,
         ValidationInfo info;
         info.ok = true;
         info.count = 0;
-        info.sum = 0;
+        info.sum = ImplicitTreap<int>::operations::query_id();
         return info;
     }
     bool ok = (node->_parent == parent);
     ValidationInfo left = validate_node(node->_child[0], node);
     ValidationInfo right = validate_node(node->_child[1], node);
     treap_size_type expected_cnt = left.count + right.count + 1;
-    int expected_sum = left.sum + node->_value + right.sum;
+    int expected_max = std::max(left.sum, std::max(node->_value, right.sum));
     ok = ok && left.ok && right.ok;
+    assert(node->_cnt == expected_cnt);
     ok = ok && (node->_cnt == expected_cnt);
-    ok = ok && (node->_acc == expected_sum);
+    assert(node->_acc == expected_max);
+    ok = ok && (node->_acc == expected_max);
     ValidationInfo result;
     result.ok = ok;
     result.count = expected_cnt;
-    result.sum = expected_sum;
+    result.sum = expected_max;
     return result;
 }
 
@@ -68,8 +70,8 @@ void expect_sequence(ImplicitTreap<int> &treap,
     if (!expected.empty()) {
         int total = treap.query(0,
             static_cast<treap_size_type>(expected.size()));
-        int expected_total = std::accumulate(expected.begin(),
-            expected.end(), 0);
+        int expected_total = *std::max_element(expected.begin(),
+            expected.end());
         assert(total == expected_total);
     }
 }
@@ -79,10 +81,10 @@ void verify_all_ranges(ImplicitTreap<int> &treap,
     expect_sequence(treap, mirror);
     for (std::size_t l = 0; l < mirror.size(); ++l) {
         for (std::size_t r = l + 1; r <= mirror.size(); ++r) {
-            int expected_sum = std::accumulate(mirror.begin() + l,
-                mirror.begin() + r, 0);
+            int expected_max = *std::max_element(mirror.begin() + l,
+                mirror.begin() + r);
             assert(treap.query(static_cast<treap_size_type>(l),
-                static_cast<treap_size_type>(r)) == expected_sum);
+                static_cast<treap_size_type>(r)) == expected_max);
         }
     }
 }
@@ -131,12 +133,10 @@ void test_range_add_range_sum_behavior() {
 
     for (std::size_t l = 0; l < n; ++l) {
         for (std::size_t r = l + 1; r <= n; ++r) {
-            int expected_sum = 0;
-            for (std::size_t idx = l; idx < r; ++idx) {
-                expected_sum += expected[idx];
-            }
+            int expected_max = *std::max_element(expected.begin() + l,
+                expected.begin() + r);
             assert(treap.query(static_cast<treap_size_type>(l),
-                static_cast<treap_size_type>(r)) == expected_sum);
+                static_cast<treap_size_type>(r)) == expected_max);
         }
     }
 }
@@ -191,13 +191,11 @@ void benchmark_range_add_range_sum() {
         size_type length = static_cast<size_type>(1 + std::rand()
             % static_cast<int>(max_len));
         size_type r = l + length;
-        int treap_sum = treap.query(l, r);
-        int expected_sum = 0;
-        for (size_type i = l; i < r; ++i) {
-            expected_sum += mirror[i];
-        }
-        assert(treap_sum == expected_sum);
-        checksum += treap_sum;
+        int treap_max = treap.query(l, r);
+        int expected_max = *std::max_element(mirror.begin() + l,
+            mirror.begin() + r);
+        assert(treap_max == expected_max);
+        checksum += treap_max;
     }
     std::clock_t query_end = std::clock();
 
@@ -226,7 +224,7 @@ void test_mixed_operations_range_sum() {
         mirror.push_back(value);
     }
 
-    verify_all_ranges(treap, mirror);
+    verify_all_ranges(treap, mirror); // ここで失敗
 
     treap[3] = 100;
     mirror[3] = 100;
@@ -335,10 +333,10 @@ int main() {
 
     const ImplicitTreap<int>::size_type ql = 2;
     const ImplicitTreap<int>::size_type qr = 6;
-    int expected_sum = std::accumulate(expected.begin() + ql,
-        expected.begin() + qr, 0);
-    int treap_sum = treap.query(ql, qr);
-    assert(treap_sum == expected_sum);
+    int expected_max = *std::max_element(expected.begin() + ql,
+        expected.begin() + qr);
+    int treap_max = treap.query(ql, qr);
+    assert(treap_max == expected_max);
 
     treap.update(1, 5, 4);
     for (std::size_t i = 1; i < 5; ++i) {
@@ -376,7 +374,7 @@ int main() {
     treap2[2] = 10;
     expected2[2] = 10;
     expect_sequence(treap2, expected2);
-    assert(treap2.query(0, 5) == 7 * 4 + 10);
+    assert(treap2.query(0, 5) == 10);
     treap2[0] = 3;
     expected2[0] = 3;
     treap2.update(1, 4, 1);
@@ -384,7 +382,7 @@ int main() {
         expected2[i] += 1;
     }
     expect_sequence(treap2, expected2);
-    assert(treap2.query(0, 5) == 3 + 8 + 11 + 8 + 7);
+    assert(treap2.query(0, 5) == 11);
 
     treap2.insert(3, 20);
     expected2.insert(expected2.begin() + 3, 20);
@@ -405,10 +403,10 @@ int main() {
     ImplicitTreap<int> treap4(vec);
     assert(treap4.query_lower_bound(0, treap4.size(), 0) == 0);
     assert(treap4.query_lower_bound(0, treap4.size(), 1) == 1);
-    assert(treap4.query_lower_bound(0, treap4.size(), 2) == 2);
+    assert(treap4.query_lower_bound(0, treap4.size(), 2) == 4);
     assert(treap4.query_lower_bound(0, treap4.size(), 3) == 4);
     assert(treap4.query_upper_bound(0, treap4.size(), 0) == 1);
-    assert(treap4.query_upper_bound(0, treap4.size(), 1) == 2);
+    assert(treap4.query_upper_bound(0, treap4.size(), 1) == 4);
     assert(treap4.query_upper_bound(0, treap4.size(), 2) == 4);
     assert(treap4.query_upper_bound(0, treap4.size(), 3) == 4);
 

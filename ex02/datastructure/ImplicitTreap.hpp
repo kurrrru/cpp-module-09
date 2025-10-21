@@ -3,29 +3,30 @@
 #include <cassert>
 #include <iostream>
 #include <iterator>
+#include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
 
 /**
- * @brief Monoid modeling range addition queries with lazy propagation support.
+ * @brief Monoid modeling range max queries with lazy propagation support.
  */
-struct monoid_range_add_range_sum {
+struct monoid_range_add_range_max {
     /**
      * @brief Combine two query results using addition.
-     * @param a Prefix sum of the left operand.
-     * @param b Prefix sum of the right operand.
-     * @return The aggregated range sum.
+     * @param a First range maximum.
+     * @param b Second range maximum.
+     * @return The aggregated range maximum.
      */
     static int query_op(int a, int b) {
-        return a + b;
+        return std::max(a, b);
     }
     /**
-     * @brief Identity element of the range-sum monoid used for queries.
-     * @return Additive identity (0), which leaves any prefix sum unchanged.
+     * @brief Identity element of the range-max monoid used for queries.
+     * @return Maximum identity, which leaves any prefix max unchanged.
      */
     static int query_id() {
-        return 0;
+        return std::numeric_limits<int>::min();
     }
     /**
      * @brief Combine two lazy update values.
@@ -51,7 +52,8 @@ struct monoid_range_add_range_sum {
      * @return Updated aggregate after applying the lazy increment.
      */
     static int apply(int a, int b, int len) {
-        return b == update_id() ? a : a + b * len;
+        (void)len;
+        return b == update_id() ? a : a + b;
     }
 };
 
@@ -111,7 +113,7 @@ struct monoid_point_assign {
  */
 template<typename T>
 struct monoid_traits {
-    typedef monoid_range_add_range_sum type;
+    typedef monoid_range_add_range_max type;
 };
 
 /**

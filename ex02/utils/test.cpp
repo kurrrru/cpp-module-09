@@ -127,7 +127,7 @@ void test() {
 
     std::size_t treap_size = 100000;
     std::vector<int> vec = generateRandomSequence<int,
-        std::vector>(treap_size, -5000000, 5000000);
+        std::vector>(treap_size, 1, 10000000);
     ImplicitTreap<int> treap(vec);
     comparer::CLess<int>::reset();
     int64 start, end;
