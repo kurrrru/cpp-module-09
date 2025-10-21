@@ -72,5 +72,5 @@ RPN_EXPR ?= 5 3 + 8 2 - *
 solve:
 	$(eval STACK :=)
 	$(eval $(foreach token,$(RPN_EXPR),$(call process_token,$(token))))
-	@echo "計算する式: $(RPN_EXPR)"
-	@echo "計算結果: $(firstword $(STACK))"
+	@echo "RPN: $(RPN_EXPR)"
+	@echo "Result: $(firstword $(STACK))"
