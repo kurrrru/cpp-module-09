@@ -12,12 +12,14 @@ SRCS = main.cpp \
     BigInt_conversion.cpp \
 	${TOOLBOXSRCS}
 
-
 OBJS = $(SRCS:.cpp=.o)
 
 # compiler
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -pedantic -I..
+
+# tester
+TEST_PY = rpn.py
 
 # rules
 .PHONY: all
@@ -32,7 +34,7 @@ clean:
 
 .PHONY: fclean
 fclean: clean
-	$(RM) $(NAME)
+	$(RM) $(NAME) $(TEST_PY)
 
 .PHONY: clean-log
 clean-log:
@@ -40,6 +42,46 @@ clean-log:
 
 .PHONY: re
 re: fclean all
+
+.PHONY: py_create
+py_create: $(TEST_PY)
+
+$(TEST_PY):
+	@echo "#!/usr/bin/env python3" > $(TEST_PY)
+	@echo "import sys" >> $(TEST_PY)
+	@echo "" >> $(TEST_PY)
+	@echo "def rpn(expression):" >> $(TEST_PY)
+	@echo "    stack = []" >> $(TEST_PY)
+	@echo "    tokens = expression.split()" >> $(TEST_PY)
+	@echo "    for token in tokens:" >> $(TEST_PY)
+	@echo "        if token in ('+', '-', '*', '/'):" >> $(TEST_PY)
+	@echo "            b = stack.pop()" >> $(TEST_PY)
+	@echo "            a = stack.pop()" >> $(TEST_PY)
+	@echo "            if token == '+':" >> $(TEST_PY)
+	@echo "                stack.append(a + b)" >> $(TEST_PY)
+	@echo "            elif token == '-':" >> $(TEST_PY)
+	@echo "                stack.append(a - b)" >> $(TEST_PY)
+	@echo "            elif token == '*':" >> $(TEST_PY)
+	@echo "                stack.append(a * b)" >> $(TEST_PY)
+	@echo "            elif token == '/':" >> $(TEST_PY)
+	@echo "                stack.append(a / b)" >> $(TEST_PY)
+	@echo "        else:" >> $(TEST_PY)
+	@echo "            stack.append(int(token))" >> $(TEST_PY)
+	@echo "    return stack[0]" >> $(TEST_PY)
+	@echo "" >> $(TEST_PY)
+	@echo "if __name__ == '__main__':" >> $(TEST_PY)
+	@echo "    if len(sys.argv) != 2:" >> $(TEST_PY)
+	@echo "        print('Usage: python RPN.py \"<expression>\"')" >> $(TEST_PY)
+	@echo "        sys.exit(1)" >> $(TEST_PY)
+	@echo "    expression = sys.argv[1]" >> $(TEST_PY)
+	@echo "    try:" >> $(TEST_PY)
+	@echo "        result = rpn(expression)" >> $(TEST_PY)
+	@echo "    except (IndexError, ValueError, ZeroDivisionError) as e:" >> $(TEST_PY)
+	@echo "        print(f\"Error evaluating expression: {e}\")" >> $(TEST_PY)
+	@echo "        sys.exit(1)" >> $(TEST_PY)
+	@echo "    print(result)" >> $(TEST_PY)
+	@chmod +x $(TEST_PY)
+	@echo "Generated $(TEST_PY) and made it executable."
 
 # STACK
 STACK := 
