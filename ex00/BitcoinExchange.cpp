@@ -78,6 +78,11 @@ void BitcoinExchange::load_data(const std::string &data_filename) {
                 << std::endl;
             continue;
         }
+        if (value < 0.0) {
+            std::cerr << "Warning: negative exchange rate in line: "
+                << line << " (this line will be ignored)" << std::endl;
+            continue;
+        }
         if (new_map.count(date) > 0) {
             std::cerr << "Warning: duplicate date entry in data file: "
                 << line << " (the rate for this date will be overwritten)"
