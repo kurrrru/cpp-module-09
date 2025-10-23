@@ -6,6 +6,7 @@ TOOLBOXSRCS = ../toolbox/StepMark.cpp \
             ../toolbox/string.cpp
 SRCS = main.cpp \
     Rational.cpp \
+	RPN.cpp \
     BigInt_basic.cpp \
     BigInt_calculation.cpp \
     BigInt_comparison.cpp \
