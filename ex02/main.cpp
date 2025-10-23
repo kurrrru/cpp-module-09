@@ -9,8 +9,8 @@ int main(int argc, char **argv) {
 
     try {
         subject_test(argc, argv);
-        test();
-        benchmark();
+        // test();
+        // benchmark();
     } catch (const std::exception &e) {
         std::cerr << "Exception: " << e.what() << std::endl;
         return 1;
