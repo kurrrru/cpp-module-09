@@ -7,6 +7,14 @@
 #include <ex01/BigInt.hpp>
 #include <ex01/DynamicArray.hpp>
 
+namespace {
+
+BigInt mask(std::size_t bits) {
+    return (BigInt(1) << bits) - BigInt(1);
+}
+
+}  // namespace
+
 BigInt& BigInt::operator+=(const BigInt& rhs) {
     if (rhs.isZero()) {
         return *this;
@@ -111,15 +119,58 @@ BigInt& BigInt::operator*=(const BigInt& rhs) {
 
 BigInt& BigInt::operator/=(const BigInt& rhs) {  // O(n^2)
     BigInt quotient, remainder;
-    divide_and_remainder(*this, rhs, quotient, remainder);
+    division_and_remainder(*this, rhs, quotient, remainder);
     *this = quotient;
     return *this;
 }
 
 BigInt& BigInt::operator%=(const BigInt& rhs) {  // O(n^2)
     BigInt quotient, remainder;
-    divide_and_remainder(*this, rhs, quotient, remainder);
+    division_and_remainder(*this, rhs, quotient, remainder);
     *this = remainder;
+    return *this;
+}
+
+BigInt& BigInt::operator&=(const BigInt& rhs) {
+    BigInt result;
+    std::size_t minSize = std::min(this->size(), rhs.size());
+    result._digits.resize(minSize);
+    for (std::size_t i = 0; i < minSize; ++i) {
+        result._digits[i] = this->_digits[i] & rhs._digits[i];
+    }
+    result._isNegative = this->_isNegative && rhs._isNegative;
+    result.normalize();
+    *this = result;
+    return *this;
+}
+
+BigInt& BigInt::operator|=(const BigInt& rhs) {
+    BigInt result;
+    std::size_t maxSize = std::max(this->size(), rhs.size());
+    result._digits.resize(maxSize);
+    for (std::size_t i = 0; i < maxSize; ++i) {
+        DigitType lhsDigit = (i < this->_digits.size()) ? this->_digits[i] : 0;
+        DigitType rhsDigit = (i < rhs._digits.size()) ? rhs._digits[i] : 0;
+        result._digits[i] = lhsDigit | rhsDigit;
+    }
+    result._isNegative = this->_isNegative || rhs._isNegative;
+    result.normalize();
+    *this = result;
+    return *this;
+}
+
+BigInt& BigInt::operator^=(const BigInt& rhs) {
+    BigInt result;
+    std::size_t maxSize = std::max(this->size(), rhs.size());
+    result._digits.resize(maxSize);
+    for (std::size_t i = 0; i < maxSize; ++i) {
+        DigitType lhsDigit = (i < this->_digits.size()) ? this->_digits[i] : 0;
+        DigitType rhsDigit = (i < rhs._digits.size()) ? rhs._digits[i] : 0;
+        result._digits[i] = lhsDigit ^ rhsDigit;
+    }
+    result._isNegative = this->_isNegative ^ rhs._isNegative;
+    result.normalize();
+    *this = result;
     return *this;
 }
 
@@ -202,6 +253,17 @@ BigInt BigInt::operator-() const {
     return result;
 }
 
+BigInt BigInt::operator~() const {
+    BigInt result;
+    result._digits.resize(this->size());
+    for (std::size_t i = 0; i < this->size(); ++i) {
+        result._digits[i] = ~(this->_digits[i]);
+    }
+    result._isNegative = !this->_isNegative;
+    result.normalize();
+    return result;
+}
+
 BigInt& BigInt::operator++() {
     *this += BigInt(1);
     return *this;
@@ -254,6 +316,24 @@ const BigInt operator%(const BigInt& lhs, const BigInt& rhs) {
     return result;
 }
 
+const BigInt operator&(const BigInt& lhs, const BigInt& rhs) {
+    BigInt result(lhs);
+    result &= rhs;
+    return result;
+}
+
+const BigInt operator|(const BigInt& lhs, const BigInt& rhs) {
+    BigInt result(lhs);
+    result |= rhs;
+    return result;
+}
+
+const BigInt operator^(const BigInt& lhs, const BigInt& rhs) {
+    BigInt result(lhs);
+    result ^= rhs;
+    return result;
+}
+
 const BigInt operator<<(const BigInt& num, std::size_t shift) {
     BigInt result(num);
     result <<= shift;
@@ -266,12 +346,50 @@ const BigInt operator>>(const BigInt& num, std::size_t shift) {
     return result;
 }
 
+std::size_t BigInt::clz() const {
+    if (isZero()) {
+        return BITS_PER_DIGIT;
+    }
+    DigitType most_significant_digit = _digits[_digits.size() - 1];
+    std::size_t count = 0;
+    if (BITS_PER_DIGIT == 32) {
+        if (!(most_significant_digit & 0xFFFF0000)) {
+            count += 16;
+            most_significant_digit <<= 16;
+        }
+        if (!(most_significant_digit & 0xFF000000)) {
+            count += 8;
+            most_significant_digit <<= 8;
+        }
+        if (!(most_significant_digit & 0xF0000000)) {
+            count += 4;
+            most_significant_digit <<= 4;
+        }
+        if (!(most_significant_digit & 0xC0000000)) {
+            count += 2;
+            most_significant_digit <<= 2;
+        }
+        if (!(most_significant_digit & 0x80000000)) {
+            count += 1;
+        }
+    } else {
+        for (std::size_t i = 0; i < BITS_PER_DIGIT; ++i) {
+            if ((most_significant_digit & (1U << (BITS_PER_DIGIT - 1))) == 0) {
+                count++;
+                most_significant_digit <<= 1;
+            } else {
+                break;
+            }
+        }
+    }
+    return count;
+}
+
 BigInt BigInt::karatsuba_multiply(const BigInt& a, const BigInt& b) const {
     if (a.isZero() || b.isZero()) {
         return BigInt();
     }
-    const std::size_t KARATSUBA_THRESHOLD = 32;
-    if (a.size() < KARATSUBA_THRESHOLD || b.size() < KARATSUBA_THRESHOLD) {
+    if (a.size() < MULTIPLY_THRESHOLD || b.size() < MULTIPLY_THRESHOLD) {
         return schoolbook_multiply(a, b);
     }
     const bool result_is_negative = a._isNegative != b._isNegative;
@@ -389,25 +507,25 @@ BigInt BigInt::schoolbook_multiply(const BigInt& a, const BigInt& b) const {
     return result;
 }
 
-void BigInt::divide_and_remainder(const BigInt& dividend,
+void BigInt::schoolbook_division(const BigInt& divided,
                                 const BigInt& divisor,
                                 BigInt& quotient,
                                 BigInt& remainder) const {
     if (divisor.isZero()) {
-        throw std::runtime_error("Division by zero");
+        throw std::runtime_error("Error: division by zero");
     }
-    if (dividend.isZero()) {
+    if (divided.isZero()) {
         quotient = BigInt();
         remainder = BigInt();
         return;
     }
-    BigInt a_abs = dividend;
+    BigInt a_abs = divided;
     a_abs._isNegative = false;
     BigInt b_abs = divisor;
     b_abs._isNegative = false;
     if (a_abs < b_abs) {
         quotient = BigInt();
-        remainder = dividend;
+        remainder = divided;
         return;
     }
     quotient = BigInt();
@@ -424,12 +542,133 @@ void BigInt::divide_and_remainder(const BigInt& dividend,
             }
         }
     }
-    if (dividend._isNegative != divisor._isNegative) {
+    if (divided._isNegative != divisor._isNegative) {
         quotient._isNegative = true;
     }
-    if (dividend._isNegative) {
+    if (divided._isNegative) {
         remainder._isNegative = true;
     }
     quotient.normalize();
     remainder.normalize();
+}
+
+void BigInt::division_and_remainder(const BigInt& divided,
+                                const BigInt& divisor,
+                                BigInt& quotient,
+                                BigInt& remainder) const {
+    const std::size_t BZ_OFFSET_THRESHOLD = 4;
+    if (divisor.isZero()) {
+        throw std::runtime_error("Division by zero");
+    }
+    if (divided.abs() < divisor.abs()) {
+        quotient = BigInt();
+        remainder = divided;
+        return;
+    }
+    if (divisor.size() < DIVISION_THRESHOLD ||
+        (divided.size() - divisor.size() < BZ_OFFSET_THRESHOLD)) {
+        schoolbook_division(divided, divisor, quotient, remainder);
+        return;
+    }
+
+    std::size_t shift = divisor.clz();
+    BigInt normalized_divided = divided.abs() << shift;
+    BigInt normalized_divisor = divisor.abs() << shift;
+
+    recursive_division(normalized_divided, normalized_divisor,
+        quotient, remainder);
+
+    remainder >>= shift;
+    if (divided.isNegative() != divisor.isNegative()) {
+        quotient._isNegative = true;
+    }
+    if (divided.isNegative()) {
+        remainder._isNegative = true;
+    }
+    quotient.normalize();
+    remainder.normalize();
+}
+
+void BigInt::recursive_division(const BigInt& divided,
+                                const BigInt& divisor,
+                                BigInt& quotient,
+                                BigInt& remainder) const {
+    std::size_t m = divided.size();
+    std::size_t n = divisor.size();
+    if (m < n * 2) {
+        BigInt divided_pad = divided.pad_leading_zeros(n * 2);
+        divide_2n_by_n(divided_pad, divisor, quotient, remainder);
+    } else {
+        BigInt divided_high = divided >> (n * BITS_PER_DIGIT);
+        BigInt divided_low = divided & mask(n * BITS_PER_DIGIT);
+        BigInt q_high, r_high;
+        recursive_division(divided_high, divisor, q_high, r_high);
+
+        BigInt combined = (r_high << (n * BITS_PER_DIGIT)) + divided_low;
+        BigInt q_low;
+        divide_2n_by_n(combined, divisor, q_low, remainder);
+        quotient = (q_high << (n * BITS_PER_DIGIT)) + q_low;
+    }
+}
+
+void BigInt::divide_2n_by_n(const BigInt& divided,
+                            const BigInt& divisor,
+                            BigInt& quotient,
+                            BigInt& remainder) const {
+    std::size_t n = divisor.size();
+    if (n < DIVISION_THRESHOLD) {
+        schoolbook_division(divided, divisor, quotient, remainder);
+        return;
+    }
+    std::size_t n_half = n / 2;
+    BigInt A1A2 = divided >> (n * BITS_PER_DIGIT);
+    BigInt A3 = (divided >> (n_half * BITS_PER_DIGIT))
+        & mask(n_half * BITS_PER_DIGIT);
+    BigInt A4 = divided & mask(n_half * BITS_PER_DIGIT);
+
+    BigInt Q1, R1;
+    divide_3n_by_2n(A1A2, A3, divisor, Q1, R1);
+    BigInt Q2;
+    divide_3n_by_2n(R1, A4, divisor, Q2, remainder);
+    quotient = (Q1 << (n_half * BITS_PER_DIGIT)) + Q2;
+    quotient.normalize();
+    remainder.normalize();
+}
+
+void BigInt::divide_3n_by_2n(const BigInt& divided_high,
+                            const BigInt& divided_low,
+                            const BigInt& divisor,
+                            BigInt& quotient,
+                            BigInt& remainder) const {
+    std::size_t n = divisor.size();
+    std::size_t n_half = n / 2;
+
+    BigInt B1 = divisor >> (n_half * BITS_PER_DIGIT);
+    BigInt B2 = divisor & mask(n_half * BITS_PER_DIGIT);
+
+    BigInt A1 = divided_high >> (n_half * BITS_PER_DIGIT);
+    BigInt A2 = divided_high & mask(n_half * BITS_PER_DIGIT);
+
+    BigInt R_high;
+    if (A1 < B1) {
+        divide_2n_by_n(divided_high, B1, quotient, R_high);
+    } else {
+        quotient = mask(n - n_half);
+        R_high = divided_high + divided_low - (B1 << (n * BITS_PER_DIGIT))
+            + (B1 << (n_half * BITS_PER_DIGIT));
+    }
+
+    remainder = R_high - (quotient * B2);
+    while (remainder.isNegative()) {
+        remainder += divisor;
+        quotient -= BigInt(1);
+    }
+}
+
+BigInt BigInt::pad_leading_zeros(std::size_t new_size) const {
+    BigInt result(*this);
+    if (new_size > result.size()) {
+        result._digits.resize(new_size);
+    }
+    return result;
 }

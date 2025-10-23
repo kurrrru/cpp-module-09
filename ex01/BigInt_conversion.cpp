@@ -55,7 +55,7 @@ std::string BigInt::toString() const {
     BigInt TEN(10);
     while (!temp.isZero()) {
         BigInt quotient, remainder;
-        divide_and_remainder(temp, TEN, quotient, remainder);
+        division_and_remainder(temp, TEN, quotient, remainder);
         char digitChar = '0' + remainder._digits[0];
         str.push_back(digitChar);
         temp.swap(quotient);
