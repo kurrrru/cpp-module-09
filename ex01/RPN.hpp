@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <ex01/BigInt.hpp>
 #include <ex01/Rational.hpp>
 

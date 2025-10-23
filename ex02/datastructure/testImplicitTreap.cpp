@@ -224,7 +224,7 @@ void test_mixed_operations_range_sum() {
         mirror.push_back(value);
     }
 
-    verify_all_ranges(treap, mirror); // ここで失敗
+    verify_all_ranges(treap, mirror);
 
     treap[3] = 100;
     mirror[3] = 100;

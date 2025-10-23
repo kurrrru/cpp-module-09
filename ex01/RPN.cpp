@@ -31,7 +31,8 @@ Rational solveRPN(const std::string &rpn_expr, const std::string &delimiter) {
         }
         if (token == "+" || token == "-" || token == "*" || token == "/") {
                 operator_apply(st, token);
-        } else if (token.find_first_not_of("0123456789-+/") == std::string::npos) {
+        } else if (token.find_first_not_of("0123456789-+/")
+            == std::string::npos) {
             operand_push(st, token);
         } else {
             throw std::invalid_argument("Invalid token '" + token + "'");
