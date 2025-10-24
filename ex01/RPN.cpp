@@ -9,6 +9,7 @@
 #include <ex01/BigInt.hpp>
 #include <ex01/Rational.hpp>
 #include <toolbox/string.hpp>
+#include <toolbox/StepMark.hpp>
 
 namespace {
 
@@ -21,6 +22,7 @@ void operand_push(std::stack<Rational, std::list<Rational> > &st,
 
 Rational solveRPN(const std::string &rpn_expr, const std::string &delimiter) {
     std::stack<Rational, std::list<Rational> > st;
+    toolbox::logger::StepMark::info("Parsing RPN expression");
     size_t pos = 0;
     while (pos < rpn_expr.size()) {
         size_t next_pos = rpn_expr.find(delimiter, pos);
@@ -35,6 +37,8 @@ Rational solveRPN(const std::string &rpn_expr, const std::string &delimiter) {
             == std::string::npos) {
             operand_push(st, token);
         } else {
+            toolbox::logger::StepMark::error(
+                std::string("Encountered invalid token: ") + token);
             throw std::invalid_argument("Invalid token '" + token + "'");
         }
         if (next_pos == std::string::npos) {
@@ -43,8 +47,14 @@ Rational solveRPN(const std::string &rpn_expr, const std::string &delimiter) {
         pos = next_pos + delimiter.size();
     }
     if (st.size() != 1) {
+        toolbox::logger::StepMark::error(
+            "RPN evaluation ended with invalid stack state");
         throw std::invalid_argument("Invalid RPN expression");
     }
+    std::ostringstream oss;
+    oss << "RPN expression evaluated successfully with result: "
+        << st.top();
+    toolbox::logger::StepMark::info(oss.str());
     return st.top();
 }
 
@@ -53,6 +63,8 @@ namespace {
 void operator_apply(std::stack<Rational, std::list<Rational> > &st,
         const std::string &op) {
     if (st.size() < 2) {
+        toolbox::logger::StepMark::error(
+            std::string("Operator '") + op + "' lacks operands");
         throw std::runtime_error("Not enough operands for operator '"
             + op + "'");
     }
