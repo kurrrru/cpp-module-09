@@ -15,6 +15,7 @@
 #include <ex02/compare/CGreater.hpp>
 #include <ex02/benchmark/sort_functions.hpp>
 #include <ex02/utils/random_seq.hpp>
+#include <toolbox/color.hpp>
 #include <toolbox/string.hpp>
 #include <toolbox/StepMark.hpp>
 
@@ -150,7 +151,10 @@ void benchmark() {
     }
     double avgCntCmp = static_cast<double>(totalCntCmp) / numTrials;
     double avgTime = static_cast<double>(totalTime) / numTrials;
+
+    std::cout << toolbox::color::cyan;
     printResult("PmergeMe", testSize, maxCntCmp, avgCntCmp, maxTime, avgTime);
+    std::cout << toolbox::color::reset;
 
     // std::sort
     std::vector<std::vector<int> > stdSortTestVectors = testVectors;
