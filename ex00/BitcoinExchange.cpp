@@ -12,6 +12,7 @@
 
 #include <ex00/Date.hpp>
 #include <toolbox/string.hpp>
+#include <toolbox/StepMark.hpp>
 
 BitcoinExchange::BitcoinExchange() : _exchange_rates() {}
 
@@ -33,21 +34,25 @@ BitcoinExchange::BitcoinExchange(const std::string &data_filename)
 }
 
 void BitcoinExchange::load_data(const std::string &data_filename) {
+    toolbox::logger::StepMark::info(std::string("Loading exchange rate data from file: ") + data_filename);
     std::ifstream file(data_filename.c_str());
     if (!file.is_open()) {
         std::cerr << "Warning: failed to open data file: " << data_filename
             << " (the database will be empty)" << std::endl;
+        toolbox::logger::StepMark::warning(std::string("Failed to open data file: ") + data_filename);
         return;
     }
     std::string line;
     if (!std::getline(file, line)) {
         std::cerr << "Warning: data file is empty: " << data_filename
             << " (the database will be empty)" << std::endl;
+        toolbox::logger::StepMark::warning(std::string("Data file is empty: ") + data_filename);
         return;
     }
     if (line != "date,exchange_rate") {
         std::cerr << "Warning: invalid header in data file: " << data_filename
             << "(Expecting 'date,exchange_rate')" << std::endl;
+        toolbox::logger::StepMark::warning(std::string("Invalid header detected in data file: ") + data_filename);
     }
     std::map<toolbox::Date, double> new_map;
     while (std::getline(file, line)) {
@@ -56,6 +61,7 @@ void BitcoinExchange::load_data(const std::string &data_filename) {
             std::cerr << "Warning: invalid line format "
                 << "(missing delimiter) in data file: "
                 << line << "(this line will be ignored)" << std::endl;
+            toolbox::logger::StepMark::warning(std::string("Ignoring malformed line (missing delimiter): ") + line);
             continue;
         }
         std::string date_str = line.substr(0, pos_delimiter);
@@ -64,6 +70,7 @@ void BitcoinExchange::load_data(const std::string &data_filename) {
             std::cerr << "Warning: invalid line format "
                 << "(empty date or value) in data file: "
                 << line << "(this line will be ignored)" << std::endl;
+            toolbox::logger::StepMark::warning(std::string("Ignoring malformed line (empty date or value): ") + line);
             continue;
         }
         toolbox::Date date;
@@ -76,21 +83,29 @@ void BitcoinExchange::load_data(const std::string &data_filename) {
             std::cerr << "Warning: invalid data in line: " << line
                 << " (" << e.what() << ") (this line will be ignored)"
                 << std::endl;
+            std::ostringstream oss;
+            oss << "Ignoring invalid data line: " << line << " (" << e.what() << ")";
+            toolbox::logger::StepMark::warning(oss.str());
             continue;
         }
         if (value < 0.0) {
             std::cerr << "Warning: negative exchange rate in line: "
                 << line << " (this line will be ignored)" << std::endl;
+            toolbox::logger::StepMark::warning(std::string("Ignoring negative exchange rate: ") + line);
             continue;
         }
         if (new_map.count(date) > 0) {
             std::cerr << "Warning: duplicate date entry in data file: "
                 << line << " (the rate for this date will be overwritten)"
                 << std::endl;
+            toolbox::logger::StepMark::notice(std::string("Duplicate date detected, overwriting entry: ") + line);
         }
         new_map[date] = value;
     }
     std::swap(_exchange_rates, new_map);
+    std::ostringstream oss;
+    oss << "Exchange rate data loaded. Total entries: " << _exchange_rates.size();
+    toolbox::logger::StepMark::info(oss.str());
 }
 
 double BitcoinExchange::get_exchange_rate(const toolbox::Date &date) const {
