@@ -16,6 +16,7 @@
 #include <ex02/benchmark/sort_functions.hpp>
 #include <ex02/utils/random_seq.hpp>
 #include <toolbox/string.hpp>
+#include <toolbox/StepMark.hpp>
 
 namespace {
 void printResult(const std::string &sortName, std::size_t size,
@@ -43,6 +44,7 @@ bool isSorted(const std::vector<int> &vec) {
 }  // namespace
 
 void benchmark() {
+    toolbox::logger::StepMark::info("benchmark: start");
     const std::size_t numTrials = 50;
     const std::size_t testSize = 3000;
     std::vector<std::vector<int> > testVectors(numTrials);
@@ -50,6 +52,8 @@ void benchmark() {
         testVectors[i] = generateRandomSequence<int,
             std::vector>(testSize, 1, 10000000);
     }
+    toolbox::logger::StepMark::info(
+        "benchmark: prepared random input vectors");
 
     std::vector<std::pair<void (*)(std::vector<int> &,
         comparer::CLess<int>), std::string> > sortFunctions;
@@ -135,6 +139,8 @@ void benchmark() {
         totalCntCmp += cntCmp;
         if (!isSorted(pmergeMeTestVectors[i])) {
             std::cerr << "PmergeMeSort failed to sort the array." << std::endl;
+            toolbox::logger::StepMark::error(
+                "benchmark: PmergeMe verification failed");
             std::cout << "Original: ";
             for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
                 std::cout << testVectors[i][j] << " ";
@@ -167,6 +173,8 @@ void benchmark() {
         totalCntCmp += cntCmp;
         if (!isSorted(stdSortTestVectors[i])) {
             std::cerr << "std::sort failed to sort the array." << std::endl;
+            toolbox::logger::StepMark::error(
+                "benchmark: std::sort verification failed");
             std::cout << "Original: ";
             for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
                 std::cout << testVectors[i][j] << " ";
@@ -200,6 +208,8 @@ void benchmark() {
         if (!isSorted(stdStableSortTestVectors[i])) {
             std::cerr << "std::stable_sort failed to sort the array."
                 << std::endl;
+            toolbox::logger::StepMark::error(
+                "benchmark: std::stable_sort verification failed");
             std::cout << "Original: ";
             for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
                 std::cout << testVectors[i][j] << " ";
@@ -235,6 +245,8 @@ void benchmark() {
         if (!isSorted(stdPartialSortTestVectors[i])) {
             std::cerr << "std::partial_sort failed to sort the array."
                 << std::endl;
+            toolbox::logger::StepMark::error(
+                "benchmark: std::partial_sort verification failed");
             std::cout << "Original: ";
             for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
                 std::cout << testVectors[i][j] << " ";
@@ -269,6 +281,9 @@ void benchmark() {
             if (!isSorted(vec)) {
                 std::cerr << sortFunctions[funcIdx].second
                     << " failed to sort the array." << std::endl;
+                toolbox::logger::StepMark::error(
+                    "benchmark: " + sortFunctions[funcIdx].second
+                    + " verification failed");
                 std::cout << "Original: ";
                 for (std::size_t j = 0; j < testVectors[i].size(); ++j) {
                     std::cout << testVectors[i][j] << " ";
@@ -282,4 +297,5 @@ void benchmark() {
         printResult(sortName, testSize, maxCntCmp,
             avgCntCmp, maxTime, avgTime);
     }
+    toolbox::logger::StepMark::info("benchmark: completed");
 }

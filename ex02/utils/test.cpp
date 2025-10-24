@@ -13,8 +13,10 @@
 #include <ex02/compare/CGreater.hpp>
 #include <ex02/datastructure/ImplicitTreap.hpp>
 #include <ex02/utils/random_seq.hpp>
+#include <toolbox/StepMark.hpp>
 
 void test() {
+    toolbox::logger::StepMark::info("test: start");
     std::size_t max_size = 8;
     for (std::size_t size = 1; size <= max_size; ++size) {
         std::vector<int> empty_vec;
@@ -44,6 +46,8 @@ void test() {
                     std::cout << cpy[i] << " ";
                 }
                 std::cout << std::endl;
+                toolbox::logger::StepMark::error(
+                    "test: permutation check failed");
             } else {
                 cnt_cmp = std::max(cnt_cmp,
                     static_cast<std::size_t>(comparer::CLess<int>::getcnt()));
@@ -89,8 +93,12 @@ void test() {
     }
     if (sorted) {
         std::cout << "Large vector sorted successfully." << std::endl;
+        toolbox::logger::StepMark::info(
+            "test: large vector sorted successfully");
     } else {
         std::cout << "Large vector sorting failed." << std::endl;
+        toolbox::logger::StepMark::error(
+            "test: large vector sorting failed");
     }
     for (size_t i = 0; i < 10; ++i) {
         std::cout << d[i] << " ";
@@ -120,8 +128,12 @@ void test() {
     //     }
     //     if (sorted) {
     //         std::cout << "Large list sorted successfully." << std::endl;
+    //         toolbox::logger::StepMark::info(
+    //             "test: large list sorted successfully");
     //     } else {
     //         std::cout << "Large list sorting failed." << std::endl;
+    //         toolbox::logger::StepMark::error(
+    //             "test: large list sorting failed");
     //     }
     // }
 
@@ -146,8 +158,12 @@ void test() {
     }
     if (sorted) {
         std::cout << "Large ImplicitTreap sorted successfully." << std::endl;
+        toolbox::logger::StepMark::info(
+            "test: ImplicitTreap ascending sorted");
     } else {
         std::cout << "Large ImplicitTreap sorting failed." << std::endl;
+        toolbox::logger::StepMark::error(
+            "test: ImplicitTreap ascending failed");
     }
     treap = ImplicitTreap<int>(vec);
     comparer::CGreater<int>::reset();
@@ -168,8 +184,13 @@ void test() {
     if (sorted) {
         std::cout << "Large ImplicitTreap sorted "
             << "in descending order successfully." << std::endl;
+        toolbox::logger::StepMark::info(
+            "test: ImplicitTreap descending sorted");
     } else {
         std::cout << "Large ImplicitTreap sorting "
             << "in descending order failed." << std::endl;
+        toolbox::logger::StepMark::error(
+            "test: ImplicitTreap descending failed");
     }
+    toolbox::logger::StepMark::info("test: completed");
 }
