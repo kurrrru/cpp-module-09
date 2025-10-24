@@ -62,7 +62,7 @@ void subject_test(int argc, char **argv) {
     const std::string start_msg = std::string("subject_test: start size=")
         + toolbox::to_string(input.size());
     toolbox::logger::StepMark::info(start_msg);
-    const bool display_comparison = false;
+    const bool display_comparison = false;  // Set to true to display comparison counts
     const std::size_t width = longestIntegerWidth(input);
     std::vector<TestResult> results;
     std::vector<int> sortedInput;
