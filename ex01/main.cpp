@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
             "Invalid argument count supplied to application");
         return 1;
     }
-    std::string delimiter = (argc == 3) ? argv[2] : " ";
+    std::string delimiter = (argc == 3) ? argv[2] : " \t";
     if (delimiter.empty()) {
         std::cerr << "Error: Delimiter cannot be empty" << std::endl;
         toolbox::logger::StepMark::error("Delimiter string is empty");

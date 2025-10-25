@@ -25,10 +25,10 @@ Rational solveRPN(const std::string &rpn_expr, const std::string &delimiter) {
     toolbox::logger::StepMark::info("Parsing RPN expression");
     size_t pos = 0;
     while (pos < rpn_expr.size()) {
-        size_t next_pos = rpn_expr.find(delimiter, pos);
+        size_t next_pos = rpn_expr.find_first_of(delimiter, pos);
         std::string token = rpn_expr.substr(pos, next_pos - pos);
         if (token.empty()) {
-            pos = next_pos + delimiter.size();
+            pos = next_pos + 1;
             continue;
         }
         if (token == "+" || token == "-" || token == "*" || token == "/") {
@@ -44,7 +44,7 @@ Rational solveRPN(const std::string &rpn_expr, const std::string &delimiter) {
         if (next_pos == std::string::npos) {
             break;
         }
-        pos = next_pos + delimiter.size();
+        pos = next_pos + 1;
     }
     if (st.size() != 1) {
         toolbox::logger::StepMark::error(
