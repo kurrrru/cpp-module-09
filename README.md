@@ -1,57 +1,60 @@
+[Japanese version](README.ja.md)
 # cpp-module-09
 
-C++で、複数暦法対応の日付変換によるビットコイン価格換算・任意精度有理数による逆ポーランド記法(RPN)電卓・Ford-Johnsonアルゴリズムによる整数ソートと多アルゴリズム比較ベンチマークを実装したリポジトリです（42 Cursusのカリキュラムがベースになっています）。
+A C++ repository implementing Bitcoin price conversion via multi-calendar-system date conversion, a Reverse Polish Notation (RPN) calculator based on arbitrary-precision rational numbers, and integer sorting via the Ford-Johnson algorithm with a multi-algorithm comparison benchmark (based on the 42 Cursus curriculum).
 
-## 構成
+## Layout
 
-- ex00/ Bitcoin Exchange — 複数暦法対応の日付変換によるビットコイン価格換算
-- ex01/ RPN — 任意精度有理数による逆ポーランド記法演算
-- ex02/ PmergeMe — Ford-Johnson (merge-insertion) ソートとソートアルゴリズム比較ベンチマーク
-- toolbox/ 3課題共通の基盤（ロガー・文字列・数学ユーティリティ）
+```
+ex00/  Bitcoin Exchange — Bitcoin price conversion via multi-calendar-system date conversion
+ex01/  RPN               — Reverse Polish Notation arithmetic with arbitrary-precision rational numbers
+ex02/  PmergeMe           — Ford-Johnson (merge-insertion) sort with a multi-algorithm comparison benchmark
+toolbox/ Shared infrastructure used across all three exercises (logger, string, math utilities)
+```
 
-### ex00: 複数暦法対応の日付変換によるビットコイン価格換算 (BitcoinExchange)
+### ex00: Bitcoin Price Conversion via Multi-Calendar-System Date Conversion (BitcoinExchange)
 
-日付の処理は `ICalendarSystem` という抽象インターフェース（`ex00/calendar_system/ICalendarSystem.hpp`）の上に実装されています。日付とシリアル値（`to_serial_date` / `from_serial_date`）を相互変換する共通インターフェースに対して、以下の暦法を実装しています。
+Date handling is built on top of an abstract interface, `ICalendarSystem` (`ex00/calendar_system/ICalendarSystem.hpp`), which converts dates to and from a serial value (`to_serial_date` / `from_serial_date`). The following calendar systems are implemented against this interface:
 
-- グレゴリオ暦 (`GregorianCalendar`)
-- ユリウス暦 (`JulianCalendar`)
-- フランス革命暦 (`FrenchRepublicanCalendar`)
-- エチオピア暦 (`EthiopianCalendar`)
-- 非先発グレゴリオ暦 (`NonProlepticGregorianCalendar`)
+- Gregorian calendar (`GregorianCalendar`)
+- Julian calendar (`JulianCalendar`)
+- French Republican calendar (`FrenchRepublicanCalendar`)
+- Ethiopian calendar (`EthiopianCalendar`)
+- Non-proleptic Gregorian calendar (`NonProlepticGregorianCalendar`)
 
-プログラムが使用しているのはグレゴリオ暦です。
+The program itself uses the Gregorian calendar.
 
-### ex01: 任意精度有理数による逆ポーランド記法演算 (RPN)
+### ex01: Reverse Polish Notation Arithmetic with Arbitrary-Precision Rational Numbers (RPN)
 
-数値の演算には `BigInt`（任意精度整数、basic / calculation / comparison / conversion の4ファイルに分割）と、それを分子・分母に持つ既約分数型 `Rational` を使用しています。オーバーフローや誤差なしに計算できます。
+Numeric operations use `BigInt` (an arbitrary-precision integer, split across basic / calculation / comparison / conversion files) and `Rational`, a reduced-fraction type holding a numerator/denominator pair of `BigInt`s. This allows computation without overflow or rounding error.
 
-トークンの区切り文字は可変で（デフォルトは空白とタブ）、区切り文字が数字・演算子と衝突していないかのバリデーションもあります。
+The token delimiter is configurable (space and tab by default), with validation that the delimiter does not collide with digits or operators.
 
-### ex02: Ford-Johnson (merge-insertion) ソートとソートアルゴリズム比較ベンチマーク (PmergeMe)
+### ex02: Ford-Johnson (Merge-Insertion) Sort with a Multi-Algorithm Comparison Benchmark (PmergeMe)
 
-Ford-Johnson (merge-insertion sort) の実装は以下の5段階に分解されています（`ex02/detail/`）。
+The Ford-Johnson (merge-insertion sort) implementation is broken down into the following five stages (`ex02/detail/`):
 
-1. `1_cmp_neighbor.hpp` — 隣接要素のペア比較
-2. `2_reorder_pairs.hpp` — ペアの並び替え
-3. `3_create_main_chain.hpp` — メインチェーンの構築
-4. `4_insert_into_main_chain.hpp` — Jacobsthal数列に基づく挿入
-5. `5_write_back.hpp` — 結果の書き戻し
+1. `1_cmp_neighbor.hpp` — pairwise comparison of neighboring elements
+2. `2_reorder_pairs.hpp` — reordering of pairs
+3. `3_create_main_chain.hpp` — construction of the main chain
+4. `4_insert_into_main_chain.hpp` — insertion guided by the Jacobsthal sequence
+5. `5_write_back.hpp` — writing the result back
 
-`ex02/benchmark/` には比較用に22種類のソートアルゴリズムを実装しており、比較回数・実行時間の両方を計測できます。
+`ex02/benchmark/` contains 22 additional sorting algorithms implemented for comparison, measuring both comparison count and execution time.
 
 quick / merge / heap / insertion / bubble / selection / binary insertion / intro / tim / shell / odd-even / comb / cycle / gnome / shaker / patience / tree / tournament / ternary split quick / cartesian tree sort
 
-比較用のデータ構造として `BinarySearchTree` / `Cartesian`（tree sort用） / `ImplicitTreap` があります。
+Supporting data structures used for comparison include `BinarySearchTree` / `Cartesian` (for tree sort) / `ImplicitTreap`.
 
-#### ベンチマーク結果（実測）
+#### Benchmark Results (measured)
 
-3000要素・50試行・`int` 型のランダム列（1〜10,000,000）を用いて `ex02/benchmark/benchmark.cpp` を実行した結果の抜粋です。
+Excerpt from running `ex02/benchmark/benchmark.cpp` on 50 trials of random `int` sequences of 3,000 elements (range 1–10,000,000).
 
-| アルゴリズム | Max Cmp | Avg Cmp | Max Time (us) | Avg Time (us) |
+| Algorithm | Max Cmp | Avg Cmp | Max Time (us) | Avg Time (us) |
 |---|---:|---:|---:|---:|
-| 理論下限 ⌈log2(n!)⌉ | 30,332 | 30,332.00 | - | - |
-| Ford-Johnson F(n)（正しく実装した場合の最悪比較回数の上界） | 30,546 | 30,546.00 | - | - |
-| **PmergeMe（自実装）** | 30,402 | 30,379.88 | 7,096 | 6,457.28 |
+| Information-theoretic lower bound ⌈log2(n!)⌉ | 30,332 | 30,332.00 | - | - |
+| Ford-Johnson F(n) (worst-case comparison upper bound for a correct implementation) | 30,546 | 30,546.00 | - | - |
+| **PmergeMe (this implementation)** | 30,402 | 30,379.88 | 7,096 | 6,457.28 |
 | std::sort | 46,113 | 41,689.26 | 255 | 187.48 |
 | std::stable_sort | 33,063 | 32,869.20 | 279 | 208.86 |
 | Merge Sort | 31,013 | 30,927.04 | 656 | 491.10 |
@@ -60,22 +63,23 @@ quick / merge / heap / insertion / bubble / selection / binary insertion / intro
 | Bubble Sort | 4,498,455 | 4,495,535.42 | 22,542 | 18,973.82 |
 | Cycle Sort | 13,481,040 | 13,452,679.06 | 17,362 | 15,008.42 |
 
-PmergeMe の平均比較回数（30,379.88）は、正しく実装した場合の最悪比較回数の上界であるF(n)（30,546）を下回っており、実装が理論通りに機能していることが確認できます。さらに情報理論的な下限（30,332）にもほぼ張り付いています。一方で実行時間は `std::sort`（平均187us）の約35倍かかっており、比較回数と実行時間は別の指標であることが数値から分かります（Ford-Johnsonのオーバーヘッドと定数倍の大きさが要因）。
+PmergeMe's average comparison count (30,379.88) stays under F(n) (30,546), the worst-case upper bound for a correct implementation, confirming the implementation behaves as the theory predicts. It also sits close to the information-theoretic lower bound (30,332). Execution time, however, is about 35x slower than `std::sort` (average 187us), which shows numerically that comparison count and execution time are separate metrics — the gap comes from Ford-Johnson's overhead and constant factors.
 
-### 共通基盤: toolbox/
+### Shared Infrastructure: toolbox/
 
-3つの課題から使われる共有コードです。
+Code shared across all three exercises.
 
-- `StepMark`：8段階（TRACE〜FATAL）のログレベルを持つロガー。各課題の実行ログを `ex00.log` / `ex01.log` / `ex02.log` に出力
-- `string`：C++98環境向けの `to_string` / `stoi` / `stod` 相当のユーティリティ
-- `math`：`gcd` などの数学ユーティリティ
-- `color`：ターミナル出力の色付け
+- `StepMark`: a logger with 8 severity levels (TRACE–FATAL). Writes execution logs to `ex00.log` / `ex01.log` / `ex02.log` for each exercise
+- `string`: utilities equivalent to `to_string` / `stoi` / `stod` for a C++98 environment
+- `math`: math utilities such as `gcd`
+- `color`: colored terminal output
 
-## ビルド・実行方法
+## Build & Run
 
-C++98準拠、`-Wall -Wextra -Werror` でコンパイルしています。
+Compiled against C++98 with `-Wall -Wextra -Werror`.
 
 ```sh
 cd ex00 && make && ./btc input.txt
 cd ex01 && make && ./RPN "8 9 * 9 - 9 - 9 - 4 - 1 +"
 cd ex02 && make && ./PmergeMe 3 5 9 7 4
+```
